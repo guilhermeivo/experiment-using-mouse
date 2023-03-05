@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Maze</title>
+
+    <link rel="stylesheet" href="../dist/reset.css">
+    <link rel="stylesheet" href="../dist/global.css">
+
+    <script src="../dist/bundle.js" defer></script>
+</head>
+<body>
+    <main>
+        <maze-construction rows="8" columns="8"></maze-construction>
+
+        <div>
+            <button onclick="document.querySelector('maze-construction').createColumnHandler()">+ Columns</button>
+            <button onclick="document.querySelector('maze-construction').removeColumnHandler()">- Columns</button>
+        </div>
+        <div>
+            <button onclick="document.querySelector('maze-construction').createRowHandler()">+ Rows</button>
+            <button onclick="document.querySelector('maze-construction').removeRowHandler()">- Rows</button>
+        </div>
+    </main>
+</body>
+</html>

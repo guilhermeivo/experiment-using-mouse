@@ -1,0 +1,20 @@
+.maze {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    transform-style: preserve-3d;
+    transform: rotateX(240deg) rotateY(-5deg) rotate(-155deg);
+
+    .line {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .maze__block {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        border: 1px solid #3498db;
+    }
+}

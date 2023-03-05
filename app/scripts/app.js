@@ -1,12 +1,7 @@
-import MyComponent from '../components/MyComponent'
+import Maze from '../components/Maze'
 
 (() => {
     `strict`
-
-    const myComponent = new MyComponent()
-    const myMain = document.querySelector('.main')
-
-    myMain.innerHTML = myComponent.render()
 
     console.log('⭐')
 })()
