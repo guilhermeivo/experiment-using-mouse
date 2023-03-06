@@ -1,4 +1,4 @@
-import Maze from '../components/Maze'
+import Maze from '../components/MazeConstruction'
 import BlocksToolbar from '../components/BlocksToolbar'
 
 (() => {

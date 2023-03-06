@@ -2,6 +2,22 @@ import tag from './tags.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
 
+const audio = {
+    plungerImmediate: 'PlungerImmediate',
+
+    loadAudio(filename) {
+        const audio = document.querySelector(`#${ filename }`)
+        audio.load()
+        return audio
+    },
+
+    loadAudios() {
+        if (typeof(this.plungerImmediate) == 'object') return
+
+        this.plungerImmediate = this.loadAudio(this.plungerImmediate)
+    } 
+}
+
 export default customElements.define('blocks-toolbar',
     class extends HTMLElement {
         constructor(...props) {
@@ -10,6 +26,7 @@ export default customElements.define('blocks-toolbar',
             styles.use()
 
             this.keyDownHandler = this.keyDownHandler.bind(this)
+            this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
 
             this.state = {
                 items: tag.allowedTags(),
@@ -21,6 +38,7 @@ export default customElements.define('blocks-toolbar',
             if (!this.rendered) {
                 this.render()
                 this.rendered = true
+                audio.loadAudios()
             }
         }
 
@@ -28,20 +46,49 @@ export default customElements.define('blocks-toolbar',
             this.removeEventsListener()
         }
 
+        mouseMoveHandler(event) {
+            if (this.state.selectedItem >= 0) {
+                if (!document.querySelector(`.${ style.cursorItem }`)) {
+                    const element = document.createElement('div')
+                    element.innerHTML = this.#createCursorItem(this.state.selectedItem)
+                    this.append(element)
+                }
+
+                const cursorItemSelected = document.querySelector(`.${ style.cursorItem }`)
+
+                let x = event.clientX
+                let y = event.clientY
+                cursorItemSelected.style.transform = `translate3d(calc(${ x }px - 50%), calc(${ y }px - 50%), 0)`
+
+                if (cursorItemSelected.getAttribute('key') != this.state.selectedItem)
+                    cursorItemSelected.parentElement.remove()
+            } else {
+                if (document.querySelector(`.${ style.cursorItem }`))
+                    document.querySelector(`.${ style.cursorItem }`).parentElement.remove()
+            }
+        }
+
         keyDownHandler(event) {
             switch (event.key) {
                 case 'Escape':
                     event.preventDefault()
-                    if(this.state.selectedItem >= 0) {
-                        const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-                        itemToolbar[this.state.selectedItem].classList.remove('toolbar__item--selected')
-                        this.state = { 
-                            ...this.state, 
-                            selectedItem: -1
-                        }
-                    }
+                    this.onUnselectedItemHadler()
                     break
             }
+        }
+
+        onUnselectedItemHadler() {
+            if (this.state.selectedItem >= 0) {
+                const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
+                itemToolbar[this.state.selectedItem].classList.remove('toolbar__item--selected')
+                this.state = { 
+                    ...this.state, 
+                    selectedItem: -1
+                }
+
+                if (document.querySelector(`.${ style.cursorItem }`))
+                    document.querySelector(`.${ style.cursorItem }`).parentElement.remove()
+            } 
         }
 
         onSelectedItemHadler(event, key) {
@@ -57,6 +104,8 @@ export default customElements.define('blocks-toolbar',
             }
 
             itemToolbar[this.state.selectedItem].classList.add('toolbar__item--selected')
+
+            audio.plungerImmediate.play()
         }
 
         addEventsListener() {
@@ -69,10 +118,27 @@ export default customElements.define('blocks-toolbar',
             })
 
             document.addEventListener('keydown', this.keyDownHandler)
+            document.addEventListener('mousemove', this.mouseMoveHandler)
         }
 
         removeEventsListener() {
             document.removeEventListener('keydown', this.keyDownHandler)
+            document.removeEventListener('mousemove', this.mouseMoveHandler)
+        }
+
+        #createCursorItem(key) {
+            const directorPath = window.location.origin + '/app/assets/'
+
+            return(`
+                <div class="${ style.cursorItem }" key="${ key }">
+                    ${(() => {
+                        const item = this.state.items[key]
+                        return (`
+                            <img src="${ directorPath }${ item.icon }.png" alt="${ item.id }">
+                        `)
+                    })()}
+                </div>
+            `)
         }
 
         #createBlocksToolbar() {
