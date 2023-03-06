@@ -72,7 +72,7 @@ export default customElements.define('maze-construction',
             }
         }
 
-        createColumnHandler() {
+        createColumnHandler(e) {
             const newValue = parseInt(this.columns) + 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -88,7 +88,7 @@ export default customElements.define('maze-construction',
             })
         }
 
-        removeColumnHandler() {
+        removeColumnHandler(e) {
             const newValue = parseInt(this.columns) - 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -107,7 +107,7 @@ export default customElements.define('maze-construction',
             })
         }
 
-        createRowHandler() {
+        createRowHandler(e) {
             const newValue = parseInt(this.rows) + 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -126,7 +126,7 @@ export default customElements.define('maze-construction',
             maze.append(line)
         }
 
-        removeRowHandler() {
+        removeRowHandler(e) {
             const newValue = parseInt(this.rows) - 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -185,7 +185,6 @@ export default customElements.define('maze-construction',
         } 
 
         update() {          
-            if (this.rendered) {
-            }  
+            if (this.rendered) { }  
         }
     })

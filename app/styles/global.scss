@@ -1,0 +1,14 @@
+@import 'variables.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+}
