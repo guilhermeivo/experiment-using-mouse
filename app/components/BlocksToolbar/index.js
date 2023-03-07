@@ -1,4 +1,5 @@
 import tag from './tags.js'
+import { createElementFromHTML } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
 
@@ -49,9 +50,7 @@ export default customElements.define('blocks-toolbar',
         mouseMoveHandler(event) {
             if (this.state.selectedItem >= 0) {
                 if (!document.querySelector(`.${ style.cursorItem }`)) {
-                    const element = document.createElement('div')
-                    element.innerHTML = this.#createCursorItem(this.state.selectedItem)
-                    this.append(element)
+                    this.append(createElementFromHTML(this.#createCursorItem(this.state.selectedItem)))
                 }
 
                 const cursorItemSelected = document.querySelector(`.${ style.cursorItem }`)
@@ -61,10 +60,10 @@ export default customElements.define('blocks-toolbar',
                 cursorItemSelected.style.transform = `translate3d(calc(${ x }px - 50%), calc(${ y }px - 50%), 0)`
 
                 if (cursorItemSelected.getAttribute('key') != this.state.selectedItem)
-                    cursorItemSelected.parentElement.remove()
+                    cursorItemSelected.remove()
             } else {
                 if (document.querySelector(`.${ style.cursorItem }`))
-                    document.querySelector(`.${ style.cursorItem }`).parentElement.remove()
+                    document.querySelector(`.${ style.cursorItem }`).remove()
             }
         }
 
@@ -87,7 +86,7 @@ export default customElements.define('blocks-toolbar',
                 }
 
                 if (document.querySelector(`.${ style.cursorItem }`))
-                    document.querySelector(`.${ style.cursorItem }`).parentElement.remove()
+                    document.querySelector(`.${ style.cursorItem }`).remove()
             } 
         }
 
@@ -163,7 +162,7 @@ export default customElements.define('blocks-toolbar',
                     class="${ style.toolbar__item } ${ isSelected ? 'toolbar__item--selected' : '' }"
                     key="${ key }"
                     role="button"
-                    tabIndex="0",
+                    tabIndex="0"
                     title="${ item.label }"
                 >
                     <img src="${ directorPath }${ item.icon }.png" alt="${ item.id }">
@@ -172,9 +171,7 @@ export default customElements.define('blocks-toolbar',
         }
 
         render() {
-            const element = document.createElement('div')
-            element.innerHTML = this.#createBlocksToolbar()
-            this.append(element)
+            this.append(createElementFromHTML(this.#createBlocksToolbar()))
 
             this.addEventsListener()
         }

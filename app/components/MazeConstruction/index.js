@@ -1,4 +1,5 @@
 import uid from '../../utils/uid.js'
+import { createElementFromHTML } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
 
@@ -21,10 +22,14 @@ export default customElements.define('maze-construction',
             this.createRowHandler = this.createRowHandler.bind(this)
             this.removeRowHandler = this.removeRowHandler.bind(this)
 
+            this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
+
             this.state = {
                 amountOfRows: this.getAttribute('rows') || SMALLEST_POSSIBLE_SIZE,
                 amountOfColumns: this.getAttribute('columns') || SMALLEST_POSSIBLE_SIZE,
-                blocks: []
+                blocks: [],
+                resizeSelected: '',
+                initialPosition: undefined
             }
         }
 
@@ -72,7 +77,11 @@ export default customElements.define('maze-construction',
             }
         }
 
-        createColumnHandler(e) {
+        disconnectedCallback() {
+            this.removeEventsListener()
+        }
+
+        createColumnHandler(event) {
             const newValue = parseInt(this.columns) + 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -86,9 +95,11 @@ export default customElements.define('maze-construction',
                 line.append(block)
                 this.state.blocks.push({ id: block.id, type: '', position: `${ key },${ this.columns - 1 }` })
             })
+
+            this.update()
         }
 
-        removeColumnHandler(e) {
+        removeColumnHandler(event) {
             const newValue = parseInt(this.columns) - 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -105,9 +116,11 @@ export default customElements.define('maze-construction',
                 
                 lastBLock.remove()
             })
+
+            this.update()
         }
 
-        createRowHandler(e) {
+        createRowHandler(event) {
             const newValue = parseInt(this.rows) + 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -124,9 +137,11 @@ export default customElements.define('maze-construction',
                 this.state.blocks.push({ id: block.id, type: '', position: `${ this.rows - 1 },${ i }` })
             }
             maze.append(line)
+
+            this.update()
         }
 
-        removeRowHandler(e) {
+        removeRowHandler(event) {
             const newValue = parseInt(this.rows) - 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -140,6 +155,81 @@ export default customElements.define('maze-construction',
                 this.state.blocks.splice(index, 1)
             })
             lastLine.remove()
+
+            this.update()
+        }
+
+        mouseMoveHandler(event) {
+            const resizersBox = document.querySelector(`.${ style.resizable__resizers }`)
+            const resizers = document.querySelectorAll(`.${ style.resizer }`)
+
+            if (this.state.resizeSelected === 'right') {
+                resizers.forEach(resizer => {
+                    if (resizer.classList.contains('resizer--right')) {
+                        if (this.state.initialPosition + 16 < event.pageX) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.createColumnHandler()
+                        } else if (this.state.initialPosition - 16 > event.pageX) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.removeColumnHandler()
+                        }
+                    }
+                })
+            } else if (this.state.resizeSelected === 'left') {
+                resizers.forEach(resizer => {
+                    if (resizer.classList.contains('resizer--left')) {
+                        if (this.state.initialPosition + 16 < event.pageX) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.removeColumnHandler()
+                        } else if (this.state.initialPosition - 16 > event.pageX) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.createColumnHandler()
+                        }
+                    }
+                })
+            } else if (this.state.resizeSelected === 'bottom') {
+                resizers.forEach(resizer => {
+                    if (resizer.classList.contains('resizer--bottom')) {
+                        if (this.state.initialPosition + 16 < event.pageY) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.createRowHandler()
+                        } else if (this.state.initialPosition - 16 > event.pageY) {
+                            window.removeEventListener('mousemove', this.mouseMoveHandler)
+                            this.state = {
+                                ...this.state,
+                                resizeSelected: '',
+                                initialPosition: undefined
+                            }
+                            this.removeRowHandler()
+                        }
+                    }
+                })
+            }
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -151,6 +241,34 @@ export default customElements.define('maze-construction',
                         break
                 }
             }
+        }
+
+        addEventsListener() {
+            const resizers = document.querySelectorAll(`.${ style.resizer }`)
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', event => {
+                    event.preventDefault()
+
+                    this.state = {
+                        ...this.state,
+                        resizeSelected: event.target.classList[1].split('--')[1],
+                        initialPosition: event.target.classList[1].split('--')[1] === 'bottom' ? event.pageY : event.pageX
+                    }
+
+                    window.addEventListener('mousemove', this.mouseMoveHandler)
+                    window.addEventListener('mouseup', () => {
+                        window.removeEventListener('mousemove', this.mouseMoveHandler)
+                        this.state = {
+                            ...this.state,
+                            resizeSelected: ''
+                        }
+                    })
+                })
+            })
+        }
+
+        removeEventsListener() {
         }
 
         #createMaze() {
@@ -180,11 +298,30 @@ export default customElements.define('maze-construction',
             return element
         }
 
+        #createResizers() {
+            return (`
+                <div class="${ style.resizable }">
+                    <div class="${ style.resizable__resizers }">
+                        <div class="${ style.resizer } resizer--right"></div>
+                        <div class="${ style.resizer } resizer--bottom"></div>
+                        <div class="${ style.resizer } resizer--left"></div>
+                    </div>
+                </div>
+            `)
+        }
+
         render() {
             this.append(this.#createMaze())
-        } 
+            this.append(createElementFromHTML(this.#createResizers()))
+            this.addEventsListener()
+        }
 
-        update() {          
-            if (this.rendered) { }  
+        update() {
+            if (this.rendered) {
+                const resizable = document.querySelector(`.${ style.resizable__resizers }`)
+
+                resizable.style.width = (this.state.amountOfColumns * 66) + 'px'
+                resizable.style.height = (this.state.amountOfRows * 66) + 'px'
+            }
         }
     })

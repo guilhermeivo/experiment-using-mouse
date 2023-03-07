@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .toolbar {
     width: 100%;
     display: flex;
@@ -25,18 +27,15 @@
         &:hover {
             background-color: #FFFFFF;
             border: 1px solid #D9DBDD;
-            box-shadow: 0 3px 6px #EDEFF1;
-            color: #665df5;
+            color: $primary-color;
             
             box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.1);
         }
 
         &.toolbar__item--selected {
             background-color: #FFFFFF;
-            border: 1px solid #665df5;
-            box-shadow: 0 3px 6px #EDEFF1;
-            color: #665df5;
-            
+            border: 1px solid $primary-color;
+            color: $primary-color;
             box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.1);
 
             transition: none;
