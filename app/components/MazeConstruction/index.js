@@ -6,11 +6,24 @@ const { locals: style } = styles
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
 
+const audio = {
+    switchOn: 'SwitchOn',
+
+    loadAudio(filename) {
+        const audio = document.querySelector(`#${ filename }`)
+        audio.load()
+        return audio
+    },
+
+    loadAudios() {
+        if (typeof(this.switchOn) == 'object') return
+
+        this.switchOn = this.loadAudio(this.switchOn)
+    } 
+}
+
 export default customElements.define('maze-construction',
     class extends HTMLElement {
-
-        // Atributos que quando alterados chamam o metodo attributeChangedCallback()
-        static get observedAttributes() { return ['rows', 'columns'] }
 
         constructor(...props) {
             super(props)
@@ -29,7 +42,7 @@ export default customElements.define('maze-construction',
                 amountOfColumns: this.getAttribute('columns') || SMALLEST_POSSIBLE_SIZE,
                 blocks: [],
                 resizeSelected: '',
-                initialPosition: undefined
+                initialPosition: ''
             }
         }
 
@@ -74,6 +87,8 @@ export default customElements.define('maze-construction',
 
                 this.render()
                 this.rendered = true
+
+                audio.loadAudios()
             }
         }
 
@@ -97,6 +112,7 @@ export default customElements.define('maze-construction',
             })
 
             this.update()
+            audio.switchOn.play()
         }
 
         removeColumnHandler(event) {
@@ -118,6 +134,7 @@ export default customElements.define('maze-construction',
             })
 
             this.update()
+            audio.switchOn.play()
         }
 
         createRowHandler(event) {
@@ -139,6 +156,7 @@ export default customElements.define('maze-construction',
             maze.append(line)
 
             this.update()
+            audio.switchOn.play()
         }
 
         removeRowHandler(event) {
@@ -157,89 +175,59 @@ export default customElements.define('maze-construction',
             lastLine.remove()
 
             this.update()
+            audio.switchOn.play()
         }
 
         mouseMoveHandler(event) {
-            const resizersBox = document.querySelector(`.${ style.resizable__resizers }`)
             const resizers = document.querySelectorAll(`.${ style.resizer }`)
+            const tag = resizers[this.state.resizeSelected].classList[1].split('--')[1]
 
-            if (this.state.resizeSelected === 'right') {
-                resizers.forEach(resizer => {
-                    if (resizer.classList.contains('resizer--right')) {
-                        if (this.state.initialPosition + 16 < event.pageX) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.createColumnHandler()
-                        } else if (this.state.initialPosition - 16 > event.pageX) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.removeColumnHandler()
+            switch (tag) {
+                case 'right':
+                    if (this.state.initialPosition + 32 < event.pageX) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageX
                         }
-                    }
-                })
-            } else if (this.state.resizeSelected === 'left') {
-                resizers.forEach(resizer => {
-                    if (resizer.classList.contains('resizer--left')) {
-                        if (this.state.initialPosition + 16 < event.pageX) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.removeColumnHandler()
-                        } else if (this.state.initialPosition - 16 > event.pageX) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.createColumnHandler()
+                        this.createColumnHandler()
+                    } else if (this.state.initialPosition - 32 > event.pageX) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageX
                         }
+                        this.removeColumnHandler()
                     }
-                })
-            } else if (this.state.resizeSelected === 'bottom') {
-                resizers.forEach(resizer => {
-                    if (resizer.classList.contains('resizer--bottom')) {
-                        if (this.state.initialPosition + 16 < event.pageY) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.createRowHandler()
-                        } else if (this.state.initialPosition - 16 > event.pageY) {
-                            window.removeEventListener('mousemove', this.mouseMoveHandler)
-                            this.state = {
-                                ...this.state,
-                                resizeSelected: '',
-                                initialPosition: undefined
-                            }
-                            this.removeRowHandler()
+                    break
+                case 'left':
+                    if (this.state.initialPosition + 32 < event.pageX) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageX
                         }
+                        this.removeColumnHandler()
+                    } else if (this.state.initialPosition - 32 > event.pageX) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageX
+                        }
+                        this.createColumnHandler()
                     }
-                })
-            }
-        }
-
-        attributeChangedCallback(name, oldValue, newValue) {
-            const changedValue = oldValue !== newValue
-
-            if (changedValue) {
-                switch (name) {
-                    case '':
-                        break
-                }
+                    break
+                case 'bottom':
+                    if (this.state.initialPosition + 32 < event.pageY) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageY
+                        }
+                        this.createRowHandler()
+                    } else if (this.state.initialPosition - 32 > event.pageY) {
+                        this.state = {
+                            ...this.state,
+                            initialPosition: event.pageY
+                        }
+                        this.removeRowHandler()
+                    }
+                    break
             }
         }
 
@@ -250,10 +238,12 @@ export default customElements.define('maze-construction',
                 resizer.addEventListener('mousedown', event => {
                     event.preventDefault()
 
+                    const tagResizer = event.target.classList[1].split('--')[1]
+
                     this.state = {
                         ...this.state,
-                        resizeSelected: event.target.classList[1].split('--')[1],
-                        initialPosition: event.target.classList[1].split('--')[1] === 'bottom' ? event.pageY : event.pageX
+                        resizeSelected: event.target.getAttribute('key'),
+                        initialPosition: tagResizer === 'bottom' ? event.pageY : event.pageX
                     }
 
                     window.addEventListener('mousemove', this.mouseMoveHandler)
@@ -261,7 +251,8 @@ export default customElements.define('maze-construction',
                         window.removeEventListener('mousemove', this.mouseMoveHandler)
                         this.state = {
                             ...this.state,
-                            resizeSelected: ''
+                            resizeSelected: '',
+                            initialPosition: ''
                         }
                     })
                 })
@@ -302,9 +293,9 @@ export default customElements.define('maze-construction',
             return (`
                 <div class="${ style.resizable }">
                     <div class="${ style.resizable__resizers }">
-                        <div class="${ style.resizer } resizer--right"></div>
-                        <div class="${ style.resizer } resizer--bottom"></div>
-                        <div class="${ style.resizer } resizer--left"></div>
+                        <div class="${ style.resizer } resizer--right" key="0"></div>
+                        <div class="${ style.resizer } resizer--left" key="1"></div>
+                        <div class="${ style.resizer } resizer--bottom" key="2"></div>
                     </div>
                 </div>
             `)

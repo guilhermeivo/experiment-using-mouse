@@ -3,6 +3,8 @@ import { createElementFromHTML } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
 
+const directorAssetsPath = window.location.origin + '/app/assets/'
+
 const audio = {
     plungerImmediate: 'PlungerImmediate',
 
@@ -21,6 +23,7 @@ const audio = {
 
 export default customElements.define('blocks-toolbar',
     class extends HTMLElement {
+        
         constructor(...props) {
             super(props)
 
@@ -49,15 +52,17 @@ export default customElements.define('blocks-toolbar',
 
         mouseMoveHandler(event) {
             if (this.state.selectedItem >= 0) {
-                if (!document.querySelector(`.${ style.cursorItem }`)) {
+                if (!document.querySelector(`.${ style.cursorItem }`))
                     this.append(createElementFromHTML(this.#createCursorItem(this.state.selectedItem)))
-                }
 
                 const cursorItemSelected = document.querySelector(`.${ style.cursorItem }`)
 
-                let x = event.clientX
-                let y = event.clientY
-                cursorItemSelected.style.transform = `translate3d(calc(${ x }px - 50%), calc(${ y }px - 50%), 0)`
+                cursorItemSelected.style.transform = `
+                    translate3d(
+                        calc(${ event.clientX }px - 50%), 
+                        calc(${ event.clientY }px - 50%), 
+                        0)
+                `
 
                 if (cursorItemSelected.getAttribute('key') != this.state.selectedItem)
                     cursorItemSelected.remove()
@@ -85,33 +90,41 @@ export default customElements.define('blocks-toolbar',
                     selectedItem: -1
                 }
 
-                if (document.querySelector(`.${ style.cursorItem }`))
-                    document.querySelector(`.${ style.cursorItem }`).remove()
+                const cursorItem = document.querySelector(`.${ style.cursorItem }`)
+                if (cursorItem) cursorItem.remove()
             } 
         }
 
         onSelectedItemHadler(event, key) {
             const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-            const itemSelected = itemToolbar[key]
 
             if (this.state.selectedItem >= 0)
                 itemToolbar[this.state.selectedItem].classList.remove('toolbar__item--selected')
 
-            this.state = { 
-                ...this.state, 
-                selectedItem: itemSelected.getAttribute('key')
-            }
+            if (this.state.selectedItem != key) {
+                this.state = { 
+                    ...this.state, 
+                    selectedItem: key
+                }
+    
+                itemToolbar[this.state.selectedItem].classList.add('toolbar__item--selected')
+            } else {
+                this.state = { 
+                    ...this.state, 
+                    selectedItem: -1
+                }
 
-            itemToolbar[this.state.selectedItem].classList.add('toolbar__item--selected')
+                const cursorItem = document.querySelector(`.${ style.cursorItem }`)
+                if (cursorItem) cursorItem.remove()
+            }
 
             audio.plungerImmediate.play()
         }
 
         addEventsListener() {
             const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-
             this.state.items.map((item, key) => {
-                itemToolbar[key].addEventListener('click', (event) => {
+                itemToolbar[key].addEventListener('click', event => {
                     this.onSelectedItemHadler(event, key)
                 })
             })
@@ -126,14 +139,12 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createCursorItem(key) {
-            const directorPath = window.location.origin + '/app/assets/'
-
             return(`
                 <div class="${ style.cursorItem }" key="${ key }">
                     ${(() => {
                         const item = this.state.items[key]
                         return (`
-                            <img src="${ directorPath }${ item.icon }.png" alt="${ item.id }">
+                            <img src="${ directorAssetsPath }${ item.icon }.png" alt="${ item.id }">
                         `)
                     })()}
                 </div>
@@ -155,8 +166,6 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createItemsHandler(key, isSelected, item) {
-            const directorPath = window.location.origin + '/app/assets/'
-
             return (`
                 <div
                     class="${ style.toolbar__item } ${ isSelected ? 'toolbar__item--selected' : '' }"
@@ -165,7 +174,7 @@ export default customElements.define('blocks-toolbar',
                     tabIndex="0"
                     title="${ item.label }"
                 >
-                    <img src="${ directorPath }${ item.icon }.png" alt="${ item.id }">
+                    <img src="${ directorAssetsPath }${ item.icon }.png" alt="${ item.id }">
                 </div>
             `)
         }
