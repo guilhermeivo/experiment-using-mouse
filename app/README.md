@@ -8,3 +8,8 @@ $ npm i -D file-loader
 # OR
 $ npm i -D
 ```
+
+## NPM Run
+```bash
+$ npm run builds
+```
