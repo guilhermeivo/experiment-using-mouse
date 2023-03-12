@@ -1,5 +1,6 @@
-import Maze from '../../components/MazeConstruction'
+import MazeConstruction from '../../components/MazeConstruction'
 import BlocksToolbar from '../../components/BlocksToolbar'
+import MazeBlocks from '../../components/MazeBlocks'
 
 export default () => {
     const setup = {

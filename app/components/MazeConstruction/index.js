@@ -1,4 +1,5 @@
 import uid from '../../utils/uid.js'
+import tag from '../../utils/tags'
 import { createElementFromHTML } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
@@ -36,6 +37,8 @@ export default customElements.define('maze-construction',
             this.removeRowHandler = this.removeRowHandler.bind(this)
 
             this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
+
+            this.updateMazeHandler = this.updateMazeHandler.bind(this)
 
             this.state = {
                 amountOfRows: this.getAttribute('rows') || SMALLEST_POSSIBLE_SIZE,
@@ -80,11 +83,6 @@ export default customElements.define('maze-construction',
 
         connectedCallback() {       
             if (!this.rendered) {
-                if (!this.hasAttribute('rows'))
-                    this.#rows = this.state.amountOfRows
-                if (!this.hasAttribute('columns'))
-                    this.#columns = this.state.amountOfColumns
-
                 this.render()
                 this.rendered = true
 
@@ -96,6 +94,20 @@ export default customElements.define('maze-construction',
             this.removeEventsListener()
         }
 
+        updateMazeHandler(updatedBlock) {
+            const blocks = this.state.blocks
+            const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
+
+            tag.allowedTags().map(tag => {
+                if (tag.id === updatedBlock.type && tag.unique) {
+                    const found = blocks.find(value => value.type === updatedBlock.type)
+                    if (found) document.querySelector(`#${ found.id }`).setDefaultValue()
+                }
+            })
+
+            this.state.blocks[index].type = updatedBlock.type
+        }
+
         createColumnHandler(event) {
             const newValue = parseInt(this.columns) + 1
             this.#columns = newValue
@@ -103,12 +115,12 @@ export default customElements.define('maze-construction',
 
             const lines = this.querySelector(`.${ style.maze }`).children
             Array.from(lines).forEach((line, key) => {
-                const block = document.createElement('div')
+                const block = document.createElement('maze-blocks')
                 block.classList.add(style.maze__block)
                 block.id = uid()
 
                 line.append(block)
-                this.state.blocks.push({ id: block.id, type: '', position: `${ key },${ this.columns - 1 }` })
+                this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ key },${ this.columns - 1 }` })
             })
 
             this.update()
@@ -146,12 +158,13 @@ export default customElements.define('maze-construction',
             const line = document.createElement('div')
             line.classList.add(style.line)
             for (let i = 0; i < this.state.amountOfColumns; i++) {
-                const block = document.createElement('div')
+                const block = document.createElement('maze-blocks')
                 block.classList.add(style.maze__block)
                 block.id = uid()
 
                 line.append(block)
-                this.state.blocks.push({ id: block.id, type: '', position: `${ this.rows - 1 },${ i }` })
+
+                this.state.blocks.push({ id: block.id, type: block.getAttribute('type'), position: `${ this.rows - 1 },${ i }` })
             }
             maze.append(line)
 
@@ -259,8 +272,7 @@ export default customElements.define('maze-construction',
             })
         }
 
-        removeEventsListener() {
-        }
+        removeEventsListener() { }
 
         #createMaze() {
             let element = document.createElement('div')
@@ -274,13 +286,13 @@ export default customElements.define('maze-construction',
                 line.classList.add(style.line)
 
                 for (let j = 0; j < this.state.amountOfColumns; j++) {
-                    let block = document.createElement('div')
+                    let block = document.createElement('maze-blocks')
                     block.classList.add(style.maze__block)
                     block.id = uid()
     
                     line.append(block)
 
-                    this.state.blocks.push({ id: block.id, type: '', position: `${ i },${ j }` })
+                    this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ i },${ j }` })
                 }
 
                 element.append(line)
@@ -290,12 +302,13 @@ export default customElements.define('maze-construction',
         }
 
         #createResizers() {
+            const objectKeys = Object.keys(style)
             return (`
                 <div class="${ style.resizable }">
                     <div class="${ style.resizable__resizers }">
-                        <div class="${ style.resizer } resizer--right" key="0"></div>
-                        <div class="${ style.resizer } resizer--left" key="1"></div>
-                        <div class="${ style.resizer } resizer--bottom" key="2"></div>
+                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--right') }" key="0"></div>
+                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--left') }" key="1"></div>
+                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--bottom') }" key="2"></div>
                     </div>
                 </div>
             `)

@@ -1,4 +1,4 @@
-import tag from './tags.js'
+import tag from '../../utils/tags'
 import { createElementFromHTML } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
@@ -83,8 +83,9 @@ export default customElements.define('blocks-toolbar',
 
         onUnselectedItemHadler() {
             if (this.state.selectedItem >= 0) {
+                const objectKeys = Object.keys(style)
                 const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-                itemToolbar[this.state.selectedItem].classList.remove('toolbar__item--selected')
+                itemToolbar[this.state.selectedItem].classList.remove(objectKeys.find(name => name === 'toolbar__item--selected'))
                 this.state = { 
                     ...this.state, 
                     selectedItem: -1
@@ -98,8 +99,9 @@ export default customElements.define('blocks-toolbar',
         onSelectedItemHadler(event, key) {
             const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
 
-            if (this.state.selectedItem >= 0)
-                itemToolbar[this.state.selectedItem].classList.remove('toolbar__item--selected')
+            const objectKeys = Object.keys(style)
+            if (this.state.selectedItem >= 0) 
+                itemToolbar[this.state.selectedItem].classList.remove(objectKeys.find(name => name === 'toolbar__item--selected'))
 
             if (this.state.selectedItem != key) {
                 this.state = { 
@@ -107,7 +109,7 @@ export default customElements.define('blocks-toolbar',
                     selectedItem: key
                 }
     
-                itemToolbar[this.state.selectedItem].classList.add('toolbar__item--selected')
+                itemToolbar[this.state.selectedItem].classList.add(objectKeys.find(name => name === 'toolbar__item--selected'))
             } else {
                 this.state = { 
                     ...this.state, 
@@ -166,9 +168,10 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createItemsHandler(key, isSelected, item) {
+            const objectKeys = Object.keys(style)
             return (`
                 <div
-                    class="${ style.toolbar__item } ${ isSelected ? 'toolbar__item--selected' : '' }"
+                    class="${ style.toolbar__item } ${ isSelected ? objectKeys.find(name => name === 'toolbar__item--selected') : '' }"
                     key="${ key }"
                     role="button"
                     tabIndex="0"
@@ -181,7 +184,6 @@ export default customElements.define('blocks-toolbar',
 
         render() {
             this.append(createElementFromHTML(this.#createBlocksToolbar()))
-
             this.addEventsListener()
         }
     })

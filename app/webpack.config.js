@@ -4,7 +4,7 @@ require('dotenv').config()
 module.exports = {
     entry: './scripts/app.js',
     output: {
-        filename: 'bundle.js',
+        filename: 'bundle.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
