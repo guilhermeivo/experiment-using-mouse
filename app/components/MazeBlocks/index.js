@@ -1,9 +1,7 @@
 import tag from '../../utils/tags'
-import { createElementFromHTML } from '../../utils/utils.js'
+import { createElementFromHTML, getDirectoryAssetsPath } from '../../utils/utils.js'
 import styles from './style.module.scss'
 const { locals: style } = styles
-
-const directorAssetsPath = window.location.origin + '/app/assets/'
 
 export default customElements.define('maze-blocks', 
     class extends HTMLElement {
@@ -20,13 +18,17 @@ export default customElements.define('maze-blocks',
 
             this.state = {
                 type: this.getAttribute('type') || tag.allowedTags()[0].id,
+                maze: document.querySelector('editable-maze')
             }
         }
 
-        connectedCallback() {
+        async connectedCallback() {
             if (!this.rendered) {
-                this.render()
+                await this.render()
                 this.rendered = true
+                
+                await this.state.maze.state.sprite.initialize()
+                this.update()
             }
         }
 
@@ -38,7 +40,7 @@ export default customElements.define('maze-blocks',
             const changedValue = oldValue !== newValue
 
             if (changedValue) {
-                document.querySelector('maze-construction').updateMazeHandler({
+                document.querySelector('editable-maze').updateMazeHandler({
                     id: this.id,
                     type: this.state.type
                 })            
@@ -77,18 +79,17 @@ export default customElements.define('maze-blocks',
         }
 
         #createBlocks() {
-            const currentType = this.state.type
-            const found = tag.allowedTags().find(value => value.id === currentType)
-
             return (`
                 <div class="${ style.block__content }" type="">
-                    <img src="${ directorAssetsPath }${ found.icon }.png" alt="${ found.id }">
+                    <img
+                        src=""
+                        alt="">
                 </div>
             `)
         }
 
-        render() {
-            this.append(createElementFromHTML(this.#createBlocks()))
+        async render() {
+            await this.append(createElementFromHTML(this.#createBlocks()))
             this.addEventsListener()
         }
 
@@ -97,9 +98,21 @@ export default customElements.define('maze-blocks',
                 const currentType = this.state.type
                 this.setAttribute('type', currentType)
                 const found = tag.allowedTags().find(value => value.id === currentType)
+                const maze = document.querySelector('editable-maze')
 
                 const imageElement = this.querySelector('img')
-                imageElement.src = `${ directorAssetsPath }${ found.icon }.png`
+                let imageSrc
+
+                if (found.id === 'path') {
+                    imageSrc =  this.state.maze.state.sprite.drawImage('grass-variants').src
+                } else if (found.id === 'wall') {
+                    imageSrc =  this.state.maze.state.sprite.drawImage('edge-center').src
+                } else {
+                    imageSrc = getDirectoryAssetsPath(found.icon, 'image')
+                }
+                
+                imageElement.src = imageSrc
+                imageElement.alt = found.id
             }
         }
     })

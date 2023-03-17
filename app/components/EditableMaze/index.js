@@ -1,29 +1,29 @@
 import uid from '../../utils/uid.js'
 import tag from '../../utils/tags'
-import { createElementFromHTML } from '../../utils/utils.js'
+import { getDirectoryAssetsPath } from '../../utils/utils.js'
+import Sprite from '../../scripts/Sprite'
+
 import styles from './style.module.scss'
 const { locals: style } = styles
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
 
-const audio = {
-    switchOn: 'SwitchOn',
+const sprites = {
+    'edge-top-left': [ 0, 0 ],
+    'edge-top': [ 1, 0 ],
+    'edge-top-right': [ 2, 0 ],
+    'edge-center-left': [ 3, 0 ],
+    'edge-center': [ 4, 0 ],
+    'edge-center-right': [ 5, 0 ],
+    'edge-bottom-left': [ 6, 0 ],
+    'edge-bottom': [ 7, 0 ],
+    'edge-bottom-right': [ 8, 0 ],
 
-    loadAudio(filename) {
-        const audio = document.querySelector(`#${ filename }`)
-        audio.load()
-        return audio
-    },
-
-    loadAudios() {
-        if (typeof(this.switchOn) == 'object') return
-
-        this.switchOn = this.loadAudio(this.switchOn)
-    } 
+    'grass-variants': [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 4, 1 ], [ 5, 1 ], [ 6, 1 ], [ 7, 1 ], [ 8, 1 ] ]
 }
 
-export default customElements.define('maze-construction',
+export default customElements.define('editable-maze',
     class extends HTMLElement {
 
         constructor(...props) {
@@ -36,16 +36,17 @@ export default customElements.define('maze-construction',
             this.createRowHandler = this.createRowHandler.bind(this)
             this.removeRowHandler = this.removeRowHandler.bind(this)
 
-            this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
-
             this.updateMazeHandler = this.updateMazeHandler.bind(this)
-
+            
             this.state = {
                 amountOfRows: this.getAttribute('rows') || SMALLEST_POSSIBLE_SIZE,
                 amountOfColumns: this.getAttribute('columns') || SMALLEST_POSSIBLE_SIZE,
                 blocks: [],
-                resizeSelected: '',
-                initialPosition: ''
+                editable: this.hasAttribute('editable') || false,
+                sprite: new Sprite({
+                    src: getDirectoryAssetsPath('FileMap', 'image'),
+                    sprites: sprites
+                })
             }
         }
 
@@ -85,13 +86,7 @@ export default customElements.define('maze-construction',
             if (!this.rendered) {
                 this.render()
                 this.rendered = true
-
-                audio.loadAudios()
             }
-        }
-
-        disconnectedCallback() {
-            this.removeEventsListener()
         }
 
         updateMazeHandler(updatedBlock) {
@@ -109,6 +104,8 @@ export default customElements.define('maze-construction',
         }
 
         createColumnHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
             const newValue = parseInt(this.columns) + 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -122,12 +119,11 @@ export default customElements.define('maze-construction',
                 line.append(block)
                 this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ key },${ this.columns - 1 }` })
             })
-
-            this.update()
-            audio.switchOn.play()
         }
 
         removeColumnHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
             const newValue = parseInt(this.columns) - 1
             this.#columns = newValue
             if (newValue != this.columns) return
@@ -144,12 +140,11 @@ export default customElements.define('maze-construction',
                 
                 lastBLock.remove()
             })
-
-            this.update()
-            audio.switchOn.play()
         }
 
         createRowHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
             const newValue = parseInt(this.rows) + 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -167,12 +162,11 @@ export default customElements.define('maze-construction',
                 this.state.blocks.push({ id: block.id, type: block.getAttribute('type'), position: `${ this.rows - 1 },${ i }` })
             }
             maze.append(line)
-
-            this.update()
-            audio.switchOn.play()
         }
 
         removeRowHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
             const newValue = parseInt(this.rows) - 1
             this.#rows = newValue
             if (newValue != this.rows) return
@@ -186,93 +180,7 @@ export default customElements.define('maze-construction',
                 this.state.blocks.splice(index, 1)
             })
             lastLine.remove()
-
-            this.update()
-            audio.switchOn.play()
         }
-
-        mouseMoveHandler(event) {
-            const resizers = document.querySelectorAll(`.${ style.resizer }`)
-            const tag = resizers[this.state.resizeSelected].classList[1].split('--')[1]
-
-            switch (tag) {
-                case 'right':
-                    if (this.state.initialPosition + 32 < event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.createColumnHandler()
-                    } else if (this.state.initialPosition - 32 > event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.removeColumnHandler()
-                    }
-                    break
-                case 'left':
-                    if (this.state.initialPosition + 32 < event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.removeColumnHandler()
-                    } else if (this.state.initialPosition - 32 > event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.createColumnHandler()
-                    }
-                    break
-                case 'bottom':
-                    if (this.state.initialPosition + 32 < event.pageY) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageY
-                        }
-                        this.createRowHandler()
-                    } else if (this.state.initialPosition - 32 > event.pageY) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageY
-                        }
-                        this.removeRowHandler()
-                    }
-                    break
-            }
-        }
-
-        addEventsListener() {
-            const resizers = document.querySelectorAll(`.${ style.resizer }`)
-
-            resizers.forEach(resizer => {
-                resizer.addEventListener('mousedown', event => {
-                    event.preventDefault()
-
-                    const tagResizer = event.target.classList[1].split('--')[1]
-
-                    this.state = {
-                        ...this.state,
-                        resizeSelected: event.target.getAttribute('key'),
-                        initialPosition: tagResizer === 'bottom' ? event.pageY : event.pageX
-                    }
-
-                    window.addEventListener('mousemove', this.mouseMoveHandler)
-                    window.addEventListener('mouseup', () => {
-                        window.removeEventListener('mousemove', this.mouseMoveHandler)
-                        this.state = {
-                            ...this.state,
-                            resizeSelected: '',
-                            initialPosition: ''
-                        }
-                    })
-                })
-            })
-        }
-
-        removeEventsListener() { }
 
         #createMaze() {
             let element = document.createElement('div')
@@ -301,31 +209,7 @@ export default customElements.define('maze-construction',
             return element
         }
 
-        #createResizers() {
-            const objectKeys = Object.keys(style)
-            return (`
-                <div class="${ style.resizable }">
-                    <div class="${ style.resizable__resizers }">
-                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--right') }" key="0"></div>
-                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--left') }" key="1"></div>
-                        <div class="${ style.resizer } ${ objectKeys.find(name => name === 'resizer--bottom') }" key="2"></div>
-                    </div>
-                </div>
-            `)
-        }
-
         render() {
             this.append(this.#createMaze())
-            this.append(createElementFromHTML(this.#createResizers()))
-            this.addEventsListener()
-        }
-
-        update() {
-            if (this.rendered) {
-                const resizable = document.querySelector(`.${ style.resizable__resizers }`)
-
-                resizable.style.width = (this.state.amountOfColumns * 66) + 'px'
-                resizable.style.height = (this.state.amountOfRows * 66) + 'px'
-            }
         }
     })

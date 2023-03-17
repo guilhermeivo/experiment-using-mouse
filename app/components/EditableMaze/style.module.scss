@@ -1,0 +1,36 @@
+@import '../../styles/variables';
+
+maze-construction {
+    position: relative;
+}
+
+.maze {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .line {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .line:first-child {
+        .maze__block:first-child { border-top-left-radius: 16px; }
+        .maze__block:last-child { border-top-right-radius: 16px; }
+    }
+
+    .line:last-child {
+        .maze__block:first-child { border-bottom-left-radius: 16px; }
+        .maze__block:last-child { border-bottom-right-radius: 16px; }
+    }
+
+    .maze__block {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        border: 1px solid $primary-color;
+        z-index: 999;
+        overflow: hidden;
+    }
+}

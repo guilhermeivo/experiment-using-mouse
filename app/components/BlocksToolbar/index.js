@@ -1,25 +1,9 @@
 import tag from '../../utils/tags'
-import { createElementFromHTML } from '../../utils/utils.js'
+import CustomCursor from '../../scripts/CustomCursor'
+import { createElementFromHTML, getDirectoryAssetsPath } from '../../utils/utils'
+
 import styles from './style.module.scss'
 const { locals: style } = styles
-
-const directorAssetsPath = window.location.origin + '/app/assets/'
-
-const audio = {
-    plungerImmediate: 'PlungerImmediate',
-
-    loadAudio(filename) {
-        const audio = document.querySelector(`#${ filename }`)
-        audio.load()
-        return audio
-    },
-
-    loadAudios() {
-        if (typeof(this.plungerImmediate) == 'object') return
-
-        this.plungerImmediate = this.loadAudio(this.plungerImmediate)
-    } 
-}
 
 export default customElements.define('blocks-toolbar',
     class extends HTMLElement {
@@ -30,7 +14,6 @@ export default customElements.define('blocks-toolbar',
             styles.use()
 
             this.keyDownHandler = this.keyDownHandler.bind(this)
-            this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
 
             this.state = {
                 items: tag.allowedTags(),
@@ -38,38 +21,16 @@ export default customElements.define('blocks-toolbar',
             }
         }
 
-        connectedCallback() {
+        async connectedCallback() {
             if (!this.rendered) {
-                this.render()
+                await this.render()
                 this.rendered = true
-                audio.loadAudios()
+                this.state.customCursor.initialize()
             }
         }
 
         disconnectedCallback() {
             this.removeEventsListener()
-        }
-
-        mouseMoveHandler(event) {
-            if (this.state.selectedItem >= 0) {
-                if (!document.querySelector(`.${ style.cursorItem }`))
-                    this.append(createElementFromHTML(this.#createCursorItem(this.state.selectedItem)))
-
-                const cursorItemSelected = document.querySelector(`.${ style.cursorItem }`)
-
-                cursorItemSelected.style.transform = `
-                    translate3d(
-                        calc(${ event.clientX }px - 50%), 
-                        calc(${ event.clientY }px - 50%), 
-                        0)
-                `
-
-                if (cursorItemSelected.getAttribute('key') != this.state.selectedItem)
-                    cursorItemSelected.remove()
-            } else {
-                if (document.querySelector(`.${ style.cursorItem }`))
-                    document.querySelector(`.${ style.cursorItem }`).remove()
-            }
         }
 
         keyDownHandler(event) {
@@ -82,26 +43,23 @@ export default customElements.define('blocks-toolbar',
         }
 
         onUnselectedItemHadler() {
-            if (this.state.selectedItem >= 0) {
-                const objectKeys = Object.keys(style)
-                const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-                itemToolbar[this.state.selectedItem].classList.remove(objectKeys.find(name => name === 'toolbar__item--selected'))
-                this.state = { 
-                    ...this.state, 
-                    selectedItem: -1
-                }
+            if (this.state.selectedItem < 0) return
 
-                const cursorItem = document.querySelector(`.${ style.cursorItem }`)
-                if (cursorItem) cursorItem.remove()
-            } 
+            const itemsToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
+            itemsToolbar[this.state.selectedItem].classList.remove(style['toolbar__item--selected'])
+            this.state = { 
+                ...this.state, 
+                selectedItem: -1
+            }
+
+            this.state.customCursor.disable()
         }
 
         onSelectedItemHadler(event, key) {
             const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
 
-            const objectKeys = Object.keys(style)
             if (this.state.selectedItem >= 0) 
-                itemToolbar[this.state.selectedItem].classList.remove(objectKeys.find(name => name === 'toolbar__item--selected'))
+                itemToolbar[this.state.selectedItem].classList.remove(style['toolbar__item--selected'])
 
             if (this.state.selectedItem != key) {
                 this.state = { 
@@ -109,18 +67,20 @@ export default customElements.define('blocks-toolbar',
                     selectedItem: key
                 }
     
-                itemToolbar[this.state.selectedItem].classList.add(objectKeys.find(name => name === 'toolbar__item--selected'))
+                itemToolbar[this.state.selectedItem].classList.add(style['toolbar__item--selected'])
+                this.state.customCursor.enable()
+
+                const item = this.state.items[this.state.selectedItem]
+                const cursorImage = this.querySelector(`.${ style.custom_cursor }`).querySelector('img')
+                cursorImage.src = getDirectoryAssetsPath(item.icon, 'image')
             } else {
                 this.state = { 
                     ...this.state, 
                     selectedItem: -1
                 }
 
-                const cursorItem = document.querySelector(`.${ style.cursorItem }`)
-                if (cursorItem) cursorItem.remove()
+                this.state.customCursor.disable()
             }
-
-            audio.plungerImmediate.play()
         }
 
         addEventsListener() {
@@ -132,23 +92,16 @@ export default customElements.define('blocks-toolbar',
             })
 
             document.addEventListener('keydown', this.keyDownHandler)
-            document.addEventListener('mousemove', this.mouseMoveHandler)
         }
 
         removeEventsListener() {
             document.removeEventListener('keydown', this.keyDownHandler)
-            document.removeEventListener('mousemove', this.mouseMoveHandler)
         }
 
-        #createCursorItem(key) {
+        #createCursorItem() {
             return(`
-                <div class="${ style.cursorItem }" key="${ key }">
-                    ${(() => {
-                        const item = this.state.items[key]
-                        return (`
-                            <img src="${ directorAssetsPath }${ item.icon }.png" alt="${ item.id }">
-                        `)
-                    })()}
+                <div class="custom_cursor">
+                    <img src="" />
                 </div>
             `)
         }
@@ -168,22 +121,32 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createItemsHandler(key, isSelected, item) {
-            const objectKeys = Object.keys(style)
             return (`
                 <div
-                    class="${ style.toolbar__item } ${ isSelected ? objectKeys.find(name => name === 'toolbar__item--selected') : '' }"
+                    class="${ style.toolbar__item } ${ isSelected ? style['toolbar__item--selected'] : '' }"
                     key="${ key }"
                     role="button"
                     tabIndex="0"
                     title="${ item.label }"
                 >
-                    <img src="${ directorAssetsPath }${ item.icon }.png" alt="${ item.id }">
+                    <img src="${ getDirectoryAssetsPath(item.icon, 'image') }" alt="${ item.id }">
                 </div>
             `)
         }
 
-        render() {
-            this.append(createElementFromHTML(this.#createBlocksToolbar()))
+        async render() {
+            await this.append(createElementFromHTML(this.#createBlocksToolbar()))
+            await this.appendChild(createElementFromHTML(this.#createCursorItem()))
             this.addEventsListener()
+
+            this.state = {
+                ...this.state,
+                customCursor: new CustomCursor(`.${ style.custom_cursor }`, { 
+                    disableClass: style['custom_cursor--disable'],
+                    initializedClass: style['custom_cursor--initialized'],
+                    focusElements: [ 'maze-blocks' ],
+                    focusClass: style['custom_cursor--focused']
+                })
+            }
         }
     })

@@ -15,7 +15,4 @@ $ npm run builds
 ```
 
 ## TODO:
-- [ ] Adicionar tilemap para labirinto
-- [ ] Adicionar uma refatoramento para a utilização de audios e imagens nos componentes
-- [ ] Refatoramento na classe MazeConstruction
-    - [ ] Criar uma classe apenas para Maze
+- [ ] Realizar possiveis refatoramentos

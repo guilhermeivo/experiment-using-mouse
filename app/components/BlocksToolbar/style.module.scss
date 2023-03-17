@@ -47,15 +47,32 @@
     }
 }
 
-.cursorItem {
+.custom_cursor {
+    display: none;
+    pointer-events: none;
+    user-select: none;
+    position: fixed;
+    will-change: transform;
+
     width: 64px;
     height: 64px;
     padding: 6px;
-
-    position: fixed;
+    
     left: 0;
     top: 0;
-    pointer-events: none;
-    transition: .05s ease;
+    transition: 50ms ease-in-out;
     z-index: 1000;
+
+    &.custom_cursor--initialized {
+        display: block;
+    }
+    
+    &.custom_cursor--disable {
+        display: none;
+    }
+
+    &.custom_cursor--focused {
+        width: 72px;
+        height: 72px;
+    }
 }
