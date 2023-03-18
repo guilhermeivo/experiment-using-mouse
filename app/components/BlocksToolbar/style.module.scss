@@ -12,7 +12,7 @@
         width: 64px;
         height: 64px;
         cursor: pointer;
-        padding: 6px;
+        padding: 12px;
         border-radius: 12px;
         border: 1px solid transparent;
         margin: 1px;
@@ -21,7 +21,9 @@
 
         img {
             max-width: 100%;
+            width: 100%;
             pointer-events: none;
+            image-rendering: pixelated;
         }
 
         &:hover {
@@ -56,12 +58,18 @@
 
     width: 64px;
     height: 64px;
-    padding: 6px;
+    padding: 12px;
     
     left: 0;
     top: 0;
-    transition: 50ms ease-in-out;
+    transition: 25ms ease-in-out;
     z-index: 1000;
+
+    img {
+        image-rendering: pixelated;
+        max-width: 100%;
+        width: 100%;
+    }
 
     &.custom_cursor--initialized {
         display: block;
@@ -72,6 +80,7 @@
     }
 
     &.custom_cursor--focused {
+        transition: width .1s ease-in;
         width: 72px;
         height: 72px;
     }

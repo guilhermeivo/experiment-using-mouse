@@ -1,13 +1,19 @@
+import uid from "../utils/uid"
+
 const gridDimension = 32
 
 export default class Sprite {
 
     constructor(config) {
+        this.id = uid()
         this.sprites = config.sprites || { }
         this.imageSrc = config.src
     }
 
     initialize() {
+        if (this.initialized) return
+        this.initialized = true
+
         return new Promise((resolve, reject) => {
             this.image = new Image()
             this.image.crossOrigin = 'Anonymous'

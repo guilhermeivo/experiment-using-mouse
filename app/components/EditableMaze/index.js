@@ -1,27 +1,11 @@
 import uid from '../../utils/uid.js'
 import tag from '../../utils/tags'
-import { getDirectoryAssetsPath } from '../../utils/utils.js'
-import Sprite from '../../scripts/Sprite'
 
 import styles from './style.module.scss'
 const { locals: style } = styles
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
-
-const sprites = {
-    'edge-top-left': [ 0, 0 ],
-    'edge-top': [ 1, 0 ],
-    'edge-top-right': [ 2, 0 ],
-    'edge-center-left': [ 3, 0 ],
-    'edge-center': [ 4, 0 ],
-    'edge-center-right': [ 5, 0 ],
-    'edge-bottom-left': [ 6, 0 ],
-    'edge-bottom': [ 7, 0 ],
-    'edge-bottom-right': [ 8, 0 ],
-
-    'grass-variants': [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 4, 1 ], [ 5, 1 ], [ 6, 1 ], [ 7, 1 ], [ 8, 1 ] ]
-}
 
 export default customElements.define('editable-maze',
     class extends HTMLElement {
@@ -43,10 +27,7 @@ export default customElements.define('editable-maze',
                 amountOfColumns: this.getAttribute('columns') || SMALLEST_POSSIBLE_SIZE,
                 blocks: [],
                 editable: this.hasAttribute('editable') || false,
-                sprite: new Sprite({
-                    src: getDirectoryAssetsPath('FileMap', 'image'),
-                    sprites: sprites
-                })
+                tags: tag.allowedTags()
             }
         }
 
@@ -82,9 +63,12 @@ export default customElements.define('editable-maze',
             }
         }
 
-        connectedCallback() {       
+        async connectedCallback() {       
             if (!this.rendered) {
-                this.render()
+                await this.state.tags[0].sprite.initialize()
+                await this.state.tags[1].sprite.initialize()
+
+                await this.render()
                 this.rendered = true
             }
         }
@@ -93,7 +77,7 @@ export default customElements.define('editable-maze',
             const blocks = this.state.blocks
             const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
 
-            tag.allowedTags().map(tag => {
+            this.state.tags.map(tag => {
                 if (tag.id === updatedBlock.type && tag.unique) {
                     const found = blocks.find(value => value.type === updatedBlock.type)
                     if (found) document.querySelector(`#${ found.id }`).setDefaultValue()
@@ -116,8 +100,8 @@ export default customElements.define('editable-maze',
                 block.classList.add(style.maze__block)
                 block.id = uid()
 
-                line.append(block)
                 this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ key },${ this.columns - 1 }` })
+                line.append(block)
             })
         }
 
