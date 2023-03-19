@@ -1,0 +1,23 @@
+## Architecture
+- `app/`
+    - [Overview](#overview)
+    - `assets/`
+    - `components/`
+        - `[ComponentName]`
+            - `index.js`
+            - `style.module.scss`
+    - `dist/`
+        - `bundle.min.js`
+    - `pages/`
+        - `[PageName]`
+            - `index.js`
+            - `style.module.scss`
+    - `scripts/`
+        - `app.js`
+    - `services/`
+    - `styles/`
+    - `utils/`
+    - `index.html`
+- `server/`
+
+## Overview
