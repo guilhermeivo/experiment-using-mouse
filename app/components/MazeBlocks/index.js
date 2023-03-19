@@ -1,5 +1,6 @@
 import tag from '../../utils/tags'
-import { createElementFromHTML, getDirectoryAssetsPath } from '../../utils/utils.js'
+import { createElementFromHTML, getAroundBlocks } from '../../utils/utils'
+
 import styles from './style.module.scss'
 const { locals: style } = styles
 
@@ -78,9 +79,7 @@ export default customElements.define('maze-blocks',
         #createBlocks() {
             return (`
                 <div class="${ style.block__content }">
-                    <img
-                        src=""
-                        alt="">
+                    <img src="" alt="">
                 </div>
             `)
         }
@@ -91,56 +90,37 @@ export default customElements.define('maze-blocks',
         }
 
         update() {
-            if (this.rendered) {
-                const currentType = this.state.type
-                this.setAttribute('type', currentType)
-                const found = this.state.maze.tags.find(value => value.id === currentType)
+            if (!this.rendered) return
 
-                const imageElement = this.querySelector('img')
-                let imageSrc = ''
+            const imageElement = this.querySelector('img')
+            this.setAttribute('type', this.state.type)
+            const foundCurrentTag = this.state.maze.tags.find(value => value.id === this.state.type)
 
-                if (!found.sprite) return 
+            const amountOfSprites = Object.keys(foundCurrentTag.sprite.sprites).length
+            
+            if (amountOfSprites == 1) {
+                let newSpriteName = Object.getOwnPropertyNames(foundCurrentTag.sprite.sprites)
+                if (this.state.spriteName != newSpriteName[0]) {
+                    imageElement.src = foundCurrentTag.sprite.drawImage(newSpriteName).src
+                    imageElement.alt = foundCurrentTag.id 
 
-                const amountOfSprites = Object.keys(found.sprite.sprites).length
-                let newSpritesName = Object.getOwnPropertyNames(found.sprite.sprites)
-                
-                if (amountOfSprites == 1 && this.state.spriteName != newSpritesName[0]) {
-                    imageSrc = found.sprite.drawImage(newSpritesName).src
-                    this.state.spriteName = newSpritesName
-                } else {
-                    if (found.getSpriteName) {
-                        const convertToInt = (positions) => {
-                            return positions.split(',').map(positionStr => Number(positionStr))
-                        }
-                        const getBlockWithPosition = (blocks, positions) => {
-                            return blocks.find(block => block.position === positions.join(','))
-                        }
-                        const currentPosition = convertToInt(this.state.maze.blocks.find(block => block.id === this.id).position)
-                        const indexValuesX = [0, -1, +1, 0]
-                        const indexValuesY = [-1, 0, 0, +1]
-                        let blocksUpcoming = []
-                        for (let i = 0; i < 4; i++) {
-                            const newPositionBlock = getBlockWithPosition(
-                                this.state.maze.blocks,
-                                [currentPosition[0] + indexValuesX[i], currentPosition[1] + indexValuesY[i]])
-                            if (newPositionBlock)
-                                blocksUpcoming.push(newPositionBlock.type)
-                            else 
-                                blocksUpcoming.push('void')
-                        }
-                        newSpritesName = found.getSpriteName(blocksUpcoming)
-
-                        if (this.state.spriteName != newSpritesName) {
-                            imageSrc = found.sprite.drawImage(newSpritesName).src
-                            this.state.spriteName = newSpritesName
-                        }
-                    }
+                    this.state.spriteName = newSpriteName
                 }
+            } else {
+                const currentBlock = this.state.maze.blocks.find(block => block.id === this.id)
+                let blocksAround = getAroundBlocks(this.state.maze.blocks, currentBlock.position)
+                blocksAround = blocksAround.map(block => {
+                    if (block) return block.type
+                    else return 'void'
+                })
                 
-                if (imageSrc == '') return
-                
-                imageElement.src = imageSrc
-                imageElement.alt = found.id
+                let newSpriteName = foundCurrentTag.getSpriteName(blocksAround)
+                if (this.state.spriteName != newSpriteName) {
+                    imageElement.src = foundCurrentTag.sprite.drawImage(newSpriteName).src
+                    imageElement.alt = foundCurrentTag.id 
+
+                    this.state.spriteName = newSpriteName
+                }
             }
         }
     })

@@ -1,4 +1,4 @@
-import uid from "../utils/uid"
+import { uid } from '../utils/utils'
 
 const gridDimension = 32
 

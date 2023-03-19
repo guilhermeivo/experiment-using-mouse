@@ -1,11 +1,13 @@
 ## NPM Install
-
 ```bash
+$ npm i dotenv
+
 $ npm i -D node-sass
 $ npm i -D webpack webpack-cli
 $ npm i -D css-loader style-loader sass-loader
 $ npm i -D file-loader
 # OR
+$ npm i
 $ npm i -D
 ```
 
@@ -14,5 +16,10 @@ $ npm i -D
 $ npm run builds
 ```
 
-## TODO:
-- [ ] Aumentar Colunas para a esquerda.
+## Environment configuration
+`.env`
+```
+NODE_ENV="DEVELOPMENT"
+# OR
+NODE_ENV="PRODUCTION"
+```

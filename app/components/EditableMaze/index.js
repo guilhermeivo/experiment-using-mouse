@@ -1,5 +1,5 @@
-import uid from '../../utils/uid.js'
 import tag from '../../utils/tags'
+import { getAroundBlocks, uid } from '../../utils/utils'
 
 import styles from './style.module.scss'
 const { locals: style } = styles
@@ -65,47 +65,30 @@ export default customElements.define('editable-maze',
 
         async connectedCallback() {       
             if (!this.rendered) {
-                await this.state.tags[0].sprite.initialize()
-                await this.state.tags[1].sprite.initialize()
-                await this.state.tags[2].sprite.initialize()
-                await this.state.tags[3].sprite.initialize()
+                for (let i = 0; i < this.state.tags.length; i++) 
+                    await this.state.tags[i].sprite.initialize()
 
-                await this.render()
+                this.render()
                 this.rendered = true
             }
         }
 
         updateMazeHandler(updatedBlock) {
-            const blocks = this.state.blocks
-            const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
+            if (!this.rendered) return
+
             this.state.tags.map(tag => {
                 if (tag.id === updatedBlock.type && tag.unique) {
-                    
-                    const existOtherTag = blocks.find(block => block.type === updatedBlock.type)
+                    const existOtherTag = this.state.blocks.find(block => block.type === updatedBlock.type)
                     if (existOtherTag) document.querySelector(`#${ existOtherTag.id }`).setDefaultValue()
                 }
             })
 
-            this.state.blocks[index].type = updatedBlock.type
-
-            if (this.rendered) {
-                const convertToInt = (positions) => {
-                    return positions.split(',').map(positionStr => Number(positionStr))
-                }
-                const getBlockWithPosition = (blocks, positions) => {
-                    return blocks.find(block => block.position === positions.join(','))
-                }
-                const currentPosition = convertToInt(this.state.blocks[index].position)
-                const indexValuesX = [0, -1, +1, 0]
-                const indexValuesY = [-1, 0, 0, +1]
-                for (let i = 0; i < 4; i++) {
-                    const newPositionBlock = getBlockWithPosition(
-                        this.state.blocks,
-                        [currentPosition[0] + indexValuesX[i], currentPosition[1] + indexValuesY[i]])
-                    if (newPositionBlock)
-                        document.querySelector(`#${ newPositionBlock.id }`).update()
-                }
-            }
+            const currentBlock = this.state.blocks.find(block => block.id === updatedBlock.id)
+            currentBlock.type = updatedBlock.type
+            let blocksAround = getAroundBlocks(this.state.blocks, currentBlock.position)
+            blocksAround.map(block => {
+                if (block) document.querySelector(`#${ block.id }`).update()
+            })
         }
 
         createColumnHandler(event) {
@@ -129,12 +112,10 @@ export default customElements.define('editable-maze',
             if (newValue != this.columns) return
 
             const lines = this.querySelector(`.${ style.maze }`).children
-            Array.from(lines).forEach((line, key) => {
+            Array.from(lines).forEach(line => {
                 const lastBLock = line.lastChild
 
-                const find = this.state.blocks.find((element) => {
-                    return element.id === lastBLock.id
-                })
+                const find = this.state.blocks.find(element => element.id === lastBLock.id )
                 const index = this.state.blocks.indexOf(find)
                 this.state.blocks.splice(index, 1)
                 
@@ -166,10 +147,8 @@ export default customElements.define('editable-maze',
             if (newValue != this.rows) return
 
             const lastLine = this.querySelector(`.${ style.maze }`).lastChild
-            Array.from(lastLine.children).forEach((block, key) => {
-                const find = this.state.blocks.find((element) => {
-                    return element.id === block.id
-                })
+            Array.from(lastLine.children).forEach(block => {
+                const find = this.state.blocks.find(element => element.id === block.id)
                 const index = this.state.blocks.indexOf(find)
                 this.state.blocks.splice(index, 1)
             })

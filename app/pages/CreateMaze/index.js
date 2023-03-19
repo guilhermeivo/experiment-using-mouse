@@ -149,12 +149,12 @@ export default customElements.define('create-maze',
         }
 
         update() {
-            if (this.rendered) {
-                const resizable = document.querySelector(`.${ style.resizable__resizers }`)
-                
-                resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
-                resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
-                resizable.style.top = this.state.maze.offsetTop + 'px'
-            }
+            if (!this.rendered) return
+            
+            const resizable = document.querySelector(`.${ style.resizable__resizers }`)
+            
+            resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
+            resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
+            resizable.style.top = this.state.maze.offsetTop + 'px'
         }
     })
