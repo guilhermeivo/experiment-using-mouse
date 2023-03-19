@@ -15,4 +15,4 @@ $ npm run builds
 ```
 
 ## TODO:
-- [ ] Realizar atualização automatica dos elementos "Wall" no labirinto denpendendo da sua posição em relação a outra "Wall".
+- [ ] Aumentar Colunas para a esquerda.

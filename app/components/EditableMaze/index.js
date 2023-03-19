@@ -67,6 +67,8 @@ export default customElements.define('editable-maze',
             if (!this.rendered) {
                 await this.state.tags[0].sprite.initialize()
                 await this.state.tags[1].sprite.initialize()
+                await this.state.tags[2].sprite.initialize()
+                await this.state.tags[3].sprite.initialize()
 
                 await this.render()
                 this.rendered = true
@@ -76,15 +78,34 @@ export default customElements.define('editable-maze',
         updateMazeHandler(updatedBlock) {
             const blocks = this.state.blocks
             const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
-
             this.state.tags.map(tag => {
                 if (tag.id === updatedBlock.type && tag.unique) {
-                    const found = blocks.find(value => value.type === updatedBlock.type)
-                    if (found) document.querySelector(`#${ found.id }`).setDefaultValue()
+                    
+                    const existOtherTag = blocks.find(block => block.type === updatedBlock.type)
+                    if (existOtherTag) document.querySelector(`#${ existOtherTag.id }`).setDefaultValue()
                 }
             })
 
             this.state.blocks[index].type = updatedBlock.type
+
+            if (this.rendered) {
+                const convertToInt = (positions) => {
+                    return positions.split(',').map(positionStr => Number(positionStr))
+                }
+                const getBlockWithPosition = (blocks, positions) => {
+                    return blocks.find(block => block.position === positions.join(','))
+                }
+                const currentPosition = convertToInt(this.state.blocks[index].position)
+                const indexValuesX = [0, -1, +1, 0]
+                const indexValuesY = [-1, 0, 0, +1]
+                for (let i = 0; i < 4; i++) {
+                    const newPositionBlock = getBlockWithPosition(
+                        this.state.blocks,
+                        [currentPosition[0] + indexValuesX[i], currentPosition[1] + indexValuesY[i]])
+                    if (newPositionBlock)
+                        document.querySelector(`#${ newPositionBlock.id }`).update()
+                }
+            }
         }
 
         createColumnHandler(event) {
@@ -96,12 +117,7 @@ export default customElements.define('editable-maze',
 
             const lines = this.querySelector(`.${ style.maze }`).children
             Array.from(lines).forEach((line, key) => {
-                const block = document.createElement('maze-blocks')
-                block.classList.add(style.maze__block)
-                block.id = uid()
-
-                this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ key },${ this.columns - 1 }` })
-                line.append(block)
+                line.append(this.#createBlock({ position: `${ key },${ this.columns - 1 }` }))
             })
         }
 
@@ -137,13 +153,7 @@ export default customElements.define('editable-maze',
             const line = document.createElement('div')
             line.classList.add(style.line)
             for (let i = 0; i < this.state.amountOfColumns; i++) {
-                const block = document.createElement('maze-blocks')
-                block.classList.add(style.maze__block)
-                block.id = uid()
-
-                line.append(block)
-
-                this.state.blocks.push({ id: block.id, type: block.getAttribute('type'), position: `${ this.rows - 1 },${ i }` })
+                line.append(this.#createBlock({ position: `${ this.rows - 1 },${ i }` }))
             }
             maze.append(line)
         }
@@ -166,6 +176,16 @@ export default customElements.define('editable-maze',
             lastLine.remove()
         }
 
+        #createBlock(options) {
+            const block = document.createElement('maze-blocks')
+            block.classList.add(style.maze__block)
+            block.id = uid()
+
+            this.state.blocks.push({ id: block.id, type: block.state.type, position: options.position })
+
+            return block
+        }
+
         #createMaze() {
             let element = document.createElement('div')
             element.classList.add(style.maze)
@@ -178,15 +198,8 @@ export default customElements.define('editable-maze',
                 line.classList.add(style.line)
 
                 for (let j = 0; j < this.state.amountOfColumns; j++) {
-                    let block = document.createElement('maze-blocks')
-                    block.classList.add(style.maze__block)
-                    block.id = uid()
-    
-                    line.append(block)
-
-                    this.state.blocks.push({ id: block.id, type: block.state.type, position: `${ i },${ j }` })
+                    line.append(this.#createBlock({ position: `${ i },${ j }` }))
                 }
-
                 element.append(line)
             }
 

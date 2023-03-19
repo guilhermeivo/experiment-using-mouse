@@ -18,7 +18,8 @@ export default customElements.define('maze-blocks',
 
             this.state = {
                 type: this.getAttribute('type') || tag.allowedTags()[0].id,
-                maze: document.querySelector('editable-maze').state
+                maze: document.querySelector('editable-maze').state,
+                spriteName: ''
             }
         }
 
@@ -50,7 +51,6 @@ export default customElements.define('maze-blocks',
                 ...this.state,
                 type: this.state.maze.tags[0].id,
             }
-
             this.update()
         }
 
@@ -97,17 +97,47 @@ export default customElements.define('maze-blocks',
                 const found = this.state.maze.tags.find(value => value.id === currentType)
 
                 const imageElement = this.querySelector('img')
-                let imageSrc
+                let imageSrc = ''
 
-                if (found.sprite) {
-                    if (found.id === 'path') {
-                        imageSrc = found.sprite.drawImage('grass-variants').src
-                    } else if (found.id === 'wall') {
-                        imageSrc = found.sprite.drawImage('wall-bottom-edge').src
-                    }
+                if (!found.sprite) return 
+
+                const amountOfSprites = Object.keys(found.sprite.sprites).length
+                let newSpritesName = Object.getOwnPropertyNames(found.sprite.sprites)
+                
+                if (amountOfSprites == 1 && this.state.spriteName != newSpritesName[0]) {
+                    imageSrc = found.sprite.drawImage(newSpritesName).src
+                    this.state.spriteName = newSpritesName
                 } else {
-                    imageSrc = getDirectoryAssetsPath(found.icon, 'image')
+                    if (found.getSpriteName) {
+                        const convertToInt = (positions) => {
+                            return positions.split(',').map(positionStr => Number(positionStr))
+                        }
+                        const getBlockWithPosition = (blocks, positions) => {
+                            return blocks.find(block => block.position === positions.join(','))
+                        }
+                        const currentPosition = convertToInt(this.state.maze.blocks.find(block => block.id === this.id).position)
+                        const indexValuesX = [0, -1, +1, 0]
+                        const indexValuesY = [-1, 0, 0, +1]
+                        let blocksUpcoming = []
+                        for (let i = 0; i < 4; i++) {
+                            const newPositionBlock = getBlockWithPosition(
+                                this.state.maze.blocks,
+                                [currentPosition[0] + indexValuesX[i], currentPosition[1] + indexValuesY[i]])
+                            if (newPositionBlock)
+                                blocksUpcoming.push(newPositionBlock.type)
+                            else 
+                                blocksUpcoming.push('void')
+                        }
+                        newSpritesName = found.getSpriteName(blocksUpcoming)
+
+                        if (this.state.spriteName != newSpritesName) {
+                            imageSrc = found.sprite.drawImage(newSpritesName).src
+                            this.state.spriteName = newSpritesName
+                        }
+                    }
                 }
+                
+                if (imageSrc == '') return
                 
                 imageElement.src = imageSrc
                 imageElement.alt = found.id

@@ -32,7 +32,7 @@ const tags = (() => {
                     'wall-edge-left-top': [ 5, 0 ],
                     'wall-edge-right-top': [ 6, 0 ],
                     'wall-edge-full': [ 7, 0 ],
-
+    
                     'wall-bottom-edge': [ 0, 1 ],
                     'wall-bottom-edge-left': [ 1, 1 ],
                     'wall-bottom-edge-right': [ 2, 1 ],
@@ -43,18 +43,69 @@ const tags = (() => {
                     'wall-bottom-edge-full': [ 7, 1 ],
                 }
             }),
+            getSpriteName: (tagsAround) => {
+                // tagsAround[0] - left
+                // tagsAround[1] - top
+                // tagsAround[2] - bottom
+                // tagsAround[3] - right
+                if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-edge'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-edge-left'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-edge-right'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-edge-top'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-edge-left-right'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-edge-left-top'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-edge-right-top'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-edge-full'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-bottom-edge'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-bottom-edge-left'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-bottom-edge-right'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-bottom-edge-top'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-bottom-edge-left-right'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                    return 'wall-bottom-edge-left-top'
+                } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-bottom-edge-right-top'
+                } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                    return 'wall-bottom-edge-full'
+                }
+            }
         }, { 
             id: 'mouse', 
             icon: 'MouseIcon', 
             label: 'Rato', 
             description: 'Personagem que busca a saída incerta do labirinto (entrada).', 
-            unique: true 
+            unique: true,
+            sprite: new Sprite({
+                src: getDirectoryAssetsPath('FileMap', 'image'),
+                sprites: {
+                    'mouse-variants': [ [ 0, 3 ] ]
+                }
+            }),
         }, { 
             id: 'cheese', 
             icon: 'CheeseIcon', 
             label: 'Queijo', 
             description: 'Objetivo final do rato (saída).', 
-            unique: true 
+            unique: true ,
+            sprite: new Sprite({
+                src: getDirectoryAssetsPath('FileMap', 'image'),
+                sprites: {
+                    'cheese-variants': [ [ 0, 4 ] ]
+                }
+            }),
         }
     ]
 
