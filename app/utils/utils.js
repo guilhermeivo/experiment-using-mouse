@@ -19,7 +19,7 @@ export function getDirectoryAssetsPath(file, typeFile) {
             break;
     }
 
-    const directorPath = window.location.origin + '/app/assets/' + file + extension
+    const directorPath = window.location.pathname + 'assets/' + file + extension
     
     return directorPath
 }
