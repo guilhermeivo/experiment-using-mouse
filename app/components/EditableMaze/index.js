@@ -15,19 +15,23 @@ export default customElements.define('editable-maze',
 
             styles.use()
 
-            this.createColumnHandler = this.createColumnHandler.bind(this)
-            this.removeColumnHandler = this.removeColumnHandler.bind(this)
+            this.createLeftColumnHandler = this.createLeftColumnHandler.bind(this)
+            this.removeLeftColumnHandler = this.removeLeftColumnHandler.bind(this)
+            this.createRightColumnHandler = this.createRightColumnHandler.bind(this)
+            this.removeRightColumnHandler = this.removeRightColumnHandler.bind(this)
             this.createRowHandler = this.createRowHandler.bind(this)
             this.removeRowHandler = this.removeRowHandler.bind(this)
 
             this.updateMazeHandler = this.updateMazeHandler.bind(this)
+            this.changeVisibilityEdges = this.changeVisibilityEdges.bind(this)
             
             this.state = {
                 amountOfRows: this.getAttribute('rows') || SMALLEST_POSSIBLE_SIZE,
                 amountOfColumns: this.getAttribute('columns') || SMALLEST_POSSIBLE_SIZE,
                 blocks: [],
                 editable: this.hasAttribute('editable') || false,
-                tags: tag.allowedTags()
+                tags: tag.allowedTags(),
+                containsEdges: this.hasAttribute('editable') || false
             }
         }
 
@@ -91,7 +95,49 @@ export default customElements.define('editable-maze',
             })
         }
 
-        createColumnHandler(event) {
+        changeVisibilityEdges() {
+            this.state = { 
+                ...this.state, 
+                containsEdges: !this.state.containsEdges
+            }
+            Array.from(document.querySelectorAll('.maze__block')).map(block => {
+                    block.classList.toggle('maze__block--not-edges')
+            })
+        }
+
+        createLeftColumnHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
+            const newValue = parseInt(this.columns) + 1
+            this.#columns = newValue
+            if (newValue != this.columns) return
+
+            const lines = this.querySelector(`.${ style.maze }`).children
+            Array.from(lines).forEach((line, key) => {
+                line.prepend(this.#createBlock({ position: `${ key },${ this.columns - 1 }` }))
+            })
+        }
+
+        removeLeftColumnHandler(event) {
+            if (!this.state.editable) throw new Error('Disable maze edit mode.')
+
+            const newValue = parseInt(this.columns) - 1
+            this.#columns = newValue
+            if (newValue != this.columns) return
+
+            const lines = this.querySelector(`.${ style.maze }`).children
+            Array.from(lines).forEach(line => {
+                const firstBlock = line.firstChild
+
+                const find = this.state.blocks.find(element => element.id === firstBlock.id )
+                const index = this.state.blocks.indexOf(find)
+                this.state.blocks.splice(index, 1)
+                
+                firstBlock.remove()
+            })
+        }
+
+        createRightColumnHandler(event) {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) + 1
@@ -104,7 +150,7 @@ export default customElements.define('editable-maze',
             })
         }
 
-        removeColumnHandler(event) {
+        removeRightColumnHandler(event) {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) - 1
@@ -158,6 +204,8 @@ export default customElements.define('editable-maze',
         #createBlock(options) {
             const block = document.createElement('maze-blocks')
             block.classList.add(style.maze__block)
+            if (!this.state.containsEdges)
+                block.classList.add(style['maze__block--not-edges'])
             block.id = uid()
 
             this.state.blocks.push({ id: block.id, type: block.state.type, position: options.position })

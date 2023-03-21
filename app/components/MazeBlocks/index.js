@@ -14,13 +14,14 @@ export default customElements.define('maze-blocks',
 
             styles.use()
 
-            this.onClickHandler = this.onClickHandler.bind(this)
+            this.onSelectedHandler = this.onSelectedHandler.bind(this)
             this.setDefaultValue = this.setDefaultValue.bind(this)
 
             this.state = {
                 type: this.getAttribute('type') || tag.allowedTags()[0].id,
                 maze: document.querySelector('editable-maze').state,
-                spriteName: ''
+                spriteName: '',
+                primaryButton: false
             }
         }
 
@@ -55,7 +56,7 @@ export default customElements.define('maze-blocks',
             this.update()
         }
 
-        onClickHandler(event) {
+        onSelectedHandler(event) {
             const newTypeIndex = document.querySelector('blocks-toolbar').state.selectedItem
             const newType = this.state.maze.tags[newTypeIndex]
             if (newTypeIndex >= 0 && newType.id != this.state.type) {
@@ -69,11 +70,17 @@ export default customElements.define('maze-blocks',
         }
 
         removeEventsListener() {
-            this.removeEventListener('click', this.onClickHandler)
+            this.removeEventListener('click', this.onSelectedHandler)
         }
 
         addEventsListener() {
-            this.addEventListener('click', this.onClickHandler)
+            this.addEventListener('click', this.onSelectedHandler)
+            this.addEventListener('mouseover', () => {
+                if (this.state.primaryButton) this.onSelectedHandler()
+            })
+
+            document.addEventListener('mousedown', () => this.state.primaryButton = true)
+            document.addEventListener('mouseup', () => this.state.primaryButton = false)
         }
 
         #createBlocks() {

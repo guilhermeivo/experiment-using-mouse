@@ -31,6 +31,10 @@ export default customElements.define('create-maze',
             }
         }
 
+        disconnectedCallback() {
+            this.removeEventsListener()
+        }
+
         mouseMoveHandler(event) {
             const resizers = document.querySelectorAll(`.${ style.resizer }`)
             const tag = resizers[this.state.resizeSelected].classList[1].split('--')[1]
@@ -42,13 +46,13 @@ export default customElements.define('create-maze',
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.createColumnHandler()
+                        this.state.maze.createRightColumnHandler()
                     } else if (this.state.initialPosition - 32 > event.pageX) {
                         this.state = {
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.removeColumnHandler()
+                        this.state.maze.removeRightColumnHandler()
                     }
                     break
                 case 'left':
@@ -57,13 +61,13 @@ export default customElements.define('create-maze',
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.removeColumnHandler()
+                        this.state.maze.removeLeftColumnHandler()
                     } else if (this.state.initialPosition - 32 > event.pageX) {
                         this.state = {
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.createColumnHandler()
+                        this.state.maze.createLeftColumnHandler()
                     }
                     break
                 case 'bottom':
@@ -112,13 +116,21 @@ export default customElements.define('create-maze',
                     })
                 })
             })
+
+            const checkbox = document.getElementById('checkboxEdges')
+            checkbox.addEventListener('change', event => this.state.maze.changeVisibilityEdges())
+        }
+
+        removeEventsListener() {
+            const checkbox = document.getElementById('checkboxEdges')
+            checkbox.removeEventListener('change', event => this.state.maze.changeVisibilityEdges())
         }
 
         #createPage() {
             return (`
                 <blocks-toolbar></blocks-toolbar>
             
-                <main>
+                <main class="container-wrapper ">
                     <editable-maze rows="${ DEFAULT_MAZE_ROWS }" columns="${ DEFAULT_MAZE_COLUMNS }" editable></editable-maze>
 
                     <div class="${ style.resizable }">
@@ -128,6 +140,11 @@ export default customElements.define('create-maze',
                             <div class="${ style.resizer } ${ style['resizer--bottom'] }" key="2"></div>
                         </div>
                     </div>
+
+                    <label class="form-control">
+                        <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
+                        Bordas para limitar os blocos.
+                    </label>
                 </main>
             `)
         }
@@ -142,8 +159,6 @@ export default customElements.define('create-maze',
                 ...this.state,
                 maze: document.querySelector('editable-maze')
             }
-            const resizable = document.querySelector(`.${ style.resizable__resizers }`)
-            resizable.style.top = this.state.maze.offsetTop + 'px'
 
             this.addEventsListener()
         }
@@ -155,6 +170,5 @@ export default customElements.define('create-maze',
             
             resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
             resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
-            resizable.style.top = this.state.maze.offsetTop + 'px'
         }
     })

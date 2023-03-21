@@ -4,11 +4,131 @@
     box-sizing: border-box;
 }
 
+/* text */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $title-font;
+    font-weight: $bold-font;
+    font-weight: 700;
+    line-height: 1.2;
+
+    color: $high-emphasis-color;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: $h1-font-size;
+}
+
+h2 {
+    font-size: $h2-font-size;
+}
+
+h3 {
+    font-size: $h3-font-size;
+}
+
+h4 {
+    font-size: $h4-font-size;
+}
+
+p,
+a,
+li,
+span,
+input,
+label,
+textarea,
+div {
+    font-family: $body-font;
+    font-size: $body-font-size;
+
+    color: $medium-emphasis-color;
+
+    line-height: 1.6;
+    letter-spacing: -.02em;
+}
+
+.caption {
+    font-size: $caption-font-size;
+}
+
+.bold {
+    font-weight: $semi-bold-font;
+    color: $high-emphasis-color;
+}
+
+.link:hover {
+    color: $primary-color--variant;
+    text-decoration: underline;
+}
+
+.land__link {
+    color: $primary-color--variant;
+    font-weight: $bold-font;
+    border-bottom: 1px solid $primary-color--variant;
+    cursor: pointer;
+    text-decoration: none
+}
+
+.form-control {
+    font-family: $body-font;
+    font-size: $body-2-font-size;
+    color: $medium-emphasis-color;
+
+    display: flex;
+    align-items: center;
+
+    input[type="checkbox"] {
+        appearance: none;
+        margin: 0;
+        font: inherit;
+        color: currentColor;
+        width: 1.15em;
+        height: 1.15em;
+        border: 0.15em solid currentColor;
+        border-radius: 0.15em;
+        display: grid;
+        place-content: center;
+        margin-right: 0.30em;
+
+        &::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(.7);
+            opacity: 0;
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em $primary-color;
+        }
+
+        &:checked::before {
+            content: "";
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}
+
+/* content */
+
 body {
     min-height: 100vh;
+    
     overflow-x: hidden;
 }
 
 img {
     max-width: 100%;
+}
+
+.container-wrapper {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
 }

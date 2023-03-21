@@ -1,2 +1,25 @@
+/* font-size */
+$title-font: 'Fira Sans Condensed', -apple-system, sans-serif;
+$body-font: -apple-system, sans-serif;
+
+$h1-font-size: 1.5rem;
+$h2-font-size: 1.25rem;
+$h3-font-size: 1rem;
+$h4-font-size: 0.93rem;
+$body-font-size: 0.93rem;
+$body-2-font-size: 0.875rem;
+$caption-font-size: 0.825rem;
+
+/* font weight */
+$regular-font: 400;
+$semi-bold-font: 600;
+$bold-font: 700;
+
+/* color schema */
 $primary-color: #665df5;
 $primary-color--variant: #665df5;
+
+/* emphasis */
+$high-emphasis-color: #37352f;
+$medium-emphasis-color: #37352f;
+$disabled-color: #9E9E9E;
