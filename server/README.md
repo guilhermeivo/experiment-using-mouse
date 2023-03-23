@@ -6,6 +6,7 @@ $ npm i -D @types/node
 $ npm i -D nodemon
 $ npm i -D ts-node
 $ npm i -D typescript
+$ npm i -D tsconfig-paths
 # OR
 $ npm i
 $ npm i -D
@@ -19,6 +20,8 @@ $ npm start
 ## Environment configuration
 `.env`
 ```
+MONGO_HOST=MONGO_HOST
+MONGO_DATABASE=MONGO_DATABASE
 ```
 
 ## Files configuration
@@ -28,14 +31,17 @@ $ npm start
     "watch": ["./"],
     "ext": ".ts,.js",
     "ignore": [],
-    "exec": "npx ts-node index.ts"
+    "exec": "npx ts-node ./Api/index.ts"
 }
 ```
 `tsconfig.json`
 ```json
 {
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
+    },
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "module": "commonjs",
         "lib": ["es6"],
         "allowJs": true,
@@ -44,7 +50,21 @@ $ npm start
         "strict": true,
         "noImplicitAny": true,
         "esModuleInterop": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "baseUrl": "./", 
+        "paths": {
+            "@Application/*": ["./Application/*"],
+            "@Domain/*": ["./Domain/*"],
+            "@Infrastructure/*": ["Infrastructure/*"],
+            "@Api/*": ["./Api/*"]
+        }
     }
 }
+```
+
+## Initial migrations
+```bash
+# 01_create_mazes
+$ npx ts-node ./Infrastructure/Persistence/migrations/01_create_mazes.ts
 ```

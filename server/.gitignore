@@ -112,3 +112,9 @@ out
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# local database
+*.sqlite
+*.sqlite
+*.database
+*.db

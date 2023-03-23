@@ -7,14 +7,16 @@
     "start": "npx nodemon"
   },
   "author": "Guilherme Ivo",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.15.3",
     "nodemon": "^2.0.21",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "sqlite3": "^5.1.6"
   }
 }
