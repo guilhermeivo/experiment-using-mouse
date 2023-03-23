@@ -23,6 +23,3 @@ NODE_ENV="DEVELOPMENT"
 # OR
 NODE_ENV="PRODUCTION"
 ```
-
-## TODO:
-- [ ] Experimentar ImportMap
