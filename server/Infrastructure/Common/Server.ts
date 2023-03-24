@@ -22,6 +22,14 @@ export default abstract class Server {
     }
 
     private static async requestListener(request: any, response: any) {
+        const headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
+            "Access-Control-Allow-Headers": "Content-Type",
+            'Access-Control-Max-Age': 2592000,
+            'Content-Type': 'application/json', 
+        }
+        
         let responseBody:any
 
         Server._routes.map(route => {
@@ -41,7 +49,7 @@ export default abstract class Server {
                     let queryString = request.url.substring(route.url.lastIndexOf('/') + 1, request.url.length)
                     queries[routeParam] = queryString
 
-                    response.writeHead(200, { 'Content-Type': 'application/json' })
+                    response.writeHead(200, headers)
                     responseBody = route.callback(queries, response)
                 }
             // path/to/call?query=value
@@ -60,12 +68,15 @@ export default abstract class Server {
                             queries[m[0]] = m[1]
                         })
                     }
-                    response.writeHead(200, { 'Content-Type': 'application/json' })
+                    response.writeHead(200, headers)
                     responseBody = route.callback(queries, response)
                 }
             }
         })
-        if (!responseBody) responseBody = { message: 'Route not found' }
+        if (!responseBody) {
+            response.writeHead(400, headers)
+            responseBody = { message: 'Route not found' }
+        }
         response.end(JSON.stringify(await responseBody))
     }
     
