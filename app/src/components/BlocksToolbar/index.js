@@ -1,5 +1,5 @@
 import tag from '../../utils/tags'
-import CustomCursor from '../../scripts/CustomCursor'
+import CustomCursor from '../../utils/CustomCursor'
 import { createElementFromHTML, getDirectoryAssetsPath } from '../../utils/utils'
 
 import styles from './style.module.scss'

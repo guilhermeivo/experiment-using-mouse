@@ -1,5 +1,5 @@
 import PageCreateMaze from "../pages/CreateMaze"
-import ServerService from "../services/ServerService"
+import apiService from "../services/api"
 
 (() => {
     `strict`

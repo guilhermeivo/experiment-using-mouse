@@ -2,10 +2,10 @@ const path = require('path');
 require('dotenv').config()
 
 module.exports = {
-    entry: './scripts/app.js',
+    entry: './src/scripts/app.js',
     output: {
         filename: 'bundle.min.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'src/dist'),
     },
     module: {
         rules: [

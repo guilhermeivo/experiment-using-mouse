@@ -1,4 +1,4 @@
-import Sprite from '../scripts/Sprite'
+import Sprite from './Sprite'
 import { getDirectoryAssetsPath } from './utils'
 
 const tags = (() => {
