@@ -34,6 +34,8 @@ export default customElements.define('create-maze',
         disconnectedCallback() {
             const customToolbarMenu = document.querySelector('#customToolbarMenu')
             customToolbarMenu.querySelector('blocks-toolbar').remove()
+            const customMenu = document.querySelector('#customMenu')
+            customMenu.innerHTML = ''
 
             this.removeEventsListener()
         }
@@ -122,6 +124,14 @@ export default customElements.define('create-maze',
 
             const checkbox = document.getElementById('checkboxEdges')
             checkbox.addEventListener('change', event => this.state.maze.changeVisibilityEdges())
+
+            const text = document.querySelector('#customMenu').querySelector('.icon')
+            text.addEventListener('click', () => {
+                const scrollerVertical = document.querySelector('.scroller-vertical')
+                scrollerVertical.classList.toggle('scroller-vertical__disable')
+                if (text.querySelector('span').innerText === 'menu') text.querySelector('span').innerText = 'close'
+                else text.querySelector('span').innerText = 'menu'
+            })
         }
 
         removeEventsListener() {
@@ -142,10 +152,20 @@ export default customElements.define('create-maze',
                         </div>
                     </div>
 
-                    <label class="form-control">
-                        <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
-                        Bordas para limitar os blocos.
-                    </label>
+                    <div class="scroller-vertical scroller-vertical__disable">
+                        <div class="scroller__title"><h4>Setup</h4></div>
+                        <div class="input-control">
+                            <input id="inputName" type="text" name="input-name" placeholder=" " required />
+                            <label for="inputName">Name maze</label>
+                        </div>
+                        <label class="form-control">
+                            <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
+                            Bordas para limitar os blocos
+                        </label>
+                        <div class="input-control">
+                            <input id="buttonSave" type="button" value="Save">
+                        </div>
+                    </div>
                 </div class="wrapper_content">
             `)
         }
@@ -158,6 +178,9 @@ export default customElements.define('create-maze',
 
             const customToolbarMenu = document.querySelector('#customToolbarMenu')
             customToolbarMenu.innerHTML = `<blocks-toolbar></blocks-toolbar>`
+
+            const customMenu = document.querySelector('#customMenu')
+            customMenu.innerHTML = `<div class="icon"><span class="material-symbols-outlined">menu</span></div>`
 
             this.state = {
                 ...this.state,

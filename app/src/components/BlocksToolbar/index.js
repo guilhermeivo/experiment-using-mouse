@@ -135,8 +135,8 @@ export default customElements.define('blocks-toolbar',
         }
 
         async render() {
-            await this.append(createElementFromHTML(this.#createBlocksToolbar()))
-            await this.appendChild(createElementFromHTML(this.#createCursorItem()))
+            this.append(createElementFromHTML(this.#createBlocksToolbar()))
+            this.appendChild(createElementFromHTML(this.#createCursorItem()))
             this.addEventsListener()
 
             this.state = {

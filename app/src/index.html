@@ -23,19 +23,43 @@
     <main class="content-main">
         <section>
             <nav class="header-navigation container-wrapper">
-                <img class="logo" src="./assets/images/Logo.png" alt="logo">
+                <img class="logo" src="./assets/images/Logo.svg" alt="logo">
                 <div id="customToolbarMenu" class="custom-toolbar-menu"></div>
                 <div id="customMenu" class="custom-menu"></div>
             </nav>
             <create-maze></create-maze>
+
+            <footer class="footer-main">
+                <p class="caption">created by guilhermeivo ❤️</p>
+            </footer>
         </section>
 
-        <aside></aside>
+        <aside>
+            <div class="scroller-cards">
+                <template id="cardMazes">
+                    <div class="card">
+                        <div class="card__image"></div>
+                        <div class="card__marker">
+                            <div class="marker__like">
+                                <span class="material-symbols-outlined">favorite</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card__description">
+                            <h3>Maze test</h3>
+                            <p class="caption">6 Likes - 40 Views</p>
+                      
+                            <div class="card__button">
+                                <div class="input-control">
+                                    <input id="buttonPlay" type="button" value="Play">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </aside>
     </main>
-    
-    <footer class="footer-main">
-        <p class="caption">created by guilhermeivo ❤️</p>
-    </footer>
 
     <noscript>script type is not supported by the page or scripting is disabled in browser.</noscript>
 
