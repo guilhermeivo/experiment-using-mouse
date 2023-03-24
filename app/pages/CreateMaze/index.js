@@ -32,6 +32,9 @@ export default customElements.define('create-maze',
         }
 
         disconnectedCallback() {
+            const customToolbarMenu = document.querySelector('#customToolbarMenu')
+            customToolbarMenu.querySelector('blocks-toolbar').remove()
+
             this.removeEventsListener()
         }
 
@@ -128,9 +131,7 @@ export default customElements.define('create-maze',
 
         #createPage() {
             return (`
-                <blocks-toolbar></blocks-toolbar>
-            
-                <main class="container-wrapper ">
+                <div class="wrapper_content">
                     <editable-maze rows="${ DEFAULT_MAZE_ROWS }" columns="${ DEFAULT_MAZE_COLUMNS }" editable></editable-maze>
 
                     <div class="${ style.resizable }">
@@ -145,7 +146,7 @@ export default customElements.define('create-maze',
                         <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
                         Bordas para limitar os blocos.
                     </label>
-                </main>
+                </div class="wrapper_content">
             `)
         }
 
@@ -154,6 +155,9 @@ export default customElements.define('create-maze',
             wrapperElement.innerHTML = this.#createPage()
             const contentElements = [...wrapperElement.children]
             contentElements.map(element => this.appendChild(element))
+
+            const customToolbarMenu = document.querySelector('#customToolbarMenu')
+            customToolbarMenu.innerHTML = `<blocks-toolbar></blocks-toolbar>`
 
             this.state = {
                 ...this.state,

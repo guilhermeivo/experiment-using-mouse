@@ -1,5 +1,9 @@
 @import '../../styles/variables';
 
+.wrapper_content {
+    position: relative
+}
+
 .resizable {
     position: absolute;
     width: 100%;

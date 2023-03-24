@@ -1,9 +1,6 @@
 import PageCreateMaze from "../pages/CreateMaze"
+import ServerService from "../services/ServerService"
 
 (() => {
     `strict`
-
-    const root = document.querySelector('#root')
-    const element = document.createElement('create-maze')
-    root.append(element)
 })()

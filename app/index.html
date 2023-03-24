@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./dist/reset.css">
     <link rel="stylesheet" href="./dist/global.css">
@@ -20,7 +20,22 @@
     <script src="./dist/bundle.min.js" defer></script>
 </head>
 <body>
-    <div id="root"></div>
+    <main class="content-main">
+        <section>
+            <nav class="header-navigation container-wrapper">
+                <img class="logo" src="./assets/Logo.png" alt="logo">
+                <div id="customToolbarMenu" class="custom-toolbar-menu"></div>
+                <div id="customMenu" class="custom-menu"></div>
+            </nav>
+            <create-maze></create-maze>
+        </section>
+
+        <aside></aside>
+    </main>
+    
+    <footer class="footer-main">
+        <p class="caption">created by guilhermeivo ❤️</p>
+    </footer>
 
     <noscript>script type is not supported by the page or scripting is disabled in browser.</noscript>
 
