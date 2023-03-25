@@ -15,14 +15,12 @@ $ npm i -D
 
 ## NPM Run
 ```bash
-$ npm start
+$ npm run start:nodemon
 ```
 
 ## Environment configuration
 `.env`
 ```
-MONGO_HOST=MONGO_HOST
-MONGO_DATABASE=MONGO_DATABASE
 ```
 
 ## Files configuration

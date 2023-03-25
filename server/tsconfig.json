@@ -8,17 +8,17 @@
         "lib": ["es6"],
         "allowJs": true,
         "outDir": "build",
-        "rootDir": "./",
+        "rootDir": "src",
         "strict": true,
         "noImplicitAny": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "sourceMap": true,
-        "baseUrl": "./", 
+        "baseUrl": "./src", 
         "paths": {
             "@Application/*": ["./Application/*"],
             "@Domain/*": ["./Domain/*"],
-            "@Infrastructure/*": ["Infrastructure/*"],
+            "@Infrastructure/*": ["./Infrastructure/*"],
             "@Api/*": ["./Api/*"]
         }
     }

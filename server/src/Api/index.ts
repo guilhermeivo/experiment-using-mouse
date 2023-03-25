@@ -1,7 +1,8 @@
 import app from '@Infrastructure/Common/Server'
 import routes from '@Api/routes'
+require('dotenv').config()
 
-const PORT = 8000
+const PORT = Number(process.env.PORT) || 8000
 
 app.init()
 app.use(routes)

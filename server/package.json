@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "npx ts-node ./Api/index.ts",
-    "start:nodemon": "npx nodemon"
+    "start": "npx ts-node ./src/Api/index.ts",
+    "start:dev": "npx nodemon"
   },
   "author": "Guilherme Ivo",
   "license": "MIT",
