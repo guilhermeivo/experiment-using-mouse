@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "Api/index.js",
   "_moduleAliases": {
     "@Application": "dist/Application",
     "@Domain": "dist/Domain",
