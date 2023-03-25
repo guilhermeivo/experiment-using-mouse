@@ -4,7 +4,6 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "css:scss": "node-sass --output-style compressed -o src/dist src/assets/styles",
     "build:css": "npm run css:scss",
     "build:js": "webpack --config webpack.config.js --mode=production",

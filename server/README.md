@@ -2,6 +2,7 @@
 ```bash
 $ npm i dotenv
 $ npm i sqlite3
+$ npm i module-alias
 
 $ npm i -D @types/node
 $ npm i -D nodemon
@@ -15,22 +16,25 @@ $ npm i -D
 
 ## NPM Run
 ```bash
-$ npm run start:nodemon
+$ npm run start:dev
 ```
 
 ## Environment configuration
 `.env`
 ```
+DATABASE_URL=DATABASE_URL
+PORT=PORT
+HOSTNAME=HOSTNAME
 ```
 
 ## Files configuration
 `nodemon.json`
 ```json
 {
-    "watch": ["./"],
+    "watch": ["./src"],
     "ext": ".ts,.js",
     "ignore": [],
-    "exec": "npx ts-node ./Api/index.ts"
+    "exec": "tsc & npx ts-node ./src/Api/index.ts"
 }
 ```
 `tsconfig.json`
@@ -44,26 +48,20 @@ $ npm run start:nodemon
         "module": "commonjs",
         "lib": ["es6"],
         "allowJs": true,
-        "outDir": "build",
-        "rootDir": "./",
+        "outDir": "dist",
+        "rootDir": "src",
         "strict": true,
         "noImplicitAny": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "sourceMap": true,
-        "baseUrl": "./", 
+        "baseUrl": ".", 
         "paths": {
-            "@Application/*": ["./Application/*"],
-            "@Domain/*": ["./Domain/*"],
-            "@Infrastructure/*": ["Infrastructure/*"],
-            "@Api/*": ["./Api/*"]
+            "@Application/*": ["./src/Application/*"],
+            "@Domain/*": ["./src/Domain/*"],
+            "@Infrastructure/*": ["./src/Infrastructure/*"],
+            "@Api/*": ["./src/Api/*"]
         }
     }
 }
-```
-
-## Initial migrations
-```bash
-# 01_create_mazes
-$ npx ts-node ./Infrastructure/Persistence/migrations/01_create_mazes.ts
 ```
