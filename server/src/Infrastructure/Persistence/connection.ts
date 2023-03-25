@@ -1,4 +1,4 @@
-import '@Infrastructure/Persistence/migrations/01_create_mazes'
+import createMazes from '@Infrastructure/Persistence/migrations/01_create_mazes'
 import { Database, verbose }  from 'sqlite3'
 require('dotenv').config()
 
@@ -10,6 +10,7 @@ export function openConnection() {
         if (error) {
             return console.error(error.message)
         }
+        createMazes()
     })
     return contextDb
 }
