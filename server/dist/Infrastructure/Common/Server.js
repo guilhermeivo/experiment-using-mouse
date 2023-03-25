@@ -96,7 +96,7 @@ class Server {
     }
     static listen(port, callback) {
         this.port = port;
-        this.httpServer.listen(this.port, this.hostname, callback());
+        this.httpServer.listen(this.port, callback());
     }
     static use(routes) {
         this._routes = routes.routes;
@@ -114,7 +114,6 @@ class Server {
         };
     }
 }
-Server.hostname = '127.0.0.1';
 Server._routes = [];
 exports.default = Server;
 //# sourceMappingURL=Server.js.map

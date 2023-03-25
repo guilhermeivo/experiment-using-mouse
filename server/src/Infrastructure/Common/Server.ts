@@ -10,7 +10,6 @@ interface RoutesResponse {
 
 export default abstract class Server {
     
-    static hostname: string = '127.0.0.1'
     static port: number
 
     static httpServer: any
@@ -82,7 +81,7 @@ export default abstract class Server {
     
     public static listen(port: number, callback: Function) {
         this.port = port
-        this.httpServer.listen(this.port, this.hostname, callback())
+        this.httpServer.listen(this.port, callback())
     }
 
     public static use(routes: any) {
