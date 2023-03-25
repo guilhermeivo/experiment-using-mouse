@@ -1,3 +1,4 @@
+import 'module-alias/register'
 import app from '@Infrastructure/Common/Server'
 import routes from '@Api/routes'
 require('dotenv').config()

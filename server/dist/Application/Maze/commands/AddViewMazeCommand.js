@@ -1,0 +1,58 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AddViewMazeCommandHandler = void 0;
+const Response_1 = __importDefault(require("@Application/Common/Response"));
+const connection_1 = require("@Infrastructure/Persistence/connection");
+class AddViewMazeCommandHandler {
+    static handle(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!request.id)
+                    throw new Error('need id to update');
+                const context = (0, connection_1.openConnection)();
+                const resultGet = yield new Promise((resolve, reject) => {
+                    const sql = `select * from mazes
+                    where mazes.id = '${request.id}'`;
+                    return context.get(sql, (error, row) => {
+                        if (error) {
+                            console.error(error.message);
+                            return reject(error.message);
+                        }
+                        return resolve(row);
+                    });
+                });
+                const resultUpdate = yield new Promise((resolve, reject) => {
+                    const sql = `update mazes
+                    set views = '${resultGet.views + 1}'
+                        where mazes.id = '${request.id}'`;
+                    return context.run(sql, function (error) {
+                        if (error) {
+                            console.error(error.message);
+                            return reject(error.message);
+                        }
+                        return resolve(this.lastID.toString());
+                    });
+                });
+                (0, connection_1.closeConnection)(context);
+                return new Response_1.default('sucess update', resultUpdate);
+            }
+            catch (exception) {
+                return new Response_1.default(exception.message);
+            }
+        });
+    }
+}
+exports.AddViewMazeCommandHandler = AddViewMazeCommandHandler;
+//# sourceMappingURL=AddViewMazeCommand.js.map
