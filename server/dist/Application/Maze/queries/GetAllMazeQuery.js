@@ -19,10 +19,9 @@ class GetAllMazeQueryHadler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const context = yield (0, connection_1.openConnection)();
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes`;
-                    return context.all(sql, (error, rows) => {
+                    return connection_1._context.all(sql, (error, rows) => {
                         if (error) {
                             console.error(error.message);
                             return reject(error.message);
@@ -30,7 +29,6 @@ class GetAllMazeQueryHadler {
                         return resolve(rows);
                     });
                 });
-                (0, connection_1.closeConnection)(context);
                 return new Response_1.default('sucess search', result);
             }
             catch (exception) {

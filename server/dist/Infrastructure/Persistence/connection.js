@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.closeConnection = exports.openConnection = void 0;
+exports.closeConnection = exports.openConnection = exports._context = void 0;
 const sqlite3_1 = require("sqlite3");
 require('dotenv').config();
 const sqlite3 = (0, sqlite3_1.verbose)();
@@ -20,16 +20,18 @@ function openConnection() {
             if (error) {
                 return console.error(error.message);
             }
+            console.log('Connected to the in-memory SQlite database.');
         });
-        return contextDb;
+        exports._context = contextDb;
     });
 }
 exports.openConnection = openConnection;
-function closeConnection(contextDb) {
-    contextDb.close((error) => {
+function closeConnection() {
+    exports._context.close((error) => {
         if (error) {
             return console.error(error.message);
         }
+        console.log('Close the database connection.');
     });
 }
 exports.closeConnection = closeConnection;

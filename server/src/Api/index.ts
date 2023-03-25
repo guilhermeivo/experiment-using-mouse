@@ -1,7 +1,7 @@
 import 'module-alias/register'
 import app from '@Infrastructure/Common/Server'
 import routes from '@Api/routes'
-import { openConnection } from '@Infrastructure/Persistence/connection'
+import { closeConnection, openConnection } from '@Infrastructure/Persistence/connection'
 import createMazes from '@Infrastructure/Persistence/migrations/01_create_mazes'
 require('dotenv').config()
 

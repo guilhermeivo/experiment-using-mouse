@@ -1,8 +1,6 @@
-import { openConnection, closeConnection} from '@Infrastructure/Persistence/connection'
+import { _context } from '@Infrastructure/Persistence/connection'
 
 export default async () => {
-    const context = await openConnection()
-
     const sql = `
     create table if not exists mazes (
         id integer primary key autoincrement,
@@ -13,14 +11,11 @@ export default async () => {
         ipAdress string,
         encodedString string
     )`
-    context.serialize(() => {
-        context.each(sql, (err) => {
-            if (err) {
-                console.error(err.message)
-            }
-            console.log('Successfully created')
-        })
+    _context.run(sql, (error: Error) => {
+        if (error) {
+            console.error(error.message)
+        } else {
+            console.log('Successfully created Mazes table')
+        }
     })
-    
-    closeConnection(context)
 }

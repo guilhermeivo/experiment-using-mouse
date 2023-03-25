@@ -21,11 +21,10 @@ class AddViewMazeCommandHandler {
             try {
                 if (!request.id)
                     throw new Error('need id to update');
-                const context = yield (0, connection_1.openConnection)();
                 const resultGet = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes
                     where mazes.id = '${request.id}'`;
-                    return context.get(sql, (error, row) => {
+                    return connection_1._context.get(sql, (error, row) => {
                         if (error) {
                             console.error(error.message);
                             return reject(error.message);
@@ -37,7 +36,7 @@ class AddViewMazeCommandHandler {
                     const sql = `update mazes
                     set views = '${resultGet.views + 1}'
                         where mazes.id = '${request.id}'`;
-                    return context.run(sql, function (error) {
+                    return connection_1._context.run(sql, function (error) {
                         if (error) {
                             console.error(error.message);
                             return reject(error.message);
@@ -45,7 +44,6 @@ class AddViewMazeCommandHandler {
                         return resolve(this.lastID.toString());
                     });
                 });
-                (0, connection_1.closeConnection)(context);
                 return new Response_1.default('sucess update', resultUpdate);
             }
             catch (exception) {

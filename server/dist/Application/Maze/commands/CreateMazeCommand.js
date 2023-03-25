@@ -21,11 +21,10 @@ class CreateMazeCommandHandler {
             try {
                 if (!request.name || !request.ipAdress || !request.encodedString)
                     throw new Error('missing values');
-                const context = yield (0, connection_1.openConnection)();
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `insert into mazes (name, description, ipAdress, encodedString)
                 values ('${request.name}', '${request.description}', '${request.ipAdress}', '${request.encodedString}')`;
-                    return context.run(sql, function (error) {
+                    return connection_1._context.run(sql, function (error) {
                         if (error) {
                             console.error(error.message);
                             return reject(error.message);
@@ -33,7 +32,6 @@ class CreateMazeCommandHandler {
                         return resolve(this.lastID.toString());
                     });
                 });
-                (0, connection_1.closeConnection)(context);
                 return new Response_1.default('sucess created', result);
             }
             catch (exception) {

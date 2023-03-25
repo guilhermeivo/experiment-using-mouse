@@ -21,11 +21,10 @@ class GetByIdMazeQueryHadler {
             try {
                 if (!request.id)
                     throw new Error('need id to search');
-                const context = yield (0, connection_1.openConnection)();
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes
                     where mazes.id = '${request.id}'`;
-                    return context.get(sql, (error, row) => {
+                    return connection_1._context.get(sql, (error, row) => {
                         if (error) {
                             console.error(error.message);
                             return reject(error.message);
@@ -33,7 +32,6 @@ class GetByIdMazeQueryHadler {
                         return resolve(row);
                     });
                 });
-                (0, connection_1.closeConnection)(context);
                 if (!result)
                     return new Response_1.default('could not find a maze with that value');
                 return new Response_1.default('sucess search', [result]);

@@ -3,22 +3,23 @@ require('dotenv').config()
 
 const sqlite3 = verbose()
 const databaseUrl = process.env.DATABASE_URL || ''
+export let _context:Database
 
 export async function openConnection() {
     const contextDb = new sqlite3.Database(databaseUrl, (error) => {
         if (error) {
             return console.error(error.message)
         }
+        console.log('Connected to the in-memory SQlite database.');
     })
-    
-    return contextDb
+    _context = contextDb
 }
 
-export function closeConnection(contextDb: Database) {
-    contextDb.close((error) => {
+export function closeConnection() {
+    _context.close((error) => {
         if (error) {
             return console.error(error.message)
         }
+        console.log('Close the database connection.');
     })
 }
-    
