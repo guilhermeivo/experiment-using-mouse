@@ -3,7 +3,7 @@ import { openConnection, closeConnection} from '@Infrastructure/Persistence/conn
 const context = openConnection()
 
 const sql = `
-create table mazes (
+create table if not exists mazes (
     id integer primary key autoincrement,
     name string,
     likes integer,
