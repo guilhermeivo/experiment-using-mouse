@@ -21,7 +21,7 @@ class GetByIdMazeQueryHadler {
             try {
                 if (!request.id)
                     throw new Error('need id to search');
-                const context = (0, connection_1.openConnection)();
+                const context = yield (0, connection_1.openConnection)();
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes
                     where mazes.id = '${request.id}'`;

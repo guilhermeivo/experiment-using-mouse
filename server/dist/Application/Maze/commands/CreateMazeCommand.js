@@ -21,7 +21,7 @@ class CreateMazeCommandHandler {
             try {
                 if (!request.name || !request.ipAdress || !request.encodedString)
                     throw new Error('missing values');
-                const context = (0, connection_1.openConnection)();
+                const context = yield (0, connection_1.openConnection)();
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `insert into mazes (name, description, ipAdress, encodedString)
                 values ('${request.name}', '${request.description}', '${request.ipAdress}', '${request.encodedString}')`;

@@ -12,7 +12,7 @@ export abstract class CreateMazeCommandHandler {
     public static async handle(request: CreateMazeCommand) {
         try {
             if (!request.name || !request.ipAdress || !request.encodedString) throw new Error('missing values')
-            const context = openConnection()
+            const context = await openConnection()
             const result: string = await new Promise((resolve, reject) => {
                 const sql = `insert into mazes (name, description, ipAdress, encodedString)
                 values ('${ request.name }', '${ request.description }', '${ request.ipAdress }', '${ request.encodedString }')`

@@ -1,22 +1,28 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.closeConnection = exports.openConnection = void 0;
-const _01_create_mazes_1 = __importDefault(require("@Infrastructure/Persistence/migrations/01_create_mazes"));
 const sqlite3_1 = require("sqlite3");
 require('dotenv').config();
 const sqlite3 = (0, sqlite3_1.verbose)();
 const databaseUrl = process.env.DATABASE_URL || '';
 function openConnection() {
-    const contextDb = new sqlite3.Database(databaseUrl, (error) => {
-        if (error) {
-            return console.error(error.message);
-        }
-        (0, _01_create_mazes_1.default)();
+    return __awaiter(this, void 0, void 0, function* () {
+        const contextDb = new sqlite3.Database(databaseUrl, (error) => {
+            if (error) {
+                return console.error(error.message);
+            }
+        });
+        return contextDb;
     });
-    return contextDb;
 }
 exports.openConnection = openConnection;
 function closeConnection(contextDb) {

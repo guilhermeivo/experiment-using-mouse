@@ -7,7 +7,7 @@ export interface GetAllMazeQuery { }
 export abstract class GetAllMazeQueryHadler {
     public static async handle(request: GetAllMazeQuery) {
         try {
-            const context = openConnection()
+            const context = await openConnection()
             const result: Array<Maze> = await new Promise((resolve, reject) => {
                 const sql = `select * from mazes`
                 return context.all(sql, (error, rows: Array<Maze>) => {

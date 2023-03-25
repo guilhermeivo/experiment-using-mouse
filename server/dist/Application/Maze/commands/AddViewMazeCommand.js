@@ -21,7 +21,7 @@ class AddViewMazeCommandHandler {
             try {
                 if (!request.id)
                     throw new Error('need id to update');
-                const context = (0, connection_1.openConnection)();
+                const context = yield (0, connection_1.openConnection)();
                 const resultGet = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes
                     where mazes.id = '${request.id}'`;

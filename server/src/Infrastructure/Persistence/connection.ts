@@ -1,17 +1,16 @@
-import createMazes from '@Infrastructure/Persistence/migrations/01_create_mazes'
 import { Database, verbose }  from 'sqlite3'
 require('dotenv').config()
 
 const sqlite3 = verbose()
 const databaseUrl = process.env.DATABASE_URL || ''
 
-export function openConnection() {
+export async function openConnection() {
     const contextDb = new sqlite3.Database(databaseUrl, (error) => {
         if (error) {
             return console.error(error.message)
         }
-        createMazes()
     })
+    
     return contextDb
 }
 

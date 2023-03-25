@@ -1,7 +1,7 @@
 import { openConnection, closeConnection} from '@Infrastructure/Persistence/connection'
 
-export default () => {
-    const context = openConnection()
+export default async () => {
+    const context = await openConnection()
 
     const sql = `
     create table if not exists mazes (

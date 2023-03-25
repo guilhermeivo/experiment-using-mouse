@@ -10,7 +10,7 @@ export abstract class AddLikeMazeCommandHandler {
     public static async handle(request: AddLikeMazeCommand) {
         try {
             if (!request.id) throw new Error('need id to update')
-            const context = openConnection()
+            const context = await openConnection()
             const resultGet: Maze = await new Promise((resolve, reject) => {
                 const sql = `select * from mazes
                     where mazes.id = '${ request.id }'`

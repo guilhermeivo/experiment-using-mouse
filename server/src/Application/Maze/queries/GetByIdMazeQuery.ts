@@ -11,7 +11,7 @@ export abstract class GetByIdMazeQueryHadler {
         try {
             if (!request.id) throw new Error('need id to search')
             
-            const context = openConnection()
+            const context = await openConnection()
             const result: Maze = await new Promise((resolve, reject) => {
                 const sql = `select * from mazes
                     where mazes.id = '${ request.id }'`

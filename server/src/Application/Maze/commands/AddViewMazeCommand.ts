@@ -10,7 +10,7 @@ export abstract class AddViewMazeCommandHandler {
     public static async handle(request: AddViewMazeCommand) {
         try {
             if (!request.id) throw new Error('need id to update')
-            const context = openConnection()
+            const context = await openConnection()
             const resultGet: Maze = await new Promise((resolve, reject) => {
                 const sql = `select * from mazes
                     where mazes.id = '${ request.id }'`
