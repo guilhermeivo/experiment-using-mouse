@@ -97,7 +97,7 @@ class Server {
     static listen(port, hostname, callback) {
         this.port = port;
         this.hostname = hostname;
-        this.httpServer.listen(this.port, this.hostname, callback()).on('error', (error) => {
+        this.httpServer.listen(this.port, callback()).on('error', (error) => {
             console.error(error.message);
             throw error;
         });

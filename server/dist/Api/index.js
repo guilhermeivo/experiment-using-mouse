@@ -12,6 +12,6 @@ const HOSTNAME = process.env.HOSTNAME || '127.0.0.1';
 Server_1.default.init();
 Server_1.default.use(routes_1.default);
 Server_1.default.listen(PORT, HOSTNAME, () => {
-    console.log(`Server running at ${HOSTNAME}}:${PORT}/`);
+    console.log(`Server running at ${HOSTNAME}:${PORT}/`);
 });
 //# sourceMappingURL=index.js.map

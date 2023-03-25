@@ -83,7 +83,7 @@ export default abstract class Server {
     public static listen(port: number, hostname: string, callback: Function) {
         this.port = port
         this.hostname = hostname
-        this.httpServer.listen(this.port, this.hostname, callback()).on('error', (error: Error) => {
+        this.httpServer.listen(this.port, callback()).on('error', (error: Error) => {
             console.error(error.message)
             throw error
         })
