@@ -10,6 +10,7 @@ interface RoutesResponse {
 
 export default abstract class Server {
     
+    static hostname: string
     static port: number
 
     static httpServer: any
@@ -79,9 +80,10 @@ export default abstract class Server {
         response.end(JSON.stringify(await responseBody))
     }
     
-    public static listen(port: number, callback: Function) {
+    public static listen(port: number, hostname: string, callback: Function) {
         this.port = port
-        this.httpServer.listen(this.port, callback())
+        this.hostname = hostname
+        this.httpServer.listen(this.port, this.hostname, callback())
     }
 
     public static use(routes: any) {

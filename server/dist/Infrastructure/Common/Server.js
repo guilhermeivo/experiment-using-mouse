@@ -94,9 +94,10 @@ class Server {
             response.end(JSON.stringify(yield responseBody));
         });
     }
-    static listen(port, callback) {
+    static listen(port, hostname, callback) {
         this.port = port;
-        this.httpServer.listen(this.port, callback());
+        this.hostname = hostname;
+        this.httpServer.listen(this.port, this.hostname, callback());
     }
     static use(routes) {
         this._routes = routes.routes;
