@@ -1,7 +1,7 @@
 import { _context } from '@Infrastructure/Persistence/connection'
 
 export default async () => {
-    const sql = `
+    const sqlCreate = `
     create table if not exists mazes (
         id integer primary key autoincrement,
         name string,
@@ -11,11 +11,21 @@ export default async () => {
         ipAdress string,
         encodedString string
     )`
-    _context.run(sql, (error: Error) => {
-        if (error) {
-            console.error(error.message)
-        } else {
-            console.log('Successfully created Mazes table')
-        }
+    const sqlSelect = `select * from mazes`
+    _context.serialize(() => {
+        _context.run(sqlCreate, (error: Error) => {
+            if (error) {
+                return console.error(error.message)
+            } 
+            
+        })
+    })
+    _context.serialize(() => {
+        _context.get(sqlSelect, (error, row) => {
+            if (error) {
+                return console.error(error.message)
+            } 
+            console.log('Successfully created Mazes table.')
+        })
     })
 }

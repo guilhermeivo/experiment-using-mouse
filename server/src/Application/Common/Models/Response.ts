@@ -1,8 +1,9 @@
 export default class Response<T> {
     public Succeeded: boolean
-    public Message: string 
+    public Message: string
+    public Errors: Array<string> = []
     public Data?: T
-
+    
     constructor(message?: string, data?: T) {
         this.Succeeded = data ? true : false
         this.Message = message || ''

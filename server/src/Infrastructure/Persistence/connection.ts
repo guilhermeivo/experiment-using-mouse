@@ -6,11 +6,13 @@ const databaseUrl = process.env.DATABASE_URL || ''
 export let _context:Database
 
 export async function openConnection() {
+    if (_context) return 
+    
     const contextDb = new sqlite3.Database(databaseUrl, (error) => {
         if (error) {
             return console.error(error.message)
         }
-        console.log('Connected to the in-memory SQlite database.');
+        console.log('Connected to the SQlite database.')
     })
     _context = contextDb
 }
@@ -20,6 +22,6 @@ export function closeConnection() {
         if (error) {
             return console.error(error.message)
         }
-        console.log('Close the database connection.');
+        console.log('Close the database connection.')
     })
 }

@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllMazeQueryHadler = void 0;
-const Response_1 = __importDefault(require("@Application/Common/Response"));
+const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
 const connection_1 = require("@Infrastructure/Persistence/connection");
 class GetAllMazeQueryHadler {
     static handle(request) {
@@ -21,15 +21,19 @@ class GetAllMazeQueryHadler {
             try {
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes`;
-                    return connection_1._context.all(sql, (error, rows) => {
-                        if (error) {
-                            console.error(error.message);
-                            return reject(error.message);
-                        }
-                        return resolve(rows);
+                    connection_1._context.serialize(() => {
+                        return connection_1._context.all(sql, (error, rows) => {
+                            if (error) {
+                                console.error(error.message);
+                                return reject(error.message);
+                            }
+                            return resolve(rows);
+                        });
                     });
                 });
-                return new Response_1.default('sucess search', result);
+                if (!result)
+                    return new Response_1.default('Could not find a maze.');
+                return new Response_1.default('Found mazes.', result);
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

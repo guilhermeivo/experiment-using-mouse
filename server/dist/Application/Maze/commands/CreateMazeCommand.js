@@ -13,26 +13,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateMazeCommandHandler = void 0;
-const Response_1 = __importDefault(require("@Application/Common/Response"));
+const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
 const connection_1 = require("@Infrastructure/Persistence/connection");
 class CreateMazeCommandHandler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!request.name || !request.ipAdress || !request.encodedString)
-                    throw new Error('missing values');
+                if (!request.name || !request.encodedString)
+                    throw new Error('Missing values.');
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `insert into mazes (name, description, ipAdress, encodedString)
-                values ('${request.name}', '${request.description}', '${request.ipAdress}', '${request.encodedString}')`;
-                    return connection_1._context.run(sql, function (error) {
-                        if (error) {
-                            console.error(error.message);
-                            return reject(error.message);
-                        }
-                        return resolve(this.lastID.toString());
+                values ('${request.name}', '${request.description}', '', '${request.encodedString}')`;
+                    connection_1._context.serialize(() => {
+                        return connection_1._context.run(sql, function (error) {
+                            if (error) {
+                                console.error(error.message);
+                                return reject(error.message);
+                            }
+                            return resolve(this.lastID.toString());
+                        });
                     });
                 });
-                return new Response_1.default('sucess created', result);
+                return new Response_1.default('Created maze.', result);
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

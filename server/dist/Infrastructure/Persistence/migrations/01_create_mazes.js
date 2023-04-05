@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("@Infrastructure/Persistence/connection");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    const sql = `
+    const sqlCreate = `
     create table if not exists mazes (
         id integer primary key autoincrement,
         name string,
@@ -21,13 +21,21 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         ipAdress string,
         encodedString string
     )`;
-    connection_1._context.run(sql, (error) => {
-        if (error) {
-            console.error(error.message);
-        }
-        else {
-            console.log('Successfully created Mazes table');
-        }
+    const sqlSelect = `select * from mazes`;
+    connection_1._context.serialize(() => {
+        connection_1._context.run(sqlCreate, (error) => {
+            if (error) {
+                return console.error(error.message);
+            }
+        });
+    });
+    connection_1._context.serialize(() => {
+        connection_1._context.get(sqlSelect, (error, row) => {
+            if (error) {
+                return console.error(error.message);
+            }
+            console.log('Successfully created Mazes table.');
+        });
     });
 });
 //# sourceMappingURL=01_create_mazes.js.map

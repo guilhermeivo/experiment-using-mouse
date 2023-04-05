@@ -13,28 +13,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetByIdMazeQueryHadler = void 0;
-const Response_1 = __importDefault(require("@Application/Common/Response"));
+const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
 const connection_1 = require("@Infrastructure/Persistence/connection");
 class GetByIdMazeQueryHadler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!request.id)
-                    throw new Error('need id to search');
+                    throw new Error('Need id maze to search.');
                 const result = yield new Promise((resolve, reject) => {
                     const sql = `select * from mazes
                     where mazes.id = '${request.id}'`;
-                    return connection_1._context.get(sql, (error, row) => {
-                        if (error) {
-                            console.error(error.message);
-                            return reject(error.message);
-                        }
-                        return resolve(row);
+                    connection_1._context.serialize(() => {
+                        return connection_1._context.get(sql, (error, row) => {
+                            if (error) {
+                                console.error(error.message);
+                                return reject(error.message);
+                            }
+                            return resolve(row);
+                        });
                     });
                 });
                 if (!result)
-                    return new Response_1.default('could not find a maze with that value');
-                return new Response_1.default('sucess search', [result]);
+                    return new Response_1.default('Could not find a maze with that value.');
+                return new Response_1.default('Found maze with that value.', [result]);
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

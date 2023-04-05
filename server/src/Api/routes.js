@@ -1,15 +1,19 @@
 import app from '@Infrastructure/Common/Server'
 import MazeController from '@Api/Controllers/MazeController'
+import AccountController from '@Api/Controllers/AccountController'
 
 const routes = app.router()
 const mazeController = new MazeController()
+const accountController = new AccountController()
 
-routes.get('/api', (request, response) => { return { message: 'Route found' } })
+routes.get('/api', () => { return { message: 'Route found' } })
 
-routes.get('/api/maze', (request, response) => mazeController.GetAll(request))
-routes.get('/api/maze/{id}', (request, response) => mazeController.GetById(request))
-routes.post('/api/maze', (request, response) => mazeController.Create(request))
-routes.post('/api/maze/addLikes/{id}', (request, response) => mazeController.AddLikes(request))
-routes.post('/api/maze/addViews/{id}', (request, response) => mazeController.AddViews(request))
+routes.post('/account/register', (query, request, response) => accountController.Register(request, response))
+
+routes.get('/api/maze', (request) => mazeController.GetAll(request))
+routes.get('/api/maze/{id}', (request) => mazeController.GetById(request))
+routes.post('/api/maze', (request) => mazeController.Create(request), routes.useAuthentication)
+routes.put('/api/maze/addLikes/{id}', (request) => mazeController.AddLikes(request), routes.useAuthentication)
+routes.put('/api/maze/addViews/{id}', (request) => mazeController.AddViews(request), routes.useAuthentication)
 
 export default routes

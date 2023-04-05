@@ -1,4 +1,4 @@
-import Response from '@Application/Common/Response'
+import Response from '@Application/Common/Models/Response'
 import { _context } from '@Infrastructure/Persistence/connection'
 import Maze from '@Domain/Entities/Maze'
 
@@ -9,16 +9,20 @@ export abstract class GetAllMazeQueryHadler {
         try {
             const result: Array<Maze> = await new Promise((resolve, reject) => {
                 const sql = `select * from mazes`
-                return _context.all(sql, (error, rows: Array<Maze>) => {
+                _context.serialize(() => {
+                    return _context.all(sql, (error: Error, rows: Array<Maze>) => {
                         if (error) {
                             console.error(error.message)
                             return reject(error.message)
                         }
+
                         return resolve(rows)
                     })
+                })
             })
 
-            return new Response<Array<Maze>>('sucess search', result)
+            if (!result) return new Response<Array<Maze>>('Could not find a maze.')
+            return new Response<Array<Maze>>('Found mazes.', result)
         } catch (exception: any) {
             return new Response<Array<Maze>>(exception.message)
         }

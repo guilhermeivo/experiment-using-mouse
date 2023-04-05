@@ -16,11 +16,13 @@ const sqlite3 = (0, sqlite3_1.verbose)();
 const databaseUrl = process.env.DATABASE_URL || '';
 function openConnection() {
     return __awaiter(this, void 0, void 0, function* () {
+        if (exports._context)
+            return;
         const contextDb = new sqlite3.Database(databaseUrl, (error) => {
             if (error) {
                 return console.error(error.message);
             }
-            console.log('Connected to the in-memory SQlite database.');
+            console.log('Connected to the SQlite database.');
         });
         exports._context = contextDb;
     });

@@ -1,19 +1,18 @@
-import Response from '@Application/Common/Response'
+import Response from '@Application/Common/Models/Response'
 import Maze from '@Domain/Entities/Maze'
 import { GetByIdMazeQuery, GetByIdMazeQueryHadler } from '@Application/Maze/queries/GetByIdMazeQuery'
-import { GetAllMazeQueryHadler } from '@Application/Maze/queries/GetAllMazeQuery'
+import { GetAllMazeQuery, GetAllMazeQueryHadler } from '@Application/Maze/queries/GetAllMazeQuery'
 import { CreateMazeCommand, CreateMazeCommandHandler } from '@Application/Maze/commands/CreateMazeCommand'
 import { AddLikeMazeCommand, AddLikeMazeCommandHandler } from '@Application/Maze/commands/AddLikeMazeCommand'
 import { AddViewMazeCommand, AddViewMazeCommandHandler } from '@Application/Maze/commands/AddViewMazeCommand'
 
 export default class MazeController {
-    async GetAll(request: any): Promise<Response<Array<Maze>>> {
+    async GetAll(request: GetAllMazeQuery): Promise<Response<Array<Maze>>> {
         const response = await GetAllMazeQueryHadler.handle(request)
 
         if (response.Succeeded) {
             return response
         }
-
         return response
     }
 

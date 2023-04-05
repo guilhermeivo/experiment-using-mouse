@@ -1,107 +1,117 @@
 import * as http from 'node:http'
-import IQuery from '@Application/Common/IQuery'
-
-interface RoutesResponse {
-    url: string,
-    methods: string,
-    callback: Function,
-    queries?: Array<string>
-}
+import Response from '@Application/Common/Models/Response'
+import StatusCodes from '@Infrastructure/Common/Enumerations/StatusCodes'
+import TypesRequests from '@Infrastructure/Common/Enumerations/TypesRequests'
+import { OptionsCors, defaults } from '@Infrastructure/Common/Interfaces/OptionsCors'
+import RoutesResponse from '@Infrastructure/Common/Interfaces/RoutesResponse'
+import UrlParser from '@Infrastructure/Common/UrlParser'
 
 export default abstract class Server {
     
     static hostname: string
     static port: number
+    static corsConfigurations: OptionsCors = { ...defaults }
+    static routes: Array<RoutesResponse> = []
 
-    static httpServer: any
-
-    static _routes: Array<RoutesResponse> = []
-
-    public static init() {
-        this.httpServer = http.createServer(this.requestListener)
-    }
-
-    private static async requestListener(request: any, response: any) {
-        const headers = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-            "Access-Control-Allow-Headers": "Content-Type",
-            'Access-Control-Max-Age': 2592000,
-            'Content-Type': 'application/json', 
-        }
-        
-        let responseBody:any
-
-        Server._routes.map(route => {
-            let path = ''
-            if (request.url.includes('?')) path = request.url.split('?')[0]
-            else path = request.url
-
-            const queries: IQuery = {}
-            
-            // path/to/call/:id
-            if (route.url.includes('{') && route.url.includes('}')) {
-                let routePath = route.url.substring(0, route.url.lastIndexOf('/'))
-                path = path.substring(0, path.lastIndexOf('/'))
-                let routeParam = route.url.substring(route.url.indexOf('{') + 1, route.url.indexOf('}'))
-
-                if (path === routePath && request.method === route.methods) {
-                    let queryString = request.url.substring(route.url.lastIndexOf('/') + 1, request.url.length)
-                    queries[routeParam] = queryString
-
-                    response.writeHead(200, headers)
-                    responseBody = route.callback(queries, response)
-                }
-            // path/to/call?query=value
-            } else {
-                if (path === route.url && request.method === route.methods) {
-                    if (request.url.includes('?')) {
-                        let queryString = request.url.split('?')[1]
-                        let queryParams = []
-                        
-                        if (queryString.includes('&')) {
-                            queryParams = queryString.split('&')
-                        } else {
-                            queryParams.push(queryString)
-                        }
-                        queryParams.map((m: string) => m.split('=')).map((m: string) => {
-                            queries[m[0]] = m[1]
-                        })
-                    }
-                    response.writeHead(200, headers)
-                    responseBody = route.callback(queries, response)
-                }
+    public static listen(port: number, hostname: string) {
+        const httpServer = http.createServer(async (request, response) => {  
+            const headers = {
+                'Access-Control-Allow-Origin': this.corsConfigurations.origins,
+                'Access-Control-Allow-Methods': this.corsConfigurations.methods,
+                "Access-Control-Allow-Headers": this.corsConfigurations.headers,
+                'Access-Control-Max-Age': 2592000,
+                'Content-Type': 'application/json'
             }
+
+            let responseBodyResponse: any
+
+            this.routes.map((route) => {
+                const urlComponents = UrlParser(request.url || '')
+
+                switch (route.typeRequest) {
+                    case TypesRequests.Route:
+                        if (urlComponents.path.substring(0, urlComponents.path.lastIndexOf('/')) === route.url && 
+                            request.method === route.methods) {
+                            const routeParam = route.queryRoute || ''
+                            const queryString = urlComponents.path.substring(
+                                urlComponents.path.lastIndexOf('/') + 1, 
+                                urlComponents.path.length)
+                            
+                            urlComponents.queries[routeParam] = queryString
+                            responseBodyResponse = route.callback(urlComponents.queries, request, response)
+                            
+                        }
+                        break
+                    case TypesRequests.Query:
+                        if (urlComponents.path === route.url && request.method === route.methods) {
+                            responseBodyResponse = route.callback(urlComponents.queries, request, response)
+                        }
+                        break
+                    case TypesRequests.Body:
+                        break
+                }
+            })
+
+            if (!responseBodyResponse) {
+                response.writeHead(StatusCodes.NotFound, headers)
+                response.end(JSON.stringify(new Response<string>('Route not found')))
+            }
+            
+            await responseBodyResponse
+            response.writeHead(StatusCodes.Success, headers)
+            response.end(JSON.stringify(await responseBodyResponse))
         })
-        if (!responseBody) {
-            response.writeHead(400, headers)
-            responseBody = { message: 'Route not found' }
-        }
-        response.end(JSON.stringify(await responseBody))
-    }
-    
-    public static listen(port: number, hostname: string, callback: Function) {
+
         this.port = port
         this.hostname = hostname
-        this.httpServer.listen(this.port, callback()).on('error', (error: Error) => {
+
+        httpServer.listen(this.port, () => {
+            console.log(`Server running at ${ this.hostname }:${ this.port }/`)
+        }).on('error', (error: Error) => {
             console.error(error.message)
             throw error
         })
     }
 
-    public static use(routes: any) {
-        this._routes = routes.routes
+    public static useCors(options: OptionsCors) {
+        for (const key in options) {
+            if (Object.prototype.hasOwnProperty.call(options, key)) {
+                let option = options[key as keyof OptionsCors]
+                if (typeof option === 'object') option = option.join(', ')
+                this.corsConfigurations[key as keyof OptionsCors] = option
+            }
+        }
+    }
+
+    public static useRouting(routes: Array<RoutesResponse>) {
+        routes.map(route => {
+            if (route.url.includes('{') && route.url.includes('}')) {
+                // path/to/{value}
+                let routePath = route.url.substring(0, route.url.lastIndexOf('/'))
+                let routeParam = route.url.substring(route.url.indexOf('{') + 1, route.url.indexOf('}'))
+
+                route.queryRoute = routeParam
+                this.routes.push({ ...route, url: routePath, queryRoute: route.queryRoute, typeRequest: TypesRequests.Route })
+            } else {
+                // // path/to?value=value
+                this.routes.push({ ...route, typeRequest: TypesRequests.Query })
+            }
+        })
     }
 
     public static router() {
         let routes: Array<RoutesResponse> = []
         return {
+            useAuthentication: true,
             routes: routes,
-            get: (urlPath: string, callback: Function) => {
-                routes.push({ url: urlPath, methods: 'GET', callback: callback })
+            get: (urlPath: string, callback: Function, authentication: boolean = false) => {
+                routes.push({ url: urlPath, methods: 'GET', callback: callback, authentication: authentication })
             },
-            post: (urlPath: string, callback: Function) => {
-                routes.push({ url: urlPath, methods: 'POST', callback: callback })
+            post: (urlPath: string, callback: Function, authentication: boolean = false) => {
+                routes.push({ url: urlPath, methods: 'POST', callback: callback, authentication: authentication })
+            },
+            put: (urlPath: string, callback: Function, authentication: boolean = false) => {
+                routes.push({ url: urlPath, methods: 'PUT', callback: callback, authentication: authentication })
             }
         }
     }
