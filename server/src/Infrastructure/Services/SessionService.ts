@@ -1,5 +1,6 @@
 import Session from "@Infrastructure/Identity/ApplicationSession"
 import { _context } from '@Infrastructure/Persistence/Connection'
+import { resolve } from "path"
 
 export default abstract class SessionService {
     public static async CreateTokenSession(): Promise<string> {
@@ -10,8 +11,8 @@ export default abstract class SessionService {
 
         try {
             const result: string = await new Promise((resolve, reject) => {
-                const sqlInsert = `insert into session (token)
-                    values ('${ token }')`
+                const sqlInsert = `insert into session (token, createdOn)
+                    values ('${ token }', '${ new Date().toISOString() }')`
 
                 _context.serialize(() => {
                     return _context.run(sqlInsert, function(error) {
@@ -32,8 +33,8 @@ export default abstract class SessionService {
 
     public static async ValidateTokenSession(token: string): Promise<boolean> {
         try {
-            return await new Promise((resolve, reject) => {
-                const sqlSelect = `select token from session
+            const validateToken: Array<Session> = await new Promise((resolve, reject) => {
+                const sqlSelect = `select * from session
                     where session.token = '${ token }'`
 
                 _context.serialize(() => {
@@ -43,10 +44,12 @@ export default abstract class SessionService {
                             return reject(error.message)
                         }
 
-                        return resolve(rows.length > 0 ? true : false)
+                        return resolve(rows)
                     })
                 })
             })
+
+            return validateToken.length > 0 && !validateToken[0].revokedOn ? true : false
         } catch (exception: any) { 
             return false
         }
@@ -71,6 +74,29 @@ export default abstract class SessionService {
             })
         } catch (exception: any) { 
             return null
+        }
+    }
+
+    public static async RevokeTokenSession(token: string): Promise<boolean> {
+        try { 
+            return await new Promise((resolve, reject) => {
+                const sqlSelect = `update session 
+                    set revokedOn = '${ new Date().toISOString() }'
+                        where session.token = '${ token }'`
+
+                _context.serialize(() => {
+                    return _context.run(sqlSelect, function(error) {
+                        if (error) {
+                            console.error(error.message)
+                            return reject(error.message)
+                        }
+
+                        return resolve(true)
+                    })
+                })
+            })
+        } catch (exception: any) {  
+            return false
         }
     }
 }

@@ -23,6 +23,15 @@ class MazeController {
             return responseRegister;
         });
     }
+    Remove(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const responseRemove = yield IdentityService_1.default.RemoveAsync(request, response);
+            if (responseRemove.Succeeded) {
+                return responseRemove;
+            }
+            return responseRemove;
+        });
+    }
 }
 exports.default = MazeController;
 //# sourceMappingURL=AccountController.js.map

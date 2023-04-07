@@ -6,6 +6,6 @@ export default interface Maze extends BaseEntity {
     view?: string
     isLiked?: boolean
     description?: string
-    createdOn?: Date
+    createdOn?: string
     encodedString: string
 }

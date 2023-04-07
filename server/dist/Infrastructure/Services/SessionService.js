@@ -19,8 +19,8 @@ class SessionService {
             });
             try {
                 const result = yield new Promise((resolve, reject) => {
-                    const sqlInsert = `insert into session (token)
-                    values ('${token}')`;
+                    const sqlInsert = `insert into session (token, createdOn)
+                    values ('${token}', '${new Date().toISOString()}')`;
                     Connection_1._context.serialize(() => {
                         return Connection_1._context.run(sqlInsert, function (error) {
                             if (error) {
@@ -41,8 +41,8 @@ class SessionService {
     static ValidateTokenSession(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield new Promise((resolve, reject) => {
-                    const sqlSelect = `select token from session
+                const validateToken = yield new Promise((resolve, reject) => {
+                    const sqlSelect = `select * from session
                     where session.token = '${token}'`;
                     Connection_1._context.serialize(() => {
                         return Connection_1._context.all(sqlSelect, function (error, rows) {
@@ -50,10 +50,11 @@ class SessionService {
                                 console.error(error.message);
                                 return reject(error.message);
                             }
-                            return resolve(rows.length > 0 ? true : false);
+                            return resolve(rows);
                         });
                     });
                 });
+                return validateToken.length > 0 && !validateToken[0].revokedOn ? true : false;
             }
             catch (exception) {
                 return false;
@@ -79,6 +80,29 @@ class SessionService {
             }
             catch (exception) {
                 return null;
+            }
+        });
+    }
+    static RevokeTokenSession(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield new Promise((resolve, reject) => {
+                    const sqlSelect = `update session 
+                    set revokedOn = '${new Date().toISOString()}'
+                        where session.token = '${token}'`;
+                    Connection_1._context.serialize(() => {
+                        return Connection_1._context.run(sqlSelect, function (error) {
+                            if (error) {
+                                console.error(error.message);
+                                return reject(error.message);
+                            }
+                            return resolve(true);
+                        });
+                    });
+                });
+            }
+            catch (exception) {
+                return false;
             }
         });
     }

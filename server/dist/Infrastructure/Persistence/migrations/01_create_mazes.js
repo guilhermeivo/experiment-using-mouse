@@ -17,7 +17,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         sessionId intenger,
         name string not null,
         description string,
-        createdByIp string,
+        createdOn date,
         encodedString string not null,
         foreign key (sessionId)
             references session (id)

@@ -20,11 +20,11 @@ class IdentityService {
         return __awaiter(this, void 0, void 0, function* () {
             const cookies = (0, CookieParser_1.default)(request.headers.cookie || '');
             if (cookies['sessionId'] && (yield SessionService_1.default.ValidateTokenSession(cookies['sessionId']))) {
-                return new Response_1.default('User is already registered.', cookies['sessionId']);
+                return new Response_1.default('Session is already registered.', cookies['sessionId']);
             }
             const token = yield SessionService_1.default.CreateTokenSession();
             response.setHeader('Set-Cookie', `sessionId=${token}; Path=/`);
-            return new Response_1.default('Successfully registered user', token);
+            return new Response_1.default('Successfully registered session', token);
         });
     }
     static AuthenticateAsync(request, response) {
@@ -33,7 +33,18 @@ class IdentityService {
             if (!cookies['sessionId'])
                 return new Response_1.default('Unregistered user');
             const validateToken = yield SessionService_1.default.ValidateTokenSession(cookies['sessionId']);
-            return new Response_1.default('User authenticated successfully.', validateToken);
+            return new Response_1.default('Session authenticated successfully.', validateToken);
+        });
+    }
+    static RemoveAsync(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cookies = (0, CookieParser_1.default)(request.headers.cookie || '');
+            if (!cookies['sessionId'])
+                return new Response_1.default('Unregistered user');
+            const revokeToken = yield SessionService_1.default.RevokeTokenSession(cookies['sessionId']);
+            if (revokeToken)
+                return new Response_1.default('Successfully removed session.', revokeToken);
+            return new Response_1.default('Unable to remove session.', revokeToken);
         });
     }
 }

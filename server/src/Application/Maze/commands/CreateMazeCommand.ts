@@ -19,7 +19,8 @@ export abstract class CreateMazeCommandHandler {
                 name: request.name,
                 sessionId: request.sessionId,
                 description: request.description,
-                encodedString: request.encodedString
+                encodedString: request.encodedString,
+                createdOn: new Date().toISOString()
             }
 
             const mazeId = await Maze.Add(entity)

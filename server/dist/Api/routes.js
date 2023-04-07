@@ -11,6 +11,7 @@ const mazeController = new MazeController_1.default();
 const accountController = new AccountController_1.default();
 routes.get('/api', () => { return { message: 'Route found' }; });
 routes.post('/account/register', (query, request, response) => accountController.Register(request, response));
+routes.put('/account/remove', (query, request, response) => accountController.Remove(request, response));
 routes.get('/api/maze', (request) => mazeController.GetAll(request));
 routes.get('/api/maze/{id}', (request) => mazeController.GetById(request));
 routes.post('/api/maze', (request) => mazeController.Create(request));

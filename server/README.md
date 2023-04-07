@@ -16,6 +16,8 @@ $ npm i -D
 
 ## NPM Run
 ```bash
+$ npm start
+# OR DEV MODE
 $ npm run start:dev
 ```
 
@@ -25,6 +27,9 @@ $ npm run start:dev
 DATABASE_URL=DATABASE_URL
 PORT=PORT
 HOSTNAME=HOSTNAME
+NODE_ENV=DEVELOPMENT
+# OR
+NODE_ENV=PRODUCTION
 ```
 
 ## Files configuration
@@ -65,6 +70,3 @@ HOSTNAME=HOSTNAME
     }
 }
 ```
-
-## TODO: Connection and DBSet
-## TODO: Exceptions

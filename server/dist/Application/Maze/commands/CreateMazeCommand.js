@@ -27,7 +27,8 @@ class CreateMazeCommandHandler {
                     name: request.name,
                     sessionId: request.sessionId,
                     description: request.description,
-                    encodedString: request.encodedString
+                    encodedString: request.encodedString,
+                    createdOn: new Date().toISOString()
                 };
                 const mazeId = yield Connection_1.Maze.Add(entity);
                 return new Response_1.default('Maze successfully created.', mazeId);

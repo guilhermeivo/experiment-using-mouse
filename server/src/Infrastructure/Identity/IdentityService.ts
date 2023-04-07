@@ -8,13 +8,13 @@ export default abstract class IdentityService {
         const cookies = CookieParser(request.headers.cookie || '')
 
         if (cookies['sessionId'] && await SessionService.ValidateTokenSession(cookies['sessionId'])) { 
-            return new Response<string>('User is already registered.', cookies['sessionId'])
+            return new Response<string>('Session is already registered.', cookies['sessionId'])
         }
 
         const token = await SessionService.CreateTokenSession()
         response.setHeader('Set-Cookie', `sessionId=${ token }; Path=/`)
         
-        return new Response<string>('Successfully registered user', token)
+        return new Response<string>('Successfully registered session', token)
     }
 
     public static async AuthenticateAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<boolean>> {
@@ -24,6 +24,17 @@ export default abstract class IdentityService {
         
         const validateToken: boolean = await SessionService.ValidateTokenSession(cookies['sessionId'])
 
-        return new Response<boolean>('User authenticated successfully.', validateToken)
+        return new Response<boolean>('Session authenticated successfully.', validateToken)
+    }
+
+    public static async RemoveAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<boolean>> {
+        const cookies = CookieParser(request.headers.cookie || '')
+
+        if (!cookies['sessionId']) return new Response<boolean>('Unregistered user')
+
+        const revokeToken = await SessionService.RevokeTokenSession(cookies['sessionId'])
+        
+        if (revokeToken) return new Response<boolean>('Successfully removed session.', revokeToken)
+        return new Response<boolean>('Unable to remove session.', revokeToken)
     }
 }

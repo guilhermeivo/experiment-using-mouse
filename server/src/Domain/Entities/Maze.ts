@@ -4,7 +4,6 @@ export default interface Maze extends BaseEntity {
     sessionId: string
     name: string
     description?: string
-    createdOn?: Date
-    createdByIp?: string
+    createdOn?: string
     encodedString: string
 }

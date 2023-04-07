@@ -9,6 +9,7 @@ const accountController = new AccountController()
 routes.get('/api', () => { return { message: 'Route found' } })
 
 routes.post('/account/register', (query, request, response) => accountController.Register(request, response))
+routes.put('/account/remove', (query, request, response) => accountController.Remove(request, response))
 
 routes.get('/api/maze', (request) => mazeController.GetAll(request))
 routes.get('/api/maze/{id}', (request) => mazeController.GetById(request))

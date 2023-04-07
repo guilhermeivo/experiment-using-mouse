@@ -10,4 +10,13 @@ export default class MazeController {
         }
         return responseRegister
     }
+
+    async Remove(request: any, response: any): Promise<Response<boolean>> {
+        const responseRemove = await IdentityService.RemoveAsync(request, response)
+        
+        if (responseRemove.Succeeded) {
+            return responseRemove
+        }
+        return responseRemove
+    }
 }

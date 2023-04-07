@@ -7,7 +7,7 @@ export default async () => {
         sessionId intenger,
         name string not null,
         description string,
-        createdByIp string,
+        createdOn date,
         encodedString string not null,
         foreign key (sessionId)
             references session (id)
