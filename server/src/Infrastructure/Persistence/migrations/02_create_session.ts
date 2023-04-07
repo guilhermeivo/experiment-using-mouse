@@ -1,10 +1,14 @@
-import { _context } from '@Infrastructure/Persistence/connection'
+import { _context } from '@Infrastructure/Persistence/Connection'
 
 export default async () => {
     const sqlCreate = `
     create table if not exists session (
         id integer primary key autoincrement,
-        token string
+        token string,
+        createdOn string,
+        createdByIp string,
+        revokedOn string,
+        revokedByIp string
     )`
     const sqlSelect = `select * from session`
     _context.serialize(() => {

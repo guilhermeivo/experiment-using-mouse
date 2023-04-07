@@ -1,4 +1,4 @@
-import app from '@Infrastructure/Common/Server'
+import app from '@Api/Common/Server'
 import MazeController from '@Api/Controllers/MazeController'
 import AccountController from '@Api/Controllers/AccountController'
 
@@ -12,8 +12,8 @@ routes.post('/account/register', (query, request, response) => accountController
 
 routes.get('/api/maze', (request) => mazeController.GetAll(request))
 routes.get('/api/maze/{id}', (request) => mazeController.GetById(request))
-routes.post('/api/maze', (request) => mazeController.Create(request), routes.useAuthentication)
-routes.put('/api/maze/addLikes/{id}', (request) => mazeController.AddLikes(request), routes.useAuthentication)
-routes.put('/api/maze/addViews/{id}', (request) => mazeController.AddViews(request), routes.useAuthentication)
+routes.post('/api/maze', (request) => mazeController.Create(request))
+routes.put('/api/maze/addLikes/{id}', (request) => mazeController.AddLikes(request))
+routes.put('/api/maze/addViews/{id}', (request) => mazeController.AddViews(request))
 
 export default routes

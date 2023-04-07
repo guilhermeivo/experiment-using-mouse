@@ -1,15 +1,18 @@
-import { _context } from '@Infrastructure/Persistence/connection'
+import { _context } from '@Infrastructure/Persistence/Connection'
 
 export default async () => {
     const sqlCreate = `
     create table if not exists mazes (
         id integer primary key autoincrement,
-        name string,
+        sessionId intenger,
+        name string not null,
         likes integer,
         views integer,
         description string,
-        ipAdress string,
-        encodedString string
+        createdByIp string,
+        encodedString string not null,
+        foreign key (sessionId)
+            references session (id)
     )`
     const sqlSelect = `select * from mazes`
     _context.serialize(() => {

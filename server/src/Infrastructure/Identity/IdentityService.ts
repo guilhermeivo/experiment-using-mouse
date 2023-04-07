@@ -5,7 +5,6 @@ import SessionService from '@Infrastructure/Services/SessionService';
 
 export default abstract class IdentityService {
     public static async RegisterAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<string>> {
-
         const cookies = CookieParser(request.headers.cookie || '')
 
         if (cookies['sessionId'] && await SessionService.ValidateTokenSession(cookies['sessionId'])) { 
@@ -13,7 +12,7 @@ export default abstract class IdentityService {
         }
 
         const token = await SessionService.CreateTokenSession()
-        response.setHeader('Set-Cookie', `sessionId=${ token }`)
+        response.setHeader('Set-Cookie', `sessionId=${ token }; Path=/`)
         
         return new Response<string>('Successfully registered user', token)
     }

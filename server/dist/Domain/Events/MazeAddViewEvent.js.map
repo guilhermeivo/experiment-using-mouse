@@ -1,0 +1,1 @@
+{"version":3,"file":"MazeAddViewEvent.js","sourceRoot":"","sources":["../../../src/Domain/Events/MazeAddViewEvent.ts"],"names":[],"mappings":";;AAEA,SAAwB,gBAAgB,CAAC,IAAU;IAC/C,IAAI,KAAK,qBAAQ,IAAI,CAAE,CAAA;IACvB,IAAI,KAAK,CAAC,KAAK;QAAE,KAAK,CAAC,KAAK,IAAI,CAAC,CAAA;;QAC5B,KAAK,CAAC,KAAK,GAAG,CAAC,CAAA;IAEpB,OAAO,KAAK,CAAA;AAChB,CAAC;AAND,mCAMC"}

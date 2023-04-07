@@ -14,27 +14,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateMazeCommandHandler = void 0;
 const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
-const connection_1 = require("@Infrastructure/Persistence/connection");
+const Connection_1 = require("@Infrastructure/Persistence/Connection");
 class CreateMazeCommandHandler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!request.name || !request.encodedString)
+                if (!request.name || !request.encodedString || !request.sessionId)
                     throw new Error('Missing values.');
-                const result = yield new Promise((resolve, reject) => {
-                    const sql = `insert into mazes (name, description, ipAdress, encodedString)
-                values ('${request.name}', '${request.description}', '', '${request.encodedString}')`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.run(sql, function (error) {
-                            if (error) {
-                                console.error(error.message);
-                                return reject(error.message);
-                            }
-                            return resolve(this.lastID.toString());
-                        });
-                    });
-                });
-                return new Response_1.default('Created maze.', result);
+                const result = [...yield Connection_1.Session.Where((x) => x.token === request.sessionId)][0];
+                if (result.id) {
+                    let entity = {
+                        name: request.name,
+                        sessionId: result.id,
+                        description: request.description,
+                        encodedString: request.encodedString
+                    };
+                    const mazeId = yield Connection_1.Maze.Add(entity);
+                    return new Response_1.default('Created maze.', mazeId);
+                }
+                else {
+                    throw new Error('Session invalid.');
+                }
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

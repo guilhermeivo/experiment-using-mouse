@@ -1,0 +1,1 @@
+{"version":3,"file":"UnsupportedMazeStringException.js","sourceRoot":"","sources":["../../../src/Domain/Exceptions/UnsupportedMazeStringException.ts"],"names":[],"mappings":";;AAAA,MAAM,8BAA8B,GAAG,CAAC,OAAe,EAAE,EAAE,CAAC,CAAC;IACzD,KAAK,EAAE,IAAI,KAAK,CAAC,OAAO,CAAC;IACzB,IAAI,EAAE,mCAAmC;CAC5C,CAAC,CAAA;AACF,8BAA8B,CAAC,SAAS,GAAG,KAAK,CAAC,SAAS,CAAA;AAE1D,kBAAe,8BAA8B,CAAA"}

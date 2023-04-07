@@ -17,14 +17,14 @@ const _01_create_mazes_1 = __importDefault(require("@Infrastructure/Persistence/
 const _02_create_session_1 = __importDefault(require("@Infrastructure/Persistence/migrations/02_create_session"));
 function migrateAsync() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, _01_create_mazes_1.default)();
         yield (0, _02_create_session_1.default)();
+        yield (0, _01_create_mazes_1.default)();
     });
 }
 exports.migrateAsync = migrateAsync;
 function migrate() {
-    (0, _01_create_mazes_1.default)();
     (0, _02_create_session_1.default)();
+    (0, _01_create_mazes_1.default)();
 }
 exports.migrate = migrate;
-//# sourceMappingURL=migrate.js.map
+//# sourceMappingURL=Migrate.js.map

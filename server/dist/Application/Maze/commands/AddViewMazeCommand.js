@@ -14,41 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddViewMazeCommandHandler = void 0;
 const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
-const connection_1 = require("@Infrastructure/Persistence/connection");
+const Connection_1 = require("@Infrastructure/Persistence/Connection");
+const MazeAddViewEvent_1 = __importDefault(require("@Domain/Events/MazeAddViewEvent"));
 class AddViewMazeCommandHandler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!request.id)
                     throw new Error('Need id to add.');
-                const resultGet = yield new Promise((resolve, reject) => {
-                    const sql = `select * from mazes
-                    where mazes.id = '${request.id}'`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.get(sql, (error, row) => {
-                            if (error) {
-                                console.error(error.message);
-                                return reject(error.message);
-                            }
-                            return resolve(row);
-                        });
-                    });
-                });
-                const resultUpdate = yield new Promise((resolve, reject) => {
-                    const sql = `update mazes
-                    set views = '${resultGet.views + 1}'
-                        where mazes.id = '${request.id}'`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.run(sql, function (error) {
-                            if (error) {
-                                console.error(error.message);
-                                return reject(error.message);
-                            }
-                            return resolve(this.lastID.toString());
-                        });
-                    });
-                });
-                return new Response_1.default('Successfully added.', resultUpdate);
+                var maze = [...yield Connection_1.Maze.Where((x) => x.id == request.id)][0];
+                if (maze) {
+                    maze = (0, MazeAddViewEvent_1.default)(maze);
+                    yield Connection_1.Maze.Update(maze, (x) => x.id == request.id);
+                    return new Response_1.default('Successfully added.', request.id);
+                }
+                else {
+                    throw new Error('Invalid id.');
+                }
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

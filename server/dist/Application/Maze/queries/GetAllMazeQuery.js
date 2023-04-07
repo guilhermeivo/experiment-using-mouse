@@ -14,23 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllMazeQueryHadler = void 0;
 const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
-const connection_1 = require("@Infrastructure/Persistence/connection");
+const Connection_1 = require("@Infrastructure/Persistence/Connection");
 class GetAllMazeQueryHadler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield new Promise((resolve, reject) => {
-                    const sql = `select * from mazes`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.all(sql, (error, rows) => {
-                            if (error) {
-                                console.error(error.message);
-                                return reject(error.message);
-                            }
-                            return resolve(rows);
-                        });
-                    });
-                });
+                const result = yield Connection_1.Maze.Find();
                 if (!result)
                     return new Response_1.default('Could not find a maze.');
                 return new Response_1.default('Found mazes.', result);

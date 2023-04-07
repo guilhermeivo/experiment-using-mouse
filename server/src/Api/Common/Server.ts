@@ -1,9 +1,9 @@
 import * as http from 'node:http'
 import Response from '@Application/Common/Models/Response'
-import StatusCodes from '@Infrastructure/Common/Enumerations/StatusCodes'
-import TypesRequests from '@Infrastructure/Common/Enumerations/TypesRequests'
-import { OptionsCors, defaults } from '@Infrastructure/Common/Interfaces/OptionsCors'
-import RoutesResponse from '@Infrastructure/Common/Interfaces/RoutesResponse'
+import StatusCodes from '@Api/Common/Enumerations/StatusCodes'
+import TypesRequests from '@Api/Common/Enumerations/TypesRequests'
+import { OptionsCors, defaults } from '@Api/Common/Interfaces/OptionsCors'
+import RoutesResponse from '@Api/Common/Interfaces/RoutesResponse'
 import UrlParser from '@Infrastructure/Common/UrlParser'
 
 export default abstract class Server {
@@ -12,6 +12,7 @@ export default abstract class Server {
     static port: number
     static corsConfigurations: OptionsCors = { ...defaults }
     static routes: Array<RoutesResponse> = []
+    static authenticationHandler: Function
 
     public static listen(port: number, hostname: string) {
         const httpServer = http.createServer(async (request, response) => {  
@@ -25,7 +26,9 @@ export default abstract class Server {
 
             let responseBodyResponse: any
 
-            this.routes.map((route) => {
+            await this.authenticationHandler(request, response)
+            
+            this.routes.map(async (route) => {
                 const urlComponents = UrlParser(request.url || '')
 
                 switch (route.typeRequest) {
@@ -38,13 +41,18 @@ export default abstract class Server {
                                 urlComponents.path.length)
                             
                             urlComponents.queries[routeParam] = queryString
-                            responseBodyResponse = route.callback(urlComponents.queries, request, response)
-                            
+                            responseBodyResponse = await route.callback(urlComponents.queries, request, response)
+
+                            response.writeHead(StatusCodes.Success, headers)
+                            response.end(JSON.stringify(responseBodyResponse))
                         }
                         break
                     case TypesRequests.Query:
                         if (urlComponents.path === route.url && request.method === route.methods) {
-                            responseBodyResponse = route.callback(urlComponents.queries, request, response)
+                            responseBodyResponse = await route.callback(urlComponents.queries, request, response)
+
+                            response.writeHead(StatusCodes.Success, headers)
+                            response.end(JSON.stringify(responseBodyResponse))
                         }
                         break
                     case TypesRequests.Body:
@@ -52,14 +60,10 @@ export default abstract class Server {
                 }
             })
 
-            if (!responseBodyResponse) {
+            /*if (!responseBodyResponse) {
                 response.writeHead(StatusCodes.NotFound, headers)
                 response.end(JSON.stringify(new Response<string>('Route not found')))
-            }
-            
-            await responseBodyResponse
-            response.writeHead(StatusCodes.Success, headers)
-            response.end(JSON.stringify(await responseBodyResponse))
+            }*/
         })
 
         this.port = port
@@ -93,10 +97,14 @@ export default abstract class Server {
                 route.queryRoute = routeParam
                 this.routes.push({ ...route, url: routePath, queryRoute: route.queryRoute, typeRequest: TypesRequests.Route })
             } else {
-                // // path/to?value=value
+                // path/to?value=value
                 this.routes.push({ ...route, typeRequest: TypesRequests.Query })
             }
         })
+    }
+
+    public static addAuthentication(callback: Function) {
+        this.authenticationHandler = callback
     }
 
     public static router() {
@@ -104,14 +112,14 @@ export default abstract class Server {
         return {
             useAuthentication: true,
             routes: routes,
-            get: (urlPath: string, callback: Function, authentication: boolean = false) => {
-                routes.push({ url: urlPath, methods: 'GET', callback: callback, authentication: authentication })
+            get: (urlPath: string, callback: Function) => {
+                routes.push({ url: urlPath, methods: 'GET', callback: callback })
             },
-            post: (urlPath: string, callback: Function, authentication: boolean = false) => {
-                routes.push({ url: urlPath, methods: 'POST', callback: callback, authentication: authentication })
+            post: (urlPath: string, callback: Function) => {
+                routes.push({ url: urlPath, methods: 'POST', callback: callback })
             },
-            put: (urlPath: string, callback: Function, authentication: boolean = false) => {
-                routes.push({ url: urlPath, methods: 'PUT', callback: callback, authentication: authentication })
+            put: (urlPath: string, callback: Function) => {
+                routes.push({ url: urlPath, methods: 'PUT', callback: callback })
             }
         }
     }

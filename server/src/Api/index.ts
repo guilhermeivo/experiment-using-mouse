@@ -1,8 +1,9 @@
 import 'module-alias/register'
-import app from '@Infrastructure/Common/Server'
+import app from '@Api/Common/Server'
 import router from '@Api/routes'
-import { openConnection } from '@Infrastructure/Persistence/connection'
-import { migrateAsync } from '@Infrastructure/Persistence/migrate'
+import { openConnection } from '@Infrastructure/Persistence/Connection'
+import { migrateAsync } from '@Infrastructure/Persistence/Migrate'
+import AuthenticationConfiguration from '@Infrastructure/Common/Configuration/AuthenticationConfiguration'
 require('dotenv').config()
 
 const PORT = Number(process.env.PORT) || 8000
@@ -23,6 +24,7 @@ if (process.env.NODE_ENV === 'DEVELOPMENT') {
 }
 
 app.useRouting(router.routes)
+app.addAuthentication(AuthenticationConfiguration)
 
 openConnection().then(() => {
     migrateAsync()

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const connection_1 = require("@Infrastructure/Persistence/connection");
+const Connection_1 = require("@Infrastructure/Persistence/Connection");
 class SessionService {
     static CreateTokenSession() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,8 +21,8 @@ class SessionService {
                 const result = yield new Promise((resolve, reject) => {
                     const sqlInsert = `insert into session (token)
                     values ('${token}')`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.run(sqlInsert, function (error) {
+                    Connection_1._context.serialize(() => {
+                        return Connection_1._context.run(sqlInsert, function (error) {
                             if (error) {
                                 console.error(error.message);
                                 return reject(error.message);
@@ -44,8 +44,8 @@ class SessionService {
                 return yield new Promise((resolve, reject) => {
                     const sqlSelect = `select token from session
                     where session.token = '${token}'`;
-                    connection_1._context.serialize(() => {
-                        return connection_1._context.all(sqlSelect, function (error, rows) {
+                    Connection_1._context.serialize(() => {
+                        return Connection_1._context.all(sqlSelect, function (error, rows) {
                             if (error) {
                                 console.error(error.message);
                                 return reject(error.message);

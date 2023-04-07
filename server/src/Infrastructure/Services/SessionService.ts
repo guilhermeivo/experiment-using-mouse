@@ -1,4 +1,5 @@
-import { _context } from '@Infrastructure/Persistence/connection'
+import Session from '@Domain/Entities/Session'
+import { _context } from '@Infrastructure/Persistence/Connection'
 
 export default abstract class SessionService {
     public static async CreateTokenSession(): Promise<string> {
@@ -36,7 +37,7 @@ export default abstract class SessionService {
                     where session.token = '${ token }'`
 
                 _context.serialize(() => {
-                    return _context.all(sqlSelect, function(error, rows: Array<any>) {
+                    return _context.all(sqlSelect, function(error, rows: Array<Session>) {
                         if (error) {
                             console.error(error.message)
                             return reject(error.message)

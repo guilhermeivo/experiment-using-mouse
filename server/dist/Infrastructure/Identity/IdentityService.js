@@ -23,7 +23,7 @@ class IdentityService {
                 return new Response_1.default('User is already registered.', cookies['sessionId']);
             }
             const token = yield SessionService_1.default.CreateTokenSession();
-            response.setHeader('Set-Cookie', `sessionId=${token}`);
+            response.setHeader('Set-Cookie', `sessionId=${token}; Path=/`);
             return new Response_1.default('Successfully registered user', token);
         });
     }

@@ -9,28 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const connection_1 = require("@Infrastructure/Persistence/connection");
+const Connection_1 = require("@Infrastructure/Persistence/Connection");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const sqlCreate = `
     create table if not exists mazes (
         id integer primary key autoincrement,
-        name string,
+        sessionId intenger,
+        name string not null,
         likes integer,
         views integer,
         description string,
-        ipAdress string,
-        encodedString string
+        createdByIp string,
+        encodedString string not null,
+        foreign key (sessionId)
+            references session (id)
     )`;
     const sqlSelect = `select * from mazes`;
-    connection_1._context.serialize(() => {
-        connection_1._context.run(sqlCreate, (error) => {
+    Connection_1._context.serialize(() => {
+        Connection_1._context.run(sqlCreate, (error) => {
             if (error) {
                 return console.error(error.message);
             }
         });
     });
-    connection_1._context.serialize(() => {
-        connection_1._context.get(sqlSelect, (error, row) => {
+    Connection_1._context.serialize(() => {
+        Connection_1._context.get(sqlSelect, (error, row) => {
             if (error) {
                 return console.error(error.message);
             }

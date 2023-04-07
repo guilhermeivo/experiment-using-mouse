@@ -110,7 +110,7 @@ class Server {
                 this.routes.push(Object.assign(Object.assign({}, route), { url: routePath, queryRoute: route.queryRoute, typeRequest: TypesRequests_1.default.Route }));
             }
             else {
-                // // path/to?value=value
+                // path/to?value=value
                 this.routes.push(Object.assign(Object.assign({}, route), { typeRequest: TypesRequests_1.default.Query }));
             }
         });
