@@ -7,6 +7,8 @@ export default class CustomCursor {
         this.focusClass = config.focusClass
 
         this.handleMouseMove = this.handleMouseMove.bind(this)
+        this.handleMouseEnter = this.handleMouseEnter.bind(this)
+        this.handleMouseLeave = this.handleMouseLeave.bind(this)
     }
 
     initialize() {
@@ -30,20 +32,26 @@ export default class CustomCursor {
             customCursor.classList.remove(this.disableClass)
     }
 
+    handleMouseEnter(event) {
+        const customCursor = document.querySelector(this.element)
+        if (!customCursor.classList.contains(this.focusClass))
+            customCursor.classList.add(this.focusClass)
+    }
+
+    handleMouseLeave(event) {
+        const customCursor = document.querySelector(this.element)
+        if (customCursor.classList.contains(this.focusClass))
+            customCursor.classList.remove(this.focusClass)
+    }
+
     enable() {
         const customCursor = document.querySelector(this.element)
         if (customCursor.classList.contains(this.disableClass))
             document.addEventListener('mousemove', this.handleMouseMove)
 
         document.querySelectorAll(...this.focusElements).forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                if (!customCursor.classList.contains(this.focusClass))
-                    customCursor.classList.add(this.focusClass)
-            })
-            element.addEventListener('mouseleave', () => {
-                if (customCursor.classList.contains(this.focusClass))
-                    customCursor.classList.remove(this.focusClass)
-            })
+            element.addEventListener('mouseenter', this.handleMouseEnter)
+            element.addEventListener('mouseleave', this.handleMouseLeave)
         })
     }
 
@@ -55,14 +63,17 @@ export default class CustomCursor {
         }
 
         document.querySelectorAll(...this.focusElements).forEach(element => {
-            element.removeEventListener('mouseenter', () => {
-                if (!customCursor.classList.contains(this.focusClass))
-                    customCursor.classList.add(this.focusClass)
-            })
-            element.removeEventListener('mouseleave', () => {
-                if (customCursor.classList.contains(this.focusClass))
-                    customCursor.classList.remove(this.focusClass)
-            })
+            element.removeEventListener('mouseenter', this.handleMouseEnter)
+            element.removeEventListener('mouseleave', this.handleMouseLeave)
+        })
+    }
+
+    remove() {
+        document.removeEventListener('mousemove', this.handleMouseMove)
+
+        document.querySelectorAll(...this.focusElements).forEach(element => {
+            element.removeEventListener('mouseenter', this.handleMouseEnter)
+            element.removeEventListener('mouseleave', this.handleMouseLeave)
         })
     }
 }

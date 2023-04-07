@@ -13,7 +13,7 @@ export default customElements.define('blocks-toolbar',
 
             styles.use()
 
-            this.keyDownHandler = this.keyDownHandler.bind(this)
+            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
 
             this.state = {
                 items: tag.allowedTags(),
@@ -31,18 +31,20 @@ export default customElements.define('blocks-toolbar',
 
         disconnectedCallback() {
             this.removeEventsListener()
+            this.state.customCursor.remove()
+            delete this.state.customCursor
         }
 
-        keyDownHandler(event) {
+        onKeyDownHandler(event) {
             switch (event.key) {
                 case 'Escape':
                     event.preventDefault()
-                    this.onUnselectedItemHadler()
+                    this.unselectedItemHadler()
                     break
             }
         }
 
-        onUnselectedItemHadler() {
+        unselectedItemHadler() {
             if (this.state.selectedItem < 0) return
 
             const itemsToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
@@ -78,7 +80,6 @@ export default customElements.define('blocks-toolbar',
                     ...this.state, 
                     selectedItem: -1
                 }
-
                 this.state.customCursor.disable()
             }
         }
@@ -91,16 +92,16 @@ export default customElements.define('blocks-toolbar',
                 })
             })
 
-            document.addEventListener('keydown', this.keyDownHandler)
+            document.addEventListener('keydown', this.onKeyDownHandler)
         }
 
         removeEventsListener() {
-            document.removeEventListener('keydown', this.keyDownHandler)
+            document.removeEventListener('keydown', this.onKeyDownHandler)
         }
 
         #createCursorItem() {
             return(`
-                <div class="custom_cursor">
+                <div class="${ style.custom_cursor }">
                     <img src="" />
                 </div>
             `)
@@ -148,5 +149,9 @@ export default customElements.define('blocks-toolbar',
                     focusClass: style['custom_cursor--focused']
                 })
             }
+        }
+
+        update() {
+            
         }
     })

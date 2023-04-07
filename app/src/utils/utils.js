@@ -14,6 +14,9 @@ export function getDirectoryAssetsPath(file, typeFile) {
         case 'audio':
             extension = '.mp3'
             break;
+        case 'vector':
+            extension = '.svg'
+            break;
         default:
             extension = '.png'
             break;

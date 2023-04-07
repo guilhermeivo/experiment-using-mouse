@@ -10,7 +10,7 @@
     "@Api": "dist/Api"
   },
   "scripts": {
-    "start": "node dist/Api/index.js",
+    "start": "tsc & node dist/Api/index.js",
     "start:dev": "npx nodemon",
     "build": "tsc"
   },

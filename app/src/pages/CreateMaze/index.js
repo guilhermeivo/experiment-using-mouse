@@ -1,6 +1,5 @@
-import EditableMaze from '../../components/EditableMaze'
-import BlocksToolbar from '../../components/BlocksToolbar'
-import MazeBlocks from '../../components/MazeBlocks'
+import apiService from "../../services/api"
+import { createElementFromHTML } from '../../utils/utils'
 
 import styles from './style.module.scss'
 const { locals: style } = styles
@@ -15,7 +14,10 @@ export default customElements.define('create-maze',
 
             styles.use()
 
-            this.mouseMoveHandler = this.mouseMoveHandler.bind(this)
+            this.onMouseMoveHandler = this.onMouseMoveHandler.bind(this)
+            this.onOpenCustomMenuHandler = this.onOpenCustomMenuHandler.bind(this)
+            this.onSaveMazeHandler = this.onSaveMazeHandler.bind(this)
+            this.onResizersMovimentHandler = this.onResizersMovimentHandler.bind(this)
 
             this.state = {
                 maze: '',
@@ -24,23 +26,22 @@ export default customElements.define('create-maze',
             }
         }
 
-        connectedCallback() {
+        async connectedCallback() {
             if (!this.rendered) {
-                this.render()
+                await this.render()
                 this.rendered = true
             }
         }
 
         disconnectedCallback() {
-            const customToolbarMenu = document.querySelector('#customToolbarMenu')
-            customToolbarMenu.querySelector('blocks-toolbar').remove()
-            const customMenu = document.querySelector('#customMenu')
-            customMenu.innerHTML = ''
+            const headerNavigation = document.querySelector('header-navigation')
+            headerNavigation.removeCustomToolbarMenu()
+            headerNavigation.removeCustomMenu()
 
             this.removeEventsListener()
         }
 
-        mouseMoveHandler(event) {
+        onMouseMoveHandler(event) {
             const resizers = document.querySelectorAll(`.${ style.resizer }`)
             const tag = resizers[this.state.resizeSelected].classList[1].split('--')[1]
 
@@ -95,53 +96,77 @@ export default customElements.define('create-maze',
             this.update()
         }
 
-        addEventsListener() {
-            const resizers = document.querySelectorAll(`.${ style.resizer }`)
+        onOpenCustomMenuHandler(event) {
+            const scrollerVertical = document.querySelector('.scroller-vertical')
+            scrollerVertical.classList.toggle('scroller-vertical__disable')
+        }
 
-            resizers.forEach(resizer => {
-                resizer.addEventListener('mousedown', event => {
-                    event.preventDefault()
+        onSaveMazeHandler(event) {
+            const editableMaze = document.querySelector('editable-maze')
+            const inputName = document.querySelector('#inputName')
+            if (inputName.value != '') {
+                apiService.PostMaze(inputName.value, ' ', ' ', editableMaze.exportEncodedString())
+            }
+        }
 
-                    const tagResizer = event.target.classList[1].split('--')[1]
+        onResizersMovimentHandler(event) {
+            event.preventDefault()
 
-                    this.state = {
-                        ...this.state,
-                        resizeSelected: event.target.getAttribute('key'),
-                        initialPosition: tagResizer === 'bottom' ? event.pageY : event.pageX
-                    }
+            const tagResizer = event.target.classList[1].split('--')[1]
 
-                    window.addEventListener('mousemove', this.mouseMoveHandler)
-                    window.addEventListener('mouseup', () => {
-                        window.removeEventListener('mousemove', this.mouseMoveHandler)
-                        this.state = {
-                            ...this.state,
-                            resizeSelected: '',
-                            initialPosition: ''
-                        }
-                    })
-                })
-            })
+            this.state = {
+                ...this.state,
+                resizeSelected: event.target.getAttribute('key'),
+                initialPosition: tagResizer === 'bottom' ? event.pageY : event.pageX
+            }
 
-            const checkbox = document.getElementById('checkboxEdges')
-            checkbox.addEventListener('change', event => this.state.maze.changeVisibilityEdges())
-
-            const text = document.querySelector('#customMenu').querySelector('.icon')
-            text.addEventListener('click', () => {
-                const scrollerVertical = document.querySelector('.scroller-vertical')
-                scrollerVertical.classList.toggle('scroller-vertical__disable')
-                if (text.querySelector('span').innerText === 'menu') text.querySelector('span').innerText = 'close'
-                else text.querySelector('span').innerText = 'menu'
+            window.addEventListener('mousemove', this.onMouseMoveHandler)
+            window.addEventListener('mouseup', () => {
+                window.removeEventListener('mousemove', this.onMouseMoveHandler)
+                this.state = {
+                    ...this.state,
+                    resizeSelected: '',
+                    initialPosition: ''
+                }
             })
         }
 
+        addEventsListener() {
+            const resizers = document.querySelectorAll(`.${ style.resizer }`)
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', this.onResizersMovimentHandler)
+            })
+
+            const checkbox = document.querySelector('#checkboxEdges')
+            checkbox.addEventListener('change', () => {
+                this.state.maze.onChangeVisibilityEdges()
+            })
+
+            const customMenu = document.querySelector('#customMenu').querySelector('.icon')
+            customMenu.addEventListener('click', this.onOpenCustomMenuHandler)
+
+            const buttonSave = document.querySelector('#buttonSave')
+            buttonSave.addEventListener('click', this.onSaveMazeHandler)
+        }
+
         removeEventsListener() {
-            const checkbox = document.getElementById('checkboxEdges')
-            checkbox.removeEventListener('change', event => this.state.maze.changeVisibilityEdges())
+            const resizers = document.querySelectorAll(`.${ style.resizer }`)
+            resizers.forEach(resizer => {
+                resizer.removeEventListener('mousedown', this.onResizersMovimentHandler)
+            })
+        }
+
+        #createMenuIcon() {
+            return (`
+                <div class="icon">
+                    <span class="material-symbols-outlined">menu</span>
+                </div>
+            `)
         }
 
         #createPage() {
             return (`
-                <div class="wrapper_content">
+                <div class="${ style.wrapper_content }">
                     <editable-maze rows="${ DEFAULT_MAZE_ROWS }" columns="${ DEFAULT_MAZE_COLUMNS }" editable></editable-maze>
 
                     <div class="${ style.resizable }">
@@ -152,40 +177,36 @@ export default customElements.define('create-maze',
                         </div>
                     </div>
 
-                    <div class="scroller-vertical scroller-vertical__disable">
-                        <div class="scroller__title"><h4>Setup</h4></div>
+                    <div class="${ style['scroller-vertical'] } ${ style['scroller-vertical__disable'] }">
+                        <div class="${ style.scroller__title }"><h4>Setup</h4></div>
+                        
                         <div class="input-control">
                             <input id="inputName" type="text" name="input-name" placeholder=" " required />
                             <label for="inputName">Name maze</label>
                         </div>
                         <label class="form-control">
                             <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
-                            Bordas para limitar os blocos
+                            Borders to limit the blocks
                         </label>
                         <div class="input-control">
                             <input id="buttonSave" type="button" value="Save">
                         </div>
                     </div>
-                </div class="wrapper_content">
+                </div>
             `)
         }
 
-        render() {
-            const wrapperElement = document.createElement('div')
-            wrapperElement.innerHTML = this.#createPage()
-            const contentElements = [...wrapperElement.children]
-            contentElements.map(element => this.appendChild(element))
-
-            const customToolbarMenu = document.querySelector('#customToolbarMenu')
-            customToolbarMenu.innerHTML = `<blocks-toolbar></blocks-toolbar>`
-
-            const customMenu = document.querySelector('#customMenu')
-            customMenu.innerHTML = `<div class="icon"><span class="material-symbols-outlined">menu</span></div>`
+        async render() {
+            this.append(createElementFromHTML(this.#createPage()))
 
             this.state = {
                 ...this.state,
                 maze: document.querySelector('editable-maze')
             }
+
+            const headerNavigation = document.querySelector('header-navigation')
+            headerNavigation.addCustomToolbarMenu(document.createElement('blocks-toolbar'))
+            headerNavigation.addCustomMenu(createElementFromHTML(this.#createMenuIcon()))
 
             this.addEventsListener()
         }

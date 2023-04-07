@@ -1,4 +1,5 @@
 import { createElementFromHTML } from '../../utils/utils'
+import apiService from "../../services/api"
 
 import styles from './style.module.scss'
 const { locals: style } = styles
@@ -10,6 +11,9 @@ export default customElements.define('card-info',
             super(props)
 
             styles.use()
+
+            this.onPlayClickHandler = this.onPlayClickHandler.bind(this)
+            this.onLikeClickHandler = this.onLikeClickHandler.bind(this)
 
             this.state = {
                 id: this.getAttribute("data-id"),
@@ -30,29 +34,37 @@ export default customElements.define('card-info',
             this.removeEventsListener()
         }
 
+        onPlayClickHandler(event) { }
+
+        onLikeClickHandler(event) { }
+
         addEventsListener() {
+            this.querySelector(`#buttonPlay--${ this.state.id }`).addEventListener('click', this.onPlayClickHandler)
+            this.querySelector('#buttonLike').addEventListener('click', this.onLikeClickHandler)
         }
 
         removeEventsListener() {
+            this.querySelector(`#buttonPlay--${ this.state.id }`).removeEventListener('click', this.onPlayClickHandler)
+            this.querySelector('#buttonLike').removeEventListener('click', this.onLikeClickHandler)
         }
 
-        #createCard() {
+        #createdCard() {
             return(`
-            <div class="card-info" key="${ this.state.id }">
-                <div class="card__image"></div>
-                <div class="card__marker">
-                    <div class="marker__like">
+            <div class="${ style['card-info'] }">
+                <div class="${ style.card__image }"></div>
+                <div id="buttonLike" class="${ style.card__marker }">
+                    <div class="${ style.marker__like }">
                         <span class="material-symbols-outlined">favorite</span>
                     </div>
                 </div>
                 
-                <div class="card__description">
+                <div class="${ style.card__description }">
                     <h3>${ this.state.title }</h3>
-                    <p class="caption">${ this.state.likes } Likes - ${ this.state.views } Views</p>
+                    <p class="caption"><span id="likesNumber" class="caption">${ this.state.likes }</span> Likes - <span id="viewsNumber" class="caption">${ this.state.views }</span> Views</p>
                 
-                    <div class="card__button">
+                    <div class="${ style.card__button }">
                         <div class="input-control">
-                            <input id="buttonPlay" type="button" value="Play">
+                            <input id="buttonPlay--${ this.state.id }" type="button" value="Play">
                         </div>
                     </div>
                 </div>
@@ -61,7 +73,7 @@ export default customElements.define('card-info',
         }
 
         async render() {
-            this.append(createElementFromHTML(this.#createCard()))
+            this.append(createElementFromHTML(this.#createdCard()))
             this.addEventsListener()
         }
     })

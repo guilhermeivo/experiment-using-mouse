@@ -15,15 +15,8 @@ export default customElements.define('editable-maze',
 
             styles.use()
 
-            this.createLeftColumnHandler = this.createLeftColumnHandler.bind(this)
-            this.removeLeftColumnHandler = this.removeLeftColumnHandler.bind(this)
-            this.createRightColumnHandler = this.createRightColumnHandler.bind(this)
-            this.removeRightColumnHandler = this.removeRightColumnHandler.bind(this)
-            this.createRowHandler = this.createRowHandler.bind(this)
-            this.removeRowHandler = this.removeRowHandler.bind(this)
-
             this.updateMazeHandler = this.updateMazeHandler.bind(this)
-            this.changeVisibilityEdges = this.changeVisibilityEdges.bind(this)
+            this.onChangeVisibilityEdges = this.onChangeVisibilityEdges.bind(this)
             
             this.state = {
                 amountOfRows: this.getAttribute('rows') || SMALLEST_POSSIBLE_SIZE,
@@ -72,7 +65,7 @@ export default customElements.define('editable-maze',
                 for (let i = 0; i < this.state.tags.length; i++) 
                     await this.state.tags[i].sprite.initialize()
 
-                this.render()
+                await this.render()
                 this.rendered = true
             }
         }
@@ -95,17 +88,15 @@ export default customElements.define('editable-maze',
             })
         }
 
-        changeVisibilityEdges() {
+        onChangeVisibilityEdges(event) {
             this.state = { 
                 ...this.state, 
                 containsEdges: !this.state.containsEdges
             }
-            Array.from(document.querySelectorAll('.maze__block')).map(block => {
-                    block.classList.toggle('maze__block--not-edges')
-            })
+            this.update()
         }
 
-        createLeftColumnHandler(event) {
+        createLeftColumnHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) + 1
@@ -118,7 +109,7 @@ export default customElements.define('editable-maze',
             })
         }
 
-        removeLeftColumnHandler(event) {
+        removeLeftColumnHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) - 1
@@ -137,7 +128,7 @@ export default customElements.define('editable-maze',
             })
         }
 
-        createRightColumnHandler(event) {
+        createRightColumnHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) + 1
@@ -150,7 +141,7 @@ export default customElements.define('editable-maze',
             })
         }
 
-        removeRightColumnHandler(event) {
+        removeRightColumnHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.columns) - 1
@@ -169,7 +160,7 @@ export default customElements.define('editable-maze',
             })
         }
 
-        createRowHandler(event) {
+        createRowHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.rows) + 1
@@ -185,7 +176,7 @@ export default customElements.define('editable-maze',
             maze.append(line)
         }
 
-        removeRowHandler(event) {
+        removeRowHandler() {
             if (!this.state.editable) throw new Error('Disable maze edit mode.')
 
             const newValue = parseInt(this.rows) - 1
@@ -199,6 +190,14 @@ export default customElements.define('editable-maze',
                 this.state.blocks.splice(index, 1)
             })
             lastLine.remove()
+        }
+
+        exportEncodedString() {
+            const encodedString = this.state.blocks.map(block => {
+                return `${ block.position }-${ block.type }`
+            }).join(';')
+            
+            return encodedString
         }
 
         #createBlock(options) {
@@ -233,7 +232,15 @@ export default customElements.define('editable-maze',
             return element
         }
 
-        render() {
+        async render() {
             this.append(this.#createMaze())
+        }
+
+        update() {
+            if (!this.rendered) return
+            
+            Array.from(document.querySelectorAll('.maze__block')).map(block => {
+                block.classList.toggle('maze__block--not-edges')
+            })
         }
     })

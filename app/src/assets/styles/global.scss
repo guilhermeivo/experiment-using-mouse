@@ -242,23 +242,6 @@ img {
     margin: 0 auto;
 }
 
-.header-navigation {
-    width: 100%;
-    padding: 12px 32px;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    align-items: center;
-
-    .logo {
-        width: 100px;
-    }
-
-    & > div:last-child {
-        display: flex;
-        justify-content: end;
-    }
-}
-
 .content-main {
     display: grid;
     grid-template-columns: 1fr 332px;
