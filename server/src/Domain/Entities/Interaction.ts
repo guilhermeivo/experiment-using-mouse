@@ -2,9 +2,6 @@ import BaseEntity from "@Domain/Common/BaseEntity"
 
 export default interface Maze extends BaseEntity {
     sessionId: string
-    name: string
-    description?: string
-    createdOn?: Date
-    createdByIp?: string
-    encodedString: string
+    mazeId: string
+    type: string
 }

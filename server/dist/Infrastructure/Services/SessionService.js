@@ -60,6 +60,28 @@ class SessionService {
             }
         });
     }
+    static GetTokenSession(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield new Promise((resolve, reject) => {
+                    const sqlSelect = `select * from session
+                    where session.token = '${token}'`;
+                    Connection_1._context.serialize(() => {
+                        return Connection_1._context.get(sqlSelect, function (error, row) {
+                            if (error) {
+                                console.error(error.message);
+                                return reject(error.message);
+                            }
+                            return resolve(row);
+                        });
+                    });
+                });
+            }
+            catch (exception) {
+                return null;
+            }
+        });
+    }
 }
 exports.default = SessionService;
 //# sourceMappingURL=SessionService.js.map

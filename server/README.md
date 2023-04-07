@@ -66,5 +66,5 @@ HOSTNAME=HOSTNAME
 }
 ```
 
-## TODO: Connection, DBSet and SessionManager
-## TODO: Table MazeLikes and MazeViews
+## TODO: Connection and DBSet
+## TODO: Exceptions

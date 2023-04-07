@@ -15,16 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.migrate = exports.migrateAsync = void 0;
 const _01_create_mazes_1 = __importDefault(require("@Infrastructure/Persistence/migrations/01_create_mazes"));
 const _02_create_session_1 = __importDefault(require("@Infrastructure/Persistence/migrations/02_create_session"));
+const _03_create_interaction_1 = __importDefault(require("@Infrastructure/Persistence/migrations/03_create_interaction"));
 function migrateAsync() {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, _02_create_session_1.default)();
         yield (0, _01_create_mazes_1.default)();
+        yield (0, _03_create_interaction_1.default)();
     });
 }
 exports.migrateAsync = migrateAsync;
 function migrate() {
     (0, _02_create_session_1.default)();
     (0, _01_create_mazes_1.default)();
+    (0, _03_create_interaction_1.default)();
 }
 exports.migrate = migrate;
 //# sourceMappingURL=Migrate.js.map

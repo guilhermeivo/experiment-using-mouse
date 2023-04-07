@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.closeConnection = exports.openConnection = exports.Session = exports.Maze = exports._context = void 0;
+exports.closeConnection = exports.openConnection = exports.Interaction = exports.Maze = exports._context = void 0;
 const sqlite3_1 = require("sqlite3");
 const DBSet_1 = __importDefault(require("@Infrastructure/Persistence/DBSet"));
 require('dotenv').config();
 const sqlite3 = (0, sqlite3_1.verbose)();
 const databaseUrl = process.env.DATABASE_URL || '';
 exports.Maze = (0, DBSet_1.default)('mazes');
-exports.Session = (0, DBSet_1.default)('session');
+exports.Interaction = (0, DBSet_1.default)('interaction');
 function openConnection() {
     return __awaiter(this, void 0, void 0, function* () {
         if (exports._context)

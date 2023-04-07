@@ -1,9 +1,14 @@
-import Maze from "@Domain/Entities/Maze";
+import Interaction from "@Domain/Entities/Interaction";
+import EnumTypeInteractions from "@Domain/Enumerations/EnumTypeInteractions";
 
-export default function MazeAddViewEvent(maze: Maze): Maze {
-    let _maze = { ...maze }
-    if (_maze.views) _maze.views += 1
-    else _maze.views = 1
+export default function MazeAddViewEvent(ids: { sessionId: string, mazeId: string }): Interaction {
+    const { sessionId, mazeId } = ids
 
-    return _maze
+    const interaction: Interaction = {
+        sessionId: sessionId,
+        mazeId: mazeId,
+        type: EnumTypeInteractions.Visualized.toString()
+    }
+
+    return interaction
 }

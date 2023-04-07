@@ -12,17 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Connection_1 = require("@Infrastructure/Persistence/Connection");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const sqlCreate = `
-    create table if not exists mazes (
+    create table if not exists interaction (
         id integer primary key autoincrement,
         sessionId intenger,
-        name string not null,
-        description string,
-        createdByIp string,
-        encodedString string not null,
+        mazeId intenger,
+        type intenger,
         foreign key (sessionId)
             references session (id)
+        foreign key (mazeId)
+            references mazes (id)
     )`;
-    const sqlSelect = `select * from mazes`;
+    const sqlSelect = `select * from interaction`;
     Connection_1._context.serialize(() => {
         Connection_1._context.run(sqlCreate, (error) => {
             if (error) {
@@ -35,8 +35,8 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
             if (error) {
                 return console.error(error.message);
             }
-            console.log('Successfully created Mazes table.');
+            console.log('Successfully created Interaction table.');
         });
     });
 });
-//# sourceMappingURL=01_create_mazes.js.map
+//# sourceMappingURL=03_craete_interaction.js.map

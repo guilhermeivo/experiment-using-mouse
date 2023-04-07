@@ -1,4 +1,4 @@
-import Query from "./Interfaces/Query"
+import Query from "@Infrastructure/Common/Interfaces/Query"
 
 // cookie_1=value; cookie_2=value
 export default function CookieParser(cookieString: string): Query {

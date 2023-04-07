@@ -16,17 +16,23 @@ exports.AddLikeMazeCommandHandler = void 0;
 const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
 const Connection_1 = require("@Infrastructure/Persistence/Connection");
 const MazeAddLikeEvent_1 = __importDefault(require("@Domain/Events/MazeAddLikeEvent"));
+const EnumTypeInteractions_1 = __importDefault(require("@Domain/Enumerations/EnumTypeInteractions"));
 class AddLikeMazeCommandHandler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (!request.sessionId)
+                    throw new Error('Session invalid.');
                 if (!request.id)
-                    throw new Error('Need id to add.');
+                    throw new Error('Missing id.');
                 var maze = [...yield Connection_1.Maze.Where((x) => x.id == request.id)][0];
                 if (maze) {
-                    maze = (0, MazeAddLikeEvent_1.default)(maze);
-                    yield Connection_1.Maze.Update(maze, (x) => x.id == request.id);
-                    return new Response_1.default('Successfully added.', request.id);
+                    var foundInteractions = yield Connection_1.Interaction.Where((x) => x.mazeId == request.id && x.sessionId == request.sessionId && x.type == EnumTypeInteractions_1.default.Liked.toString());
+                    if (foundInteractions.length > 0)
+                        throw new Error('This session has already held a like in this maze.');
+                    const interaction = (0, MazeAddLikeEvent_1.default)({ sessionId: request.sessionId, mazeId: request.id });
+                    yield Connection_1.Interaction.Add(interaction);
+                    return new Response_1.default('Successfully added like.', request.id);
                 }
                 else {
                     throw new Error('Invalid id.');

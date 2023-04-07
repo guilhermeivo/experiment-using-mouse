@@ -1,9 +1,14 @@
-import Maze from "@Domain/Entities/Maze";
+import Interaction from "@Domain/Entities/Interaction";
+import EnumTypeInteractions from "@Domain/Enumerations/EnumTypeInteractions";
 
-export default function MazeAddLikeEvent(maze: Maze): Maze {
-    let _maze = { ...maze }
-    if (_maze.likes) _maze.likes += 1
-    else _maze.likes = 1
+export default function MazeAddLikeEvent(ids: { sessionId: string, mazeId: string }): Interaction {
+    const { sessionId, mazeId } = ids
 
-    return _maze
+    const interaction: Interaction = {
+        sessionId: sessionId,
+        mazeId: mazeId,
+        type: EnumTypeInteractions.Liked.toString()
+    }
+
+    return interaction
 }

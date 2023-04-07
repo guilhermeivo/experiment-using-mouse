@@ -19,22 +19,18 @@ class CreateMazeCommandHandler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!request.name || !request.encodedString || !request.sessionId)
-                    throw new Error('Missing values.');
-                const result = [...yield Connection_1.Session.Where((x) => x.token === request.sessionId)][0];
-                if (result.id) {
-                    let entity = {
-                        name: request.name,
-                        sessionId: result.id,
-                        description: request.description,
-                        encodedString: request.encodedString
-                    };
-                    const mazeId = yield Connection_1.Maze.Add(entity);
-                    return new Response_1.default('Created maze.', mazeId);
-                }
-                else {
+                if (!request.sessionId)
                     throw new Error('Session invalid.');
-                }
+                if (!request.name || !request.encodedString)
+                    throw new Error('Missing values.');
+                let entity = {
+                    name: request.name,
+                    sessionId: request.sessionId,
+                    description: request.description,
+                    encodedString: request.encodedString
+                };
+                const mazeId = yield Connection_1.Maze.Add(entity);
+                return new Response_1.default('Maze successfully created.', mazeId);
             }
             catch (exception) {
                 return new Response_1.default(exception.message);

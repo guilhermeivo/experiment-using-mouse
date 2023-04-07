@@ -19,10 +19,13 @@ exports.default = (request, response) => __awaiter(void 0, void 0, void 0, funct
     const cookies = (0, CookieParser_1.default)(request.headers.cookie || '');
     if (cookies['sessionId'] && (yield SessionService_1.default.ValidateTokenSession(cookies['sessionId']))) {
         if (!((_a = request.url) === null || _a === void 0 ? void 0 : _a.includes('sessionId'))) {
-            if ((_b = request.url) === null || _b === void 0 ? void 0 : _b.includes('?'))
-                request.url = request.url + '&sessionId=' + cookies['sessionId'];
-            else
-                request.url = request.url + '?sessionId=' + cookies['sessionId'];
+            const session = yield SessionService_1.default.GetTokenSession(cookies['sessionId']);
+            if (session) {
+                if ((_b = request.url) === null || _b === void 0 ? void 0 : _b.includes('?'))
+                    request.url = request.url + '&sessionId=' + session.id;
+                else
+                    request.url = request.url + '?sessionId=' + session.id;
+            }
         }
     }
 });

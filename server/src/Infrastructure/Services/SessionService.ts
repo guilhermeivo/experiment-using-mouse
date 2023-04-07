@@ -1,4 +1,4 @@
-import Session from '@Domain/Entities/Session'
+import Session from "@Infrastructure/Identity/ApplicationSession"
 import { _context } from '@Infrastructure/Persistence/Connection'
 
 export default abstract class SessionService {
@@ -49,6 +49,28 @@ export default abstract class SessionService {
             })
         } catch (exception: any) { 
             return false
+        }
+    }
+
+    public static async GetTokenSession(token: string): Promise<Session | null> {
+        try {
+            return await new Promise((resolve, reject) => {
+                const sqlSelect = `select * from session
+                    where session.token = '${ token }'`
+
+                _context.serialize(() => {
+                    return _context.get(sqlSelect, function(error, row: Session) {
+                        if (error) {
+                            console.error(error.message)
+                            return reject(error.message)
+                        }
+                        
+                        return resolve(row)
+                    })
+                })
+            })
+        } catch (exception: any) { 
+            return null
         }
     }
 }
