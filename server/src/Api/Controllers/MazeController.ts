@@ -5,9 +5,10 @@ import { GetAllMazeQuery, GetAllMazeQueryHadler } from '@Application/Maze/querie
 import { CreateMazeCommand, CreateMazeCommandHandler } from '@Application/Maze/commands/CreateMazeCommand'
 import { AddLikeMazeCommand, AddLikeMazeCommandHandler } from '@Application/Maze/commands/AddLikeMazeCommand'
 import { AddViewMazeCommand, AddViewMazeCommandHandler } from '@Application/Maze/commands/AddViewMazeCommand'
+import MazeDto from '@Application/Maze/queries/MazeDto'
 
 export default class MazeController {
-    async GetAll(request: GetAllMazeQuery): Promise<Response<Array<Maze>>> {
+    async GetAll(request: GetAllMazeQuery): Promise<Response<Array<MazeDto>>> {
         const response = await GetAllMazeQueryHadler.handle(request)
 
         if (response.Succeeded) {
@@ -16,7 +17,7 @@ export default class MazeController {
         return response
     }
 
-    async GetById(request: GetByIdMazeQuery): Promise<Response<Array<Maze>>> {
+    async GetById(request: GetByIdMazeQuery): Promise<Response<Array<MazeDto>>> {
         const response = await GetByIdMazeQueryHadler.handle(request)
         
         if (response.Succeeded) {

@@ -84,12 +84,17 @@ function DBSet(tableName) {
             });
         });
     });
+    const Count = (callbackWhere) => __awaiter(this, void 0, void 0, function* () {
+        const found = yield Where(callbackWhere);
+        return found.length.toString();
+    });
     return ({
         Find: () => Find(),
         Where: (callback) => Where(callback),
         Add: (entity) => Add(entity),
         Remove: () => { },
-        Update: (entity, callback) => Update(entity, callback)
+        Update: (entity, callback) => Update(entity, callback),
+        Count: (callback) => Count(callback)
     });
 }
 exports.default = DBSet;

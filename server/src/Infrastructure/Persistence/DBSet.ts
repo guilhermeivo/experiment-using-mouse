@@ -86,12 +86,19 @@ export default function DBSet<T extends object>(tableName: string) {
         })
     }
 
+    const Count = async (callbackWhere: Function): Promise<string> => {
+        const found = await Where(callbackWhere)
+
+        return found.length.toString()
+    }
+
     return ({
         Find: () => Find(),
         Where: (callback: Function) => Where(callback),
         Add: (entity: T) => Add(entity),
         Remove: () => { },
-        Update: (entity: T, callback: Function) => Update(entity, callback)
+        Update: (entity: T, callback: Function) => Update(entity, callback),
+        Count: (callback: Function) => Count(callback)
     })
 }
 

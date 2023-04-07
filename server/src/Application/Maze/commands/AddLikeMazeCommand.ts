@@ -11,7 +11,7 @@ export interface AddLikeMazeCommand {
 }
 
 export abstract class AddLikeMazeCommandHandler {
-    public static async handle(request: AddLikeMazeCommand) {
+    public static async handle(request: AddLikeMazeCommand): Promise<Response<string>> {
         try {
             if (!request.sessionId) throw new Error('Session invalid.')
             if (!request.id) throw new Error('Missing id.')

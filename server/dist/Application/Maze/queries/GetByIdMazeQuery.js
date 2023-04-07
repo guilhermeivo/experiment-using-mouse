@@ -15,13 +15,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetByIdMazeQueryHadler = void 0;
 const Response_1 = __importDefault(require("@Application/Common/Models/Response"));
 const Connection_1 = require("@Infrastructure/Persistence/Connection");
+const EnumTypeInteractions_1 = __importDefault(require("@Domain/Enumerations/EnumTypeInteractions"));
 class GetByIdMazeQueryHadler {
     static handle(request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (!request.sessionId)
+                    throw new Error('Session invalid.');
                 if (!request.id)
                     throw new Error('Need id maze to search.');
-                const result = yield Connection_1.Maze.Where((x) => x.id == request.id);
+                const listMaze = yield Connection_1.Maze.Where((x) => x.id == request.id);
+                const result = [];
+                yield Promise.all(listMaze.map((maze) => __awaiter(this, void 0, void 0, function* () {
+                    const amountLikes = yield Connection_1.Interaction.Count((x) => x.mazeId == maze.id && x.type == EnumTypeInteractions_1.default.Liked.toString());
+                    const amountViews = yield Connection_1.Interaction.Count((x) => x.mazeId == maze.id && x.type == EnumTypeInteractions_1.default.Visualized.toString());
+                    const isLiked = yield Connection_1.Interaction.Where((x) => x.mazeId == maze.id && x.sessionId == request.sessionId && x.type == EnumTypeInteractions_1.default.Liked.toString());
+                    const entity = {
+                        id: maze.id,
+                        name: maze.name,
+                        description: maze.description,
+                        like: amountLikes,
+                        view: amountViews,
+                        isLiked: isLiked.length ? true : false,
+                        createdOn: maze.createdOn,
+                        encodedString: maze.encodedString
+                    };
+                    result.push(entity);
+                })));
                 if (!result.length)
                     return new Response_1.default('Could not find a maze with that value.');
                 return new Response_1.default('Found maze with that value.', result);

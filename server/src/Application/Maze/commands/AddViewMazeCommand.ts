@@ -11,7 +11,7 @@ export interface AddViewMazeCommand {
 }
 
 export abstract class AddViewMazeCommandHandler {
-    public static async handle(request: AddViewMazeCommand) {
+    public static async handle(request: AddViewMazeCommand): Promise<Response<string>> {
         try {
             if (!request.sessionId) throw new Error('Session invalid.')
             if (!request.id) throw new Error('Missing id.')

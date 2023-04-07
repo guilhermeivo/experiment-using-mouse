@@ -10,7 +10,7 @@ export interface CreateMazeCommand {
 }
 
 export abstract class CreateMazeCommandHandler {
-    public static async handle(request: CreateMazeCommand) {
+    public static async handle(request: CreateMazeCommand): Promise<Response<string>> {
         try {
             if (!request.sessionId) throw new Error('Session invalid.')
             if (!request.name || !request.encodedString) throw new Error('Missing values.')
