@@ -70,20 +70,22 @@ export default function DBSet<T extends object>(tableName: string) {
         }).filter(Boolean)
 
         const setValues = Object.keys(newEntity).map((key, index) => `${ valuesName[index] } = ${ values[index] }`).filter(Boolean).join(', ')
+        
+        if (setValues) {
+            const sqlUpdate = `update ${ tableName } set ${ setValues } where ${ tableName }.rowid = '${ entity.id }'`
 
-        const sqlUpdate = `update ${ tableName } set ${ setValues } where ${ tableName }.rowid = '${ entity.id }'`
-
-        await new Promise((resolve, reject) => {
-            _context.serialize(() => {
-                return _context.run(sqlUpdate, function(error) {
-                    if (error) {
-                        console.error(error.message)
-                        return reject(error.message)
-                    }
-                    return resolve('')
+            await new Promise((resolve, reject) => {
+                _context.serialize(() => {
+                    return _context.run(sqlUpdate, function(error) {
+                        if (error) {
+                            console.error(error.message)
+                            return reject(error.message)
+                        }
+                        return resolve('')
+                    })
                 })
             })
-        })
+        }
     }
 
     const Count = async (callbackWhere: Function): Promise<string> => {
