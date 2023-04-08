@@ -2,7 +2,6 @@
 ```bash
 $ npm i dotenv
 $ npm i sqlite3
-$ npm i module-alias
 
 $ npm i -D @types/node
 $ npm i -D nodemon
