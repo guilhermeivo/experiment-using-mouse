@@ -1,4 +1,3 @@
-import 'module-alias/register'
 import app from '@Api/Common/Server'
 import router from '@Api/routes'
 import { openConnection } from '@Infrastructure/Persistence/Connection'
