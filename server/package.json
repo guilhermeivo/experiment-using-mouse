@@ -3,16 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/Api/index.js",
-  "_moduleAliases": {
-    "@Application": "dist/Application",
-    "@Domain": "dist/Domain",
-    "@Infrastructure": "dist/Infrastructure",
-    "@Api": "dist/Api"
-  },
   "scripts": {
-    "start": "tsc & node dist/Api/index.js",
+    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/Api/index.js",
     "start:dev": "npx nodemon",
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "author": "Guilherme Ivo",
   "license": "MIT",
@@ -25,7 +19,6 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "module-alias": "^2.2.2",
     "sqlite3": "^5.1.6"
   }
 }
