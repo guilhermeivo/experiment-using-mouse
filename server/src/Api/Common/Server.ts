@@ -19,7 +19,8 @@ export default abstract class Server {
             const headers = {
                 'Access-Control-Allow-Origin': this.corsConfigurations.origins,
                 'Access-Control-Allow-Methods': this.corsConfigurations.methods,
-                "Access-Control-Allow-Headers": this.corsConfigurations.headers,
+                'Access-Control-Allow-Headers': this.corsConfigurations.headers,
+                'Access-Control-Allow-Credentials': 'true',
                 'Access-Control-Max-Age': 2592000,
                 'Content-Type': 'application/json'
             }

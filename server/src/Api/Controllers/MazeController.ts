@@ -6,6 +6,7 @@ import { CreateMazeCommand, CreateMazeCommandHandler } from '@Application/Maze/c
 import { AddLikeMazeCommand, AddLikeMazeCommandHandler } from '@Application/Maze/commands/AddLikeMazeCommand'
 import { AddViewMazeCommand, AddViewMazeCommandHandler } from '@Application/Maze/commands/AddViewMazeCommand'
 import MazeDto from '@Application/Maze/queries/MazeDto'
+import { UpdateMazeCommand, UpdateMazeCommandHandler } from '@Application/Maze/commands/UpdateMazeCommand'
 
 export default class MazeController {
     async GetAll(request: GetAllMazeQuery): Promise<Response<Array<MazeDto>>> {
@@ -35,6 +36,16 @@ export default class MazeController {
         }
 
         return response   
+    }
+
+    async Update(request: UpdateMazeCommand): Promise<Response<string>> {
+        const response = await UpdateMazeCommandHandler.handle(request)
+
+        if (response.Succeeded) {
+            return response
+        }
+
+        return response  
     }
 
     async AddLikes(request: AddLikeMazeCommand): Promise<Response<string>> {
