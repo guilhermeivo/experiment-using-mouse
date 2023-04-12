@@ -1,0 +1,17 @@
+@import '../../assets/styles/variables';
+
+.wrapper {
+
+    .flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    a {
+        font-size: $h2-font-size;
+        border-radius: 8px;
+        padding: 12px 24px;
+        margin-right: 12px;
+    }
+}

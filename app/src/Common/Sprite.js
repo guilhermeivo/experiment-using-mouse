@@ -1,6 +1,4 @@
-import { uid } from './utils'
-
-const gridDimension = 32
+import { uid } from './common'
 
 export default class Sprite {
 
@@ -8,6 +6,7 @@ export default class Sprite {
         this.id = uid()
         this.sprites = config.sprites || { }
         this.imageSrc = config.src
+        this.gridDimension = config.gridDimension || 32
     }
 
     initialize() {
@@ -22,16 +21,16 @@ export default class Sprite {
                 this.isLoaded = true
                 resolve()
             }
-            this.image.onerror = e => {
-                reject(e)
+            this.image.onerror = event => {
+                reject(event)
             }
         })
     }
 
     drawImage(typeImage) {
         const canvas = document.createElement('canvas')
-        canvas.width = gridDimension
-        canvas.height = gridDimension
+        canvas.width = this.gridDimension
+        canvas.height = this.gridDimension
         const ctx = canvas.getContext("2d")
 
         let sx = this.sprites[typeImage][0], sy = this.sprites[typeImage][1]
@@ -45,10 +44,10 @@ export default class Sprite {
 
         this.isLoaded && ctx.drawImage(
             this.image, // image
-            sx * gridDimension, sy * gridDimension, // sx, sy
-            gridDimension, gridDimension, // sWidth, sHeight
+            sx * this.gridDimension, sy * this.gridDimension, // sx, sy
+            this.gridDimension, this.gridDimension, // sWidth, sHeight
             0, 0, // dx, dy
-            gridDimension, gridDimension) // dWidth, dHeight
+            this.gridDimension, this.gridDimension) // dWidth, dHeight
 
         return this.#convertCanvasToImage(canvas)
     }

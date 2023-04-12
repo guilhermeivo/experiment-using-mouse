@@ -6,9 +6,9 @@ export default class CustomCursor {
         this.focusElements = config.focusElements
         this.focusClass = config.focusClass
 
-        this.handleMouseMove = this.handleMouseMove.bind(this)
-        this.handleMouseEnter = this.handleMouseEnter.bind(this)
-        this.handleMouseLeave = this.handleMouseLeave.bind(this)
+        this.onMouseMove = this.onMouseMove.bind(this)
+        this.onMouseEnter = this.onMouseEnter.bind(this)
+        this.onMouseLeave = this.onMouseLeave.bind(this)
     }
 
     initialize() {
@@ -16,10 +16,10 @@ export default class CustomCursor {
 
         const customCursor = document.querySelector(this.element)
         customCursor.classList.add(this.initializedClass)
-        document.addEventListener('mousemove', this.handleMouseMove)
+        document.addEventListener('mousemove', this.onMouseMove)
     }
 
-    handleMouseMove(event) {
+    onMouseMove(event) {
         const customCursor = document.querySelector(this.element)
         customCursor.style.transform = `
             translate3d(
@@ -32,13 +32,13 @@ export default class CustomCursor {
             customCursor.classList.remove(this.disableClass)
     }
 
-    handleMouseEnter(event) {
+    onMouseEnter(event) {
         const customCursor = document.querySelector(this.element)
         if (!customCursor.classList.contains(this.focusClass))
             customCursor.classList.add(this.focusClass)
     }
 
-    handleMouseLeave(event) {
+    onMouseLeave(event) {
         const customCursor = document.querySelector(this.element)
         if (customCursor.classList.contains(this.focusClass))
             customCursor.classList.remove(this.focusClass)
@@ -47,33 +47,33 @@ export default class CustomCursor {
     enable() {
         const customCursor = document.querySelector(this.element)
         if (customCursor.classList.contains(this.disableClass))
-            document.addEventListener('mousemove', this.handleMouseMove)
+            document.addEventListener('mousemove', this.onMouseMove)
 
         document.querySelectorAll(...this.focusElements).forEach(element => {
-            element.addEventListener('mouseenter', this.handleMouseEnter)
-            element.addEventListener('mouseleave', this.handleMouseLeave)
+            element.addEventListener('mouseenter', this.onMouseEnter)
+            element.addEventListener('mouseleave', this.onMouseLeave)
         })
     }
 
     disable() {
         const customCursor = document.querySelector(this.element)
         if (!customCursor.classList.contains(this.disableClass)) {
-            document.removeEventListener('mousemove', this.handleMouseMove)
+            document.removeEventListener('mousemove', this.onMouseMove)
             customCursor.classList.add(this.disableClass)
         }
 
         document.querySelectorAll(...this.focusElements).forEach(element => {
-            element.removeEventListener('mouseenter', this.handleMouseEnter)
-            element.removeEventListener('mouseleave', this.handleMouseLeave)
+            element.removeEventListener('mouseenter', this.onMouseEnter)
+            element.removeEventListener('mouseleave', this.onMouseLeave)
         })
     }
 
     remove() {
-        document.removeEventListener('mousemove', this.handleMouseMove)
+        document.removeEventListener('mousemove', this.onMouseMove)
 
         document.querySelectorAll(...this.focusElements).forEach(element => {
-            element.removeEventListener('mouseenter', this.handleMouseEnter)
-            element.removeEventListener('mouseleave', this.handleMouseLeave)
+            element.removeEventListener('mouseenter', this.onMouseEnter)
+            element.removeEventListener('mouseleave', this.onMouseLeave)
         })
     }
 }

@@ -1,25 +1,23 @@
 ## Architecture
 - `app/`
+    - `public/`
     - `src/`
         - [Overview - Client side](#overview---client-side)
         - `assets/`
             - `images/`
             - `styles/`
-        - `components/`
+        - `Common/`
+        - `Components/`
             - `[ComponentName]`
                 - `index.js`
                 - `style.module.scss`
-        - `dist/`
-            - `bundle.min.js`
-        - `pages/`
+        - `Pages/`
             - `[PageName]`
                 - `index.js`
                 - `style.module.scss`
-        - `scripts/`
-            - `app.js`
-        - `services/`
-        - `utils/`
-        - `index.html`
+        - `Services/`
+        - `app.js`
+    - `index.html`
 - `server/`
     - [Overview - Server Side](#overview---server-side)
     - `dist/`

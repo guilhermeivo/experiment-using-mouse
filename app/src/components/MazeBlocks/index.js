@@ -1,8 +1,7 @@
-import tag from '../../utils/tags'
-import { createElementFromHTML, getAroundBlocks } from '../../utils/utils'
+import tag from '../../Common/tags'
+import { createElementFromHTML, getAroundBlocks } from '../../Common/common'
 
-import styles from './style.module.scss'
-const { locals: style } = styles
+import classes from './style.module.scss'
 
 export default customElements.define('maze-blocks', 
     class extends HTMLElement {
@@ -11,8 +10,6 @@ export default customElements.define('maze-blocks',
 
         constructor(...props) {
             super(props)
-
-            styles.use()
 
             this.onSelectedHandler = this.onSelectedHandler.bind(this)
             this.onMouseOverHandler = this.onMouseOverHandler.bind(this)
@@ -98,7 +95,7 @@ export default customElements.define('maze-blocks',
 
         #createdBlocks() {
             return (`
-                <div class="${ style.block__content }">
+                <div class="${ classes['block__content'] }">
                     <img src="" alt="">
                 </div>
             `)

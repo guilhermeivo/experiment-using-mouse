@@ -5,28 +5,6 @@ export function createElementFromHTML(htmlString) {
     return div.firstChild
 }
 
-export function getDirectoryAssetsPath(file, typeFile) {
-    let extension = ''
-    switch (typeFile) {
-        case 'image':
-            extension = '.png'
-            break;
-        case 'audio':
-            extension = '.mp3'
-            break;
-        case 'vector':
-            extension = '.svg'
-            break;
-        default:
-            extension = '.png'
-            break;
-    }
-
-    const directorPath = window.location.pathname + 'assets/images/' + file + extension
-    
-    return directorPath
-}
-
 export function getAroundBlocks(blocks, position) {
     const positionNumber = position.split(',').map(positionString => Number(positionString))
     const indexValuesX = [0, -1, +1, 0]

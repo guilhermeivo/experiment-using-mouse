@@ -69,9 +69,9 @@ div {
 }
 
 .land__link {
-    color: $primary-color--variant;
+    color: $primary-color;
     font-weight: $bold-font;
-    border-bottom: 1px solid $primary-color--variant;
+    border-bottom: 1px solid $primary-color;
     cursor: pointer;
     text-decoration: none
 }
@@ -81,6 +81,8 @@ div {
     font-family: $body-font;
     font-size: $body-2-font-size;
     color: $medium-emphasis-color;
+    border-radius: 2px;
+    margin: 6px 0;
 
     input[type="text"] {
         border-radius: 2px;
@@ -119,9 +121,13 @@ div {
             background: $background-color;
         }
 
-        &:not(:placeholder-shown),
-        &:not(:placeholder-shown) + label {
+        &:not(:placeholder-shown) {
             background: $background-color;
+        }
+
+        &:not(:placeholder-shown):not(:focus) + label {
+            background: $background-color;
+            color: $disabled-color;
         }
     }
 
@@ -131,14 +137,15 @@ div {
         position: absolute;
         border-radius: 2px;
         left: 16px;
-        top: 10px;
+        top: 6px;
         color: $disabled-color;
         font-size: $body-2-font-size;
         transition: .2s cubic-bezier(1, 0, 1, 1);
         user-select: none;
     }
 
-    input[type="button"] {
+    input[type="button"],
+    a {
         font-family: $title-font;
         width: 100%;
         border-radius: 2px;
@@ -147,6 +154,7 @@ div {
         padding: 4px 12px;
         transition: .2s cubic-bezier(1, 0, 1, 1);
         outline: 3px solid transparent;
+        text-decoration: none;
 
         &:focus {
             transition: .2s ease-in;
@@ -167,6 +175,13 @@ div {
     color: $medium-emphasis-color;
     display: flex;
     align-items: center;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+
+    &:hover {
+        background: $surface-color--variant;
+    }
 
     input[type="checkbox"] {
         appearance: none;
@@ -228,8 +243,7 @@ div {
 
 body {
     min-height: 100vh;
-    
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 img {
@@ -238,57 +252,37 @@ img {
 
 .container-wrapper {
     position: relative;
+    padding: 0 32px;
     max-width: 1280px;
     margin: 0 auto;
 }
 
-.content-main {
-    display: grid;
-    grid-template-columns: 1fr 332px;
+.header-navigation {
     width: 100%;
-    height: 100vh;
+    padding: 12px 32px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
 
-    & > section {
-        overflow: hidden;
-        position: relative;
+    & > div:last-child {
+        display: flex;
+        justify-content: end;
     }
-    
-    & > aside {
-        padding: 12px 32px;
-        position: relative;
-        overflow: hidden;
 
-        .scroller-cards {
-            max-height: calc(100vh - 24px);
-            overflow-y: auto;
-
-            &::-webkit-scrollbar {
-                width: 8px;
-            }
-               
-            &::-webkit-scrollbar-thumb {
-                background: $background-color;
-                border: 1px solid $border-color;
-                box-shadow: 0px 4px 16px $shadow-color;
-                border-radius: 16px;
-                cursor: pointer;
-
-                &:hover {
-                    box-shadow: 0px 4px 16px $shadow-color;
-                    border: 1px solid $primary-color;
-                }
-            }
-
-            &::before {
-                content: '';
-                position: absolute;
-                height: 10px;
-                width: 252px;
-                box-shadow: 0 0 32px rgba(0, 0, 0, 0.675);
-                bottom: -12px;
-            }
+    .back-menu {
+        &.back-menu--disabled > div {
+            transition: none;
+            display: none;
+            pointer-events: none;
         }
     }
+}
+
+main#app {
+    height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .footer-main {
@@ -296,4 +290,49 @@ img {
     position: absolute;
     bottom: 4px;
     width: 100%;
+}
+
+.transitionAnimation {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    height: 100vh;
+    width: 100%;
+    background: $primary-color;
+    z-index: 10000;
+}
+
+.transitionAnimation--left {
+    animation: transitionAnimation--left 850ms ease-in-out;
+    animation-delay: 300ms
+}
+
+@keyframes transitionAnimation--left {
+    0% {
+        left: 100%;
+    }
+    45%, 55% {
+        left: 0;
+    }
+    100% {
+        left: -100%;
+    }
+}
+
+.transitionAnimation--right {
+    animation: transitionAnimation--right 850ms ease-in-out;
+    animation-delay: 300ms
+}
+
+@keyframes transitionAnimation--right {
+    0% {
+        left: -100%;
+    }
+    45%,
+    55% {
+        left: 0;
+    }
+    100% {
+        left: 100%;
+    }
 }

@@ -1,31 +1,31 @@
-import tag from '../../utils/tags'
-import CustomCursor from '../../utils/CustomCursor'
-import { createElementFromHTML, getDirectoryAssetsPath } from '../../utils/utils'
+import classes from './style.module.scss'
+import tags from '../../Common/tags'
+import CustomCursor from '../../Common/CustomCursor'
+import CheeseIcon from '../../assets/images/CheeseIcon.png'
+import MouseIcon from '../../assets/images/MouseIcon.png'
+import PathIcon from '../../assets/images/PathIcon.png'
+import WallIcon from '../../assets/images/WallIcon.png'
+import { createElementFromHTML } from '../../Common/common'
 
-import styles from './style.module.scss'
-const { locals: style } = styles
+const images = { CheeseIcon, MouseIcon, PathIcon, WallIcon }
 
-export default customElements.define('blocks-toolbar',
+export default customElements.define('blocks-toolbar', 
     class extends HTMLElement {
-        
         constructor(...props) {
             super(props)
 
-            styles.use()
-
-            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
-
             this.state = {
-                items: tag.allowedTags(),
+                items: tags.allowedTags(),
                 selectedItem: -1
             }
+
+            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
         }
 
-        async connectedCallback() {
+        connectedCallback() {
             if (!this.rendered) {
-                await this.render()
+                this.render()
                 this.rendered = true
-                this.state.customCursor.initialize()
             }
         }
 
@@ -39,16 +39,16 @@ export default customElements.define('blocks-toolbar',
             switch (event.key) {
                 case 'Escape':
                     event.preventDefault()
-                    this.unselectedItemHadler()
+                    this.unselectedItemHandler()
                     break
             }
         }
 
-        unselectedItemHadler() {
+        unselectedItemHandler() {
             if (this.state.selectedItem < 0) return
 
-            const itemsToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
-            itemsToolbar[this.state.selectedItem].classList.remove(style['toolbar__item--selected'])
+            const itemsToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
+            itemsToolbar[this.state.selectedItem].classList.remove(classes['toolbar__item--selected'])
             this.state = { 
                 ...this.state, 
                 selectedItem: -1
@@ -58,10 +58,10 @@ export default customElements.define('blocks-toolbar',
         }
 
         onSelectedItemHadler(event, key) {
-            const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
+            const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
 
             if (this.state.selectedItem >= 0) 
-                itemToolbar[this.state.selectedItem].classList.remove(style['toolbar__item--selected'])
+                itemToolbar[this.state.selectedItem].classList.remove(classes['toolbar__item--selected'])
 
             if (this.state.selectedItem != key) {
                 this.state = { 
@@ -69,12 +69,12 @@ export default customElements.define('blocks-toolbar',
                     selectedItem: key
                 }
     
-                itemToolbar[this.state.selectedItem].classList.add(style['toolbar__item--selected'])
+                itemToolbar[this.state.selectedItem].classList.add(classes['toolbar__item--selected'])
                 this.state.customCursor.enable()
 
                 const item = this.state.items[this.state.selectedItem]
-                const cursorImage = this.querySelector(`.${ style.custom_cursor }`).querySelector('img')
-                cursorImage.src = getDirectoryAssetsPath(item.icon, 'image')
+                const cursorImage = this.querySelector(`.${ classes['custom_cursor'] }`).querySelector('img')
+                cursorImage.src = images[item.icon]
             } else {
                 this.state = { 
                     ...this.state, 
@@ -85,7 +85,7 @@ export default customElements.define('blocks-toolbar',
         }
 
         addEventsListener() {
-            const itemToolbar = this.querySelectorAll(`.${ style.toolbar__item }`)
+            const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
             this.state.items.map((item, key) => {
                 itemToolbar[key].addEventListener('click', event => {
                     this.onSelectedItemHadler(event, key)
@@ -101,7 +101,7 @@ export default customElements.define('blocks-toolbar',
 
         #createCursorItem() {
             return(`
-                <div class="${ style.custom_cursor }">
+                <div class="${ classes['custom_cursor'] }">
                     <img src="" />
                 </div>
             `)
@@ -109,7 +109,7 @@ export default customElements.define('blocks-toolbar',
 
         #createBlocksToolbar() {
             return (`
-                <div class="${ style.toolbar }">
+                <div class="${ classes['toolbar'] }">
                     ${
                         this.state.items.map((item, key) => {
                             const selectedItem = this.state.selectedItem
@@ -124,34 +124,31 @@ export default customElements.define('blocks-toolbar',
         #createItemsHandler(key, isSelected, item) {
             return (`
                 <div
-                    class="${ style.toolbar__item } ${ isSelected ? style['toolbar__item--selected'] : '' }"
+                    class="${ classes['toolbar__item'] } ${ isSelected ? classes['toolbar__item--selected'] : '' }"
                     key="${ key }"
                     role="button"
                     tabIndex="0"
                     title="${ item.label }"
                 >
-                    <img src="${ getDirectoryAssetsPath(item.icon, 'image') }" alt="${ item.id }">
+                    <img src="${ images[item.icon] }" alt="${ item.id }">
                 </div>
             `)
         }
 
-        async render() {
+        render() {
             this.append(createElementFromHTML(this.#createBlocksToolbar()))
             this.appendChild(createElementFromHTML(this.#createCursorItem()))
             this.addEventsListener()
 
             this.state = {
                 ...this.state,
-                customCursor: new CustomCursor(`.${ style.custom_cursor }`, { 
-                    disableClass: style['custom_cursor--disable'],
-                    initializedClass: style['custom_cursor--initialized'],
+                customCursor: new CustomCursor(`.${ classes['custom_cursor'] }`, { 
+                    disableClass: classes['custom_cursor--disable'],
+                    initializedClass: classes['custom_cursor--initialized'],
                     focusElements: [ 'maze-blocks' ],
-                    focusClass: style['custom_cursor--focused']
+                    focusClass: classes['custom_cursor--focused']
                 })
             }
-        }
-
-        update() {
-            
+            this.state.customCursor.initialize()
         }
     })

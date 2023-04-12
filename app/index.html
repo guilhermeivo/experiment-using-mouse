@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Experiment Using Mouse">
+    <link rel="icon" href="./favicon.ico"> 
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./src/assets/styles/reset.scss">
+    <link rel="stylesheet" href="./src/assets/styles/global.scss">
+    
+    <title>Experiment Using Mouse 🖱️</title>
+</head>
+<body>
+    <nav id="headerNavigation" class="header-navigation container-wrapper">
+        <div id="backMenu" class="back-menu back-menu--disabled">
+            <div class="icon" onclick="history.back()">
+                <span class="material-symbols-outlined">
+                    chevron_left
+                </span>
+            </div>
+        </div>
+        <div id="toolbarMenu" class="toolbar-menu"></div>
+        <div id="floatingMenu" class="floating-menu">
+            <div class="icon">
+                <span class="material-symbols-outlined">menu</span>
+            </div>
+
+            <floating-vertical></floating-vertical>
+        </div>
+    </nav>
+
+    <main id="app" class="container-wrapper"></main>
+
+    <footer class="footer-main">
+        <p class="caption">created by <a href="https://github.com/guilhermeivo" class="land__link caption">guilhermeivo</a> ❤️</p>
+    </footer>
+
+    <div id="transitionAnimation" class="transitionAnimation"></div>
+
+    <script type="module" src="src/app.js"></script>
+
+    <noscript>script type is not supported by the page or scripting is disabled in browser.</noscript>
+
+    <!-- Gabizinha ❤️🥄 -->
+</body>
+</html>

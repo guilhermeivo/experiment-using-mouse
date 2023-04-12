@@ -1,16 +1,16 @@
 import Sprite from './Sprite'
-import { getDirectoryAssetsPath } from './utils'
+import FileMapImage from '../assets/images/FileMap.png'
 
 const tags = (() => {
     const allowedTags = [
         { 
             id: 'path', 
             icon: 'PathIcon', 
-            label: 'Caminho', 
-            description: 'Construir conjunto de percursos intricados.', 
+            label: 'Path', 
+            description: 'Build set of intricate pathways.', 
             unique: false,
             sprite: new Sprite({
-                src: getDirectoryAssetsPath('FileMap', 'image'),
+                src: FileMapImage,
                 sprites: {
                     'grass-variants': [ [ 0, 2 ], [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 4, 2 ], [ 5, 2 ], [ 6, 2 ], [ 7, 2 ] ]
                 }
@@ -18,11 +18,11 @@ const tags = (() => {
         }, { 
             id: 'wall', 
             icon: 'WallIcon', 
-            label: 'Muro', 
-            description: 'Obstaculos difucultando o percuso do personagem.', 
+            label: 'Wall', 
+            description: 'Obstacles hindering the characters path.', 
             unique: false,
             sprite: new Sprite({
-                src: getDirectoryAssetsPath('FileMap', 'image'),
+                src: FileMapImage,
                 sprites: {
                     'wall-edge': [ 0, 0 ],
                     'wall-edge-left': [ 1, 0 ],
@@ -85,11 +85,11 @@ const tags = (() => {
         }, { 
             id: 'mouse', 
             icon: 'MouseIcon', 
-            label: 'Rato', 
-            description: 'Personagem que busca a saída incerta do labirinto (entrada).', 
+            label: 'Mouse', 
+            description: 'Character who seeks the uncertain exit from the labyrinth (entrance).', 
             unique: true,
             sprite: new Sprite({
-                src: getDirectoryAssetsPath('FileMap', 'image'),
+                src: FileMapImage,
                 sprites: {
                     'mouse-variants': [ [ 0, 3 ] ]
                 }
@@ -97,11 +97,11 @@ const tags = (() => {
         }, { 
             id: 'cheese', 
             icon: 'CheeseIcon', 
-            label: 'Queijo', 
-            description: 'Objetivo final do rato (saída).', 
+            label: 'Cheese', 
+            description: 'Mouses final goal (exit).', 
             unique: true ,
             sprite: new Sprite({
-                src: getDirectoryAssetsPath('FileMap', 'image'),
+                src: FileMapImage,
                 sprites: {
                     'cheese-variants': [ [ 0, 4 ] ]
                 }
@@ -114,9 +114,6 @@ const tags = (() => {
     return {
         allowedTags: () => {
             return allowedTags
-        },
-        notAllowedTags: () => {
-            return notAllowedTags
         }
     }
 })()
