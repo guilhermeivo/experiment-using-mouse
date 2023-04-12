@@ -1,0 +1,84 @@
+@import '../../assets/styles/variables';
+
+.card-info {
+    width: 252px;
+    height: 265px;
+    background: $background-color;
+    border-radius: 12px;
+    border: 1px solid $border-color;
+    box-shadow: 0px 4px 16px $shadow-color;
+    overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
+
+    .card__marker {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        display: flex;
+        align-items: top;
+        justify-content: right;
+
+        .marker__like {
+            background: $background-color;
+            border-radius: 12px;
+            border: 1px solid $border-color;
+            color: $medium-emphasis-color;
+            margin: 20px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+
+            span {
+                font-size: $caption-font-size;
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+                transition: .2s cubic-bezier(1, 0, 1, 1);
+            }
+              
+            &:hover span {
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48
+            }
+
+            &.marker__like--liked span {
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+                color: $error-color;
+            }
+        }
+    }
+
+    .card__image {
+        width: 100%;
+        height: 50%;
+        background-image: url(../../assets/images/DefaultMap.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 125%;
+        filter: opacity(80%);
+    }
+
+    .card__description {
+        margin: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: space-around;
+
+        h3 {
+            margin: 0;
+            color: $high-emphasis-color;
+        }
+
+        p {
+            margin: 0;
+            color: $medium-emphasis-color;
+        }
+    }
+
+    .card__button {
+        margin-top: 15px;
+        width: 70%;
+    }
+}
