@@ -11,6 +11,8 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 ## TODO
 - [ ] Add name attribute for updating mazes
 - [ ] Add play page
+- [ ] Customize client-side TransitionPages class
+- [ ] Run tests
 
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
