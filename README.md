@@ -13,9 +13,10 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 - [ ] Add play page
 - [ ] Customize client-side TransitionPages class
 - [ ] Run tests
+- [ ] Creating logging
 - [ ] Best practices - frontend performance
 - [ ] Best practices - API security
-- [ ] create documentation for architecture
+- [ ] Create documentation for architecture
 
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
