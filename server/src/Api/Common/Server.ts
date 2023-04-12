@@ -31,7 +31,7 @@ export default abstract class Server {
             
             this.routes.map(async (route) => {
                 const urlComponents = UrlParser(request.url || '')
-
+                
                 switch (route.typeRequest) {
                     case TypesRequests.Route:
                         if (urlComponents.path.substring(0, urlComponents.path.lastIndexOf('/')) === route.url && 

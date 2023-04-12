@@ -14,7 +14,7 @@ routes.put('/account/remove', (query, request, response) => accountController.Re
 routes.get('/api/maze', (request) => mazeController.GetAll(request))
 routes.get('/api/maze/{id}', (request) => mazeController.GetById(request))
 routes.post('/api/maze', (request) => mazeController.Create(request))
-routes.put('/api/maze/{id}', (request) => mazeController.Update(request))
+routes.post('/api/maze/{id}', (request) => mazeController.Update(request))
 routes.put('/api/maze/addLikes/{id}', (request) => mazeController.AddLikes(request))
 routes.put('/api/maze/addViews/{id}', (request) => mazeController.AddViews(request))
 

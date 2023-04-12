@@ -10,7 +10,7 @@ const HOSTNAME = process.env.HOSTNAME || '127.0.0.1'
 
 if (process.env.NODE_ENV === 'DEVELOPMENT') {
     app.useCors({
-        origins: 'http://127.0.0.1:5500',
+        origins: 'http://localhost:5173',
         headers: '*',
         methods: '*'
     })
