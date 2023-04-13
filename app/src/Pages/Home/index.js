@@ -30,4 +30,8 @@ export default customElements.define('home-page',
             </div>
             `
         }
+
+        update() {
+            
+        }
     })

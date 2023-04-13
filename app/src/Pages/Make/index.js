@@ -171,9 +171,7 @@ export default customElements.define('make-page',
             })
 
             const checkbox = document.querySelector('#checkboxEdges')
-            checkbox.addEventListener('change', () => {
-                this.state.maze.onChangeVisibilityEdges()
-            })
+            checkbox.addEventListener('change', this.state.maze.onChangeVisibilityEdges)
 
             const buttonCreate = document.querySelector('#buttonCreate')
             if (buttonCreate) {
@@ -207,23 +205,22 @@ export default customElements.define('make-page',
             return (`
                 <div id="wrapperMaze">
                     <div class="input-control">
-                        <input id="inputName" type="text" name="input-name" placeholder=" " required />
+                        <input type="text" name="inputName" id="inputName" placeholder=" " autocomplete="off" required />
                         <label for="inputName">Name maze</label>
                     </div>
-                    <label class="form-control">
-                        <input id="checkboxEdges" type="checkbox" name="checkbox-checked" checked />
-                        Borders to limit the blocks
-                    </label>
+                    <div class="form-control">
+                        <input type="checkbox" name="checkboxEdges" id="checkboxEdges" checked />
+                        <label for="checkboxEdges">Borders to limit the blocks</label>
+                    </div>
                     ${
                         this.state.idMaze
                             ? `<div class="input-control">
-                                <button id="buttonSave" class="button button__secondary button__submit">Save</button>
+                                <button id="buttonSave" class="button button--small button__secondary button__submit">Save</button>
                               </div>`
                             : `<div class="input-control">
-                                <button id="buttonCreate" class="button button__secondary">Create</button>
+                                <button id="buttonCreate" class="button button--small button__secondary">Create</button>
                               </div>`
                     }
-                    
                 </div>
             `)
         }
@@ -236,8 +233,7 @@ export default customElements.define('make-page',
                     <div class="${ classes['resizable'] }">
                         <div class="${ classes['resizable__resizers'] }">
                             <div class="${ classes['resizer'] } ${ classes['resizer--right'] }" key="0"></div>
-                            <div class="${ classes['resizer'] } ${ classes['resizer--left'] }" key="1"></div>
-                            <div class="${ classes['resizer'] } ${ classes['resizer--bottom'] }" key="2"></div>
+                            <div class="${ classes['resizer'] } ${ classes['resizer--bottom'] }" key="1"></div>
                         </div>
                     </div>
                 </div>
@@ -273,8 +269,8 @@ export default customElements.define('make-page',
 
         update() {
             if (!this.rendered) return
-            
-            const resizable = document.querySelector(`.${ classes.resizable__resizers }`)
+
+            const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
             
             resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
             resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'

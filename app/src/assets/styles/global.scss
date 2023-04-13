@@ -141,7 +141,6 @@ div {
         color: $disabled-color;
         font-size: $body-2-font-size;
         transition: .2s cubic-bezier(1, 0, 1, 1);
-        user-select: none;
     }    
 }
 
@@ -327,7 +326,7 @@ main#app {
 }
 
 .button--small {
-    padding: 4px 12px;
+    padding: 8px 12px;
     border-radius: 2px;
     font-size: 0.875rem;
 }

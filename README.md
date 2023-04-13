@@ -10,7 +10,6 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 
 ## TODO
 - [ ] Add play page
-- [ ] Customize client-side TransitionPages class
 - [ ] Run tests
 - [ ] Creating logging
 - [ ] Best practices - frontend performance

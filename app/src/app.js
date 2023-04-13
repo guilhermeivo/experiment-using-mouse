@@ -20,9 +20,9 @@ import TransitionPages from "./Common/TransitionPages"
 
     // set system routes in application
     new Router({
-        '/': { name: 'Home', nameTag: 'home-page', defaultRoute: true, transition: transition.transitionLeft },
-        '/make': { name: 'Make', nameTag: 'make-page', transition: transition.transitionRight },
-        '/play': { name: 'Play', nameTag: 'play-page', transition: transition.transitionRight },
+        '/': { name: 'Home', nameTag: 'home-page', defaultRoute: true, transition: transition.wipeLeft },
+        '/make': { name: 'Make', nameTag: 'make-page', transition: transition.wipeRight },
+        '/play': { name: 'Play', nameTag: 'play-page', transition: transition.wipeRight },
         404: { name: '404', nameTag: 'error-page' }
     }).initialize()
 

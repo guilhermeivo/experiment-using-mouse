@@ -184,6 +184,7 @@ export default customElements.define('editable-maze',
             const lastLine = this.querySelector(`.${ classes['maze'] }`).lastChild
             Array.from(lastLine.children).forEach(block => {
                 const find = this.state.blocks.find(element => element.id === block.id)
+
                 const index = this.state.blocks.indexOf(find)
                 this.state.blocks.splice(index, 1)
             })
@@ -202,12 +203,15 @@ export default customElements.define('editable-maze',
             encodedString.split(';').map(block => {
                 this.state.blocks.push({ id: uid(), type: block.split('-')[1], position: block.split('-')[0] })
             })
+
+            const lastBlock = this.state.blocks[this.state.blocks.length - 1]
+            this.#rows = Number(lastBlock.position.split(',')[0]) + 1
+            this.#columns = Number(lastBlock.position.split(',')[1]) + 1
         }
 
         #createBlock(options) {
             if (this.state.encodedString) {
                 const foundBlock = this.state.blocks.find(block => block.position === options.position)
-                this.state.blocks.push({ id: foundBlock.id, type: foundBlock.type, position: foundBlock.position})
 
                 return createElementFromHTML(`
                     <maze-blocks 
@@ -224,7 +228,7 @@ export default customElements.define('editable-maze',
 
                 block.id = uid()
                 this.state.blocks.push({ id: block.id, type: block.state.type, position: options.position })
-
+                
                 return block
             }
         }
@@ -246,25 +250,23 @@ export default customElements.define('editable-maze',
                 }
                 element.append(line)
             }
-
+            this.state.encodedString = undefined
             return element
         }
 
         async render() {
             if (this.state.encodedString) {
                 this.importEncodedString(this.state.encodedString)
-                const lastBlock = this.state.blocks[this.state.blocks.length - 1]
-                this.append(this.#createMaze(Number(lastBlock.position.split(',')[0]) + 1, Number(lastBlock.position.split(',')[1]) + 1))
-            } else {
-                this.append(this.#createMaze(this.state.amountOfRows, this.state.amountOfColumns))
             }
+
+            this.append(this.#createMaze(this.state.amountOfRows, this.state.amountOfColumns))
         }
 
         update() {
             if (!this.rendered) return
             
-            Array.from(document.querySelectorAll('.maze__block')).map(block => {
-                block.classList.toggle('maze__block--not-edges')
+            Array.from(document.querySelectorAll(`.${ classes['maze__block'] }`)).map(block => {
+                block.classList.toggle(classes['maze__block--not-edges'])
             })
         }
     })

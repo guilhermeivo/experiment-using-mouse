@@ -31,8 +31,8 @@ editable-maze {
         width: 64px;
         height: 64px;
         border: 1px solid $primary-color;
-        z-index: 999;
         overflow: hidden;
+        z-index: 999;
 
         &.maze__block--not-edges {
             border: none;

@@ -3,7 +3,7 @@ export default class TransitionPages {
         this.element = element
     }
 
-    transitionLeft() {
+    transitionWipeLeft() {
         return new Promise(resolve => {
             const transition = document.querySelector('.transitionAnimation')
             transition.classList.toggle('transitionAnimation--left')
@@ -16,7 +16,7 @@ export default class TransitionPages {
         })
     }
 
-    transitionRight() {
+    transitionWipeRight() {
         return new Promise(resolve => {
             const transition = document.querySelector('.transitionAnimation')
             transition.classList.toggle('transitionAnimation--right')

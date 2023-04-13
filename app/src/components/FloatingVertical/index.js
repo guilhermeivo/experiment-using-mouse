@@ -43,13 +43,13 @@ export default customElements.define('floating-vertical',
                 isOpen: !this.querySelector('#floatingVertical').classList.contains(classes['floating-vertical__disable']) 
             }
             
-            if (this.state.isOpen) {
+            /*if (this.state.isOpen) {
                 setTimeout(() => {
                     window.addEventListener('click', this.onClickOutside)
                 }, 1)
             } else {
                 window.removeEventListener('click', this.onClickOutside)
-            }
+            }*/
         }
 
         render() {
