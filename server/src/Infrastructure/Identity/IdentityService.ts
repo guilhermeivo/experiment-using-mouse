@@ -12,7 +12,7 @@ export default abstract class IdentityService {
         }
 
         const token = await SessionService.CreateTokenSession()
-        response.setHeader('Set-Cookie', `sessionId=${ token }; Path=/; HttpOnly; `)
+        response.setHeader('Set-Cookie', `sessionId=${ token }; Path=/; HttpOnly; Secure; SameSite=None`)
         
         return new Response<string>('Successfully registered session', token)
     }

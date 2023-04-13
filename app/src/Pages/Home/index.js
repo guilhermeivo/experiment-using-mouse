@@ -21,10 +21,10 @@ export default customElements.define('home-page',
                 <h1>Experiment Using Mouse 🖱️</h1>
                 <div class="${ classes['flex'] }">
                     <div class="input-control">
-                        <a href="/make" data-link>Make</a>
+                        <a href="/make" class="button button__secondary" data-link>Make</a>
                     </div>
                     <div class="input-control">
-                        <a href="/play" data-link>Play</a>
+                        <a href="/play" class="button button__primary" data-link>Play</a>
                     </div>
                 </div>
             </div>

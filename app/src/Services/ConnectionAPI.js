@@ -48,7 +48,6 @@ export default (() => {
                     throw new Error(response.Message)
                 }
             } catch (exception) {
-                console.error(exception.message)
                 reject(exception.message)
             }
         })

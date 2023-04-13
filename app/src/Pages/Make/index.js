@@ -5,6 +5,9 @@ import classes from './style.module.scss'
 const DEFAULT_MAZE_ROWS = 8
 const DEFAULT_MAZE_COLUMNS = 8
 
+const TIME_SHOWING_MESSAGE = 1000
+const MINIMUM_TIME_WAIT = 1000
+
 export default customElements.define('make-page', 
     class extends HTMLElement {
         constructor(...props) {
@@ -129,8 +132,35 @@ export default customElements.define('make-page',
         }
 
         async onSaveMazeHandler(event) {
-            await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), this.state.maze.exportEncodedString())
-            document.location.reload()
+            const targetClass = event.target.classList
+            if (targetClass.contains('button__submit--active') || targetClass.contains('button__submit--done') || targetClass.contains('button__submit--error')) return
+            
+            targetClass.add('button__submit--active')
+
+            Promise.all([new Promise(async (resolve, reject) => {
+                try {
+                    await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), this.state.maze.exportEncodedString())
+                    resolve()
+                } catch {
+                    reject()
+                }
+            }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
+            .then(() => {
+                targetClass.remove('button__submit--active')
+                targetClass.add('button__submit--done')
+
+                setTimeout(() => {
+                    targetClass.remove('button__submit--done')
+                }, TIME_SHOWING_MESSAGE)
+            })
+            .catch(() => {
+                targetClass.remove('button__submit--active')
+                targetClass.add('button__submit--error')
+
+                setTimeout(() => {
+                    targetClass.remove('button__submit--error')
+                }, TIME_SHOWING_MESSAGE)
+            })
         }
 
         addEventsListener() {
@@ -186,10 +216,10 @@ export default customElements.define('make-page',
                     ${
                         this.state.idMaze
                             ? `<div class="input-control">
-                                <input id="buttonSave" type="button" value="Save">
+                                <button id="buttonSave" class="button button__secondary button__submit">Save</button>
                               </div>`
                             : `<div class="input-control">
-                                <input id="buttonCreate" type="button" value="Create">
+                                <button id="buttonCreate" class="button button__secondary">Create</button>
                               </div>`
                     }
                     
