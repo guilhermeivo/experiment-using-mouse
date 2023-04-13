@@ -20,8 +20,8 @@ export default (() => {
         return httpConnection(path, 'POST')
     }
 
-    const UpdateMaze = (id, encodedString) => {
-        const path = `${ urlServer }/api/maze/${ id }?encodedString=${ encodedString }`
+    const UpdateMaze = (id, name, encodedString) => {
+        const path = `${ urlServer }/api/maze/${ id }?name=${ name }&encodedString=${ encodedString }`
         
         return httpConnection(path, 'POST')
     }

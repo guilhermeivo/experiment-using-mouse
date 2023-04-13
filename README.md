@@ -9,7 +9,6 @@
 Project initially thought to build a graphic part of the exercise number `9.2` of the USP IME college's list of exercises for Computer Science ([link](https://www.ime.usp.br/~macmulti/caderno-exercicios-versao2005.pdf) to list of exercises), where the challenge is to help a mouse find a piece of cheese in a maze.
 
 ## TODO
-- [ ] Add name attribute for updating mazes
 - [ ] Add play page
 - [ ] Customize client-side TransitionPages class
 - [ ] Run tests

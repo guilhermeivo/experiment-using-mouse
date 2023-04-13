@@ -3,7 +3,7 @@ import MazeEntity from '@Domain/Entities/Maze'
 import { Maze } from '@Infrastructure/Persistence/Connection'
 
 export interface CreateMazeCommand {
-    name: string,
+    name: string
     description: string
     encodedString: string
     sessionId: string

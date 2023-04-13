@@ -139,7 +139,8 @@ export default customElements.define('make-page',
 
             Promise.all([new Promise(async (resolve, reject) => {
                 try {
-                    await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), this.state.maze.exportEncodedString())
+                    const inputName = document.querySelector('#inputName')
+                    await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
                     resolve()
                 } catch {
                     reject()
