@@ -1,4 +1,4 @@
-import { createElementFromHTML } from '../../Common/common'
+import { createElementFromHTML, importEncodedStringMaze } from '../../Common/common'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 import classes from './style.module.scss'
 
@@ -241,6 +241,7 @@ export default customElements.define('make-page',
         }
 
         async render() {
+            var encodedMaze
             const floatingVertical = document.querySelector('floating-vertical')
             floatingVertical.addContentElement({ title: 'Maze Configurations', element: createElementFromHTML(this.#sectionScrollerMenu())})
 
@@ -254,10 +255,16 @@ export default customElements.define('make-page',
                 this.append(createElementFromHTML(this.#createPage()))
             } else {
                 const response = await ConnectionAPI.GetMazeById(this.state.idMaze)
+                encodedMaze = importEncodedStringMaze(response[0].encodedString)
                 const inputName = document.querySelector('#inputName')
                 inputName.value = response[0].name
                 this.append(createElementFromHTML(this.#createPage(response[0].encodedString)))
             }
+
+            const lastBlock = encodedMaze[encodedMaze.length - 1]
+            const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
+            resizable.style.width = ((Number(lastBlock.position.split(',')[1]) + 1) * 66) + 'px'
+            resizable.style.height = ((Number(lastBlock.position.split(',')[0]) + 1) * 66) + 'px'
 
             this.state = {
                 ...this.state,
@@ -271,8 +278,9 @@ export default customElements.define('make-page',
             if (!this.rendered) return
 
             const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
-            
-            resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
-            resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
+            if (resizable) {
+                resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
+                resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
+            }
         }
     })

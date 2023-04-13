@@ -10,6 +10,7 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 
 ## TODO
 - [ ] Add play page
+- [ ] Error messages
 - [ ] Run tests
 - [ ] Creating logging
 - [ ] Best practices - frontend performance

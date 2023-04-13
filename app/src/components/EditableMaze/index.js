@@ -1,5 +1,5 @@
 import tag from '../../Common/tags'
-import { createElementFromHTML, getAroundBlocks, uid } from '../../Common/common'
+import { createElementFromHTML, exportEncodedStringMaze, getAroundBlocks, importEncodedStringMaze, uid } from '../../Common/common'
 
 import classes from './style.module.scss'
 
@@ -192,17 +192,11 @@ export default customElements.define('editable-maze',
         }
 
         exportEncodedString() {
-            const encodedString = this.state.blocks.map(block => {
-                return `${ block.position }-${ block.type }`
-            }).join(';')
-            
-            return encodedString
+            return exportEncodedStringMaze(this.state.blocks)
         }
 
         importEncodedString(encodedString) {
-            encodedString.split(';').map(block => {
-                this.state.blocks.push({ id: uid(), type: block.split('-')[1], position: block.split('-')[0] })
-            })
+            this.state.blocks = [...importEncodedStringMaze(encodedString)]
 
             const lastBlock = this.state.blocks[this.state.blocks.length - 1]
             this.#rows = Number(lastBlock.position.split(',')[0]) + 1

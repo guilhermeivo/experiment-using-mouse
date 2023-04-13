@@ -28,3 +28,24 @@ export function getAroundBlocks(blocks, position) {
 export function uid() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2)
 }
+
+export function exportEncodedStringMaze(blocks) {
+    if (!blocks) throw new Error('Missing blocks.')
+
+    const encodedString = blocks.map(block => {
+        return `${ block.position }-${ block.type }`
+    }).join(';')
+    
+    return encodedString
+}
+
+export function importEncodedStringMaze(encodedString) {
+    if (!encodedString) throw new Error('Missing encodedString.')
+
+    const blocks = []
+    encodedString.split(';').map(block => {
+        blocks.push({ id: uid(), type: block.split('-')[1], position: block.split('-')[0] })
+    })
+    
+    return blocks
+}
