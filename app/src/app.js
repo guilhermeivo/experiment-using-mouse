@@ -7,6 +7,7 @@ import "./Components/FloatingVertical"
 import "./Components/EditableMaze"
 import "./Components/MazeBlocks"
 import "./Components/CardInfo"
+import "./Components/MessageInfo"
 
 import Router from "./Services/Router"
 import ConnectionAPI from "./Services/ConnectionAPI"

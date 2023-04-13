@@ -2,16 +2,21 @@ const urlServer = 'http://127.0.0.1:8000'
 
 export default (() => {
     const Register = (callback) => {
-        const path = `${ urlServer }/account/register`
-        const client = new XMLHttpRequest()
-        client.onreadystatechange = () => {
-            if (client.readyState == XMLHttpRequest.DONE) {
-                callback(JSON.parse(client.responseText))
+        try {
+            const path = `${ urlServer }/account/register`
+            const client = new XMLHttpRequest()
+            client.onreadystatechange = () => {
+                if (client.readyState == XMLHttpRequest.DONE) {
+                    callback(JSON.parse(client.responseText))
+                }
             }
+            client.open('POST', path, false)
+            client.withCredentials = true
+            client.send()
+        }  catch {
+            const message = document.querySelector('message-info')
+            message.addMessageInfo({ description: 'Error when trying to connect to the server, probably the server is off.', type: 'warn' })
         }
-        client.open('POST', path, false)
-        client.withCredentials = true
-        client.send()
     }
 
     const CreateMaze = (name, encodedString, description = '') => {
@@ -48,6 +53,9 @@ export default (() => {
                     throw new Error(response.Message)
                 }
             } catch (exception) {
+                const message = document.querySelector('message-info')
+                message.addMessageInfo({ description: exception.message, type: 'warn' })
+
                 reject(exception.message)
             }
         })

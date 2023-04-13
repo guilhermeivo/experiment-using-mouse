@@ -82,7 +82,22 @@ div {
     font-size: $body-2-font-size;
     color: $medium-emphasis-color;
     border-radius: 2px;
-    margin: 6px 0;
+
+    .error-message {
+        opacity: 0;
+        transition: .2s ease-in-out;
+        color: $error-color;
+    }
+
+    &.input-control--error {
+        .error-message {
+            opacity: 1;
+        }
+
+        input[type="text"] {
+            border: 1px solid $error-color;
+        }
+    }
 
     input[type="text"] {
         border-radius: 2px;

@@ -125,43 +125,62 @@ export default customElements.define('make-page',
 
         async onCreateMazeHandler(event) {
             const inputName = document.querySelector('#inputName')
-            const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportEncodedString())
-            localStorage.setItem('mazeId', response)
-            event.target.removeEventListener('click', this.onCreateMazeHandler)
-            document.location.reload()
+
+            if (inputName.value) {
+                const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportEncodedString())
+                localStorage.setItem('mazeId', response)
+                event.target.removeEventListener('click', this.onCreateMazeHandler)
+                document.location.reload()
+            } else {
+                if (!inputName.parentElement.classList.contains('input-control--error')) {
+                    inputName.parentElement.classList.add('input-control--error')
+                    setTimeout(() => {
+                        inputName.parentElement.classList.remove('input-control--error')
+                    }, 5000)
+                }
+            }            
         }
 
         async onSaveMazeHandler(event) {
             const targetClass = event.target.classList
             if (targetClass.contains('button__submit--active') || targetClass.contains('button__submit--done') || targetClass.contains('button__submit--error')) return
-            
-            targetClass.add('button__submit--active')
 
-            Promise.all([new Promise(async (resolve, reject) => {
-                try {
-                    const inputName = document.querySelector('#inputName')
-                    await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
-                    resolve()
-                } catch {
-                    reject()
+            const inputName = document.querySelector('#inputName')
+
+            if (inputName.value) {
+                targetClass.add('button__submit--active')
+                Promise.all([new Promise(async (resolve, reject) => {
+                    try {
+                        await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
+                        resolve()
+                    } catch {
+                        reject()
+                    }
+                }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
+                .then(() => {
+                    targetClass.remove('button__submit--active')
+                    targetClass.add('button__submit--done')
+    
+                    setTimeout(() => {
+                        targetClass.remove('button__submit--done')
+                    }, TIME_SHOWING_MESSAGE)
+                })
+                .catch(() => {
+                    targetClass.remove('button__submit--active')
+                    targetClass.add('button__submit--error')
+    
+                    setTimeout(() => {
+                        targetClass.remove('button__submit--error')
+                    }, TIME_SHOWING_MESSAGE)
+                })
+            } else {
+                if (!inputName.parentElement.classList.contains('input-control--error')) {
+                    inputName.parentElement.classList.add('input-control--error')
+                    setTimeout(() => {
+                        inputName.parentElement.classList.remove('input-control--error')
+                    }, 5000)
                 }
-            }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
-            .then(() => {
-                targetClass.remove('button__submit--active')
-                targetClass.add('button__submit--done')
-
-                setTimeout(() => {
-                    targetClass.remove('button__submit--done')
-                }, TIME_SHOWING_MESSAGE)
-            })
-            .catch(() => {
-                targetClass.remove('button__submit--active')
-                targetClass.add('button__submit--error')
-
-                setTimeout(() => {
-                    targetClass.remove('button__submit--error')
-                }, TIME_SHOWING_MESSAGE)
-            })
+            }
         }
 
         addEventsListener() {
@@ -207,6 +226,7 @@ export default customElements.define('make-page',
                     <div class="input-control">
                         <input type="text" name="inputName" id="inputName" placeholder=" " autocomplete="off" required />
                         <label for="inputName">Name maze</label>
+                        <p class="caption error-message">Missing name maze</p>
                     </div>
                     <div class="form-control">
                         <input type="checkbox" name="checkboxEdges" id="checkboxEdges" checked />
@@ -259,12 +279,12 @@ export default customElements.define('make-page',
                 const inputName = document.querySelector('#inputName')
                 inputName.value = response[0].name
                 this.append(createElementFromHTML(this.#createPage(response[0].encodedString)))
-            }
 
-            const lastBlock = encodedMaze[encodedMaze.length - 1]
-            const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
-            resizable.style.width = ((Number(lastBlock.position.split(',')[1]) + 1) * 66) + 'px'
-            resizable.style.height = ((Number(lastBlock.position.split(',')[0]) + 1) * 66) + 'px'
+                const lastBlock = encodedMaze[encodedMaze.length - 1]
+                const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
+                resizable.style.width = ((Number(lastBlock.position.split(',')[1]) + 1) * 66) + 'px'
+                resizable.style.height = ((Number(lastBlock.position.split(',')[0]) + 1) * 66) + 'px'
+            }
 
             this.state = {
                 ...this.state,
