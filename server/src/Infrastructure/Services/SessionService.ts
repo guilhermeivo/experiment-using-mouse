@@ -1,6 +1,5 @@
 import Session from "@Infrastructure/Identity/ApplicationSession"
 import { _context } from '@Infrastructure/Persistence/Connection'
-import { resolve } from "path"
 
 export default abstract class SessionService {
     public static async CreateTokenSession(): Promise<string> {

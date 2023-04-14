@@ -6,9 +6,9 @@ import Session from "@Infrastructure/Identity/ApplicationSession"
 export default async (request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>) => {
     const cookies = CookieParser(request.headers.cookie || '')
 
-    if (cookies['sessionId'] && await SessionService.ValidateTokenSession(cookies['sessionId'])) { 
+    if (cookies['SessionId'] && await SessionService.ValidateTokenSession(cookies['SessionId'])) { 
         if (!request.url?.includes('sessionId')) {
-            const session: Session | null = await SessionService.GetTokenSession(cookies['sessionId'])
+            const session: Session | null = await SessionService.GetTokenSession(cookies['SessionId'])
 
             if (session) {
                 if (request.url?.includes('?')) request.url = request.url + '&sessionId=' + session.id

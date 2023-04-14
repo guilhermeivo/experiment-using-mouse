@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'DEVELOPMENT') {
     })
 } else {
     app.useCors({
-        origins: 'https://guilhermeivo.github.io/experiment-using-mice',
+        origins: 'LINK_ORIGIN',
         headers: '*',
         methods: '*'
     })

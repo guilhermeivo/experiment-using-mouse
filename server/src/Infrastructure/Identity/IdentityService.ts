@@ -7,12 +7,12 @@ export default abstract class IdentityService {
     public static async RegisterAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<string>> {
         const cookies = CookieParser(request.headers.cookie || '')
 
-        if (cookies['sessionId'] && await SessionService.ValidateTokenSession(cookies['sessionId'])) { 
-            return new Response<string>('Session is already registered.', cookies['sessionId'])
+        if (cookies['SessionId'] && await SessionService.ValidateTokenSession(cookies['SessionId'])) { 
+            return new Response<string>('Session is already registered.', cookies['SessionId'])
         }
 
         const token = await SessionService.CreateTokenSession()
-        response.setHeader('Set-Cookie', `__Host-SessionId=${ token }; Path=/; HttpOnly; Secure; SameSite=None`)
+        response.setHeader('Set-Cookie', `__Secure-SessionId=${ token }; Path=/; HttpOnly; Secure; SameSite=None`)
         
         return new Response<string>('Successfully registered session', token)
     }
@@ -20,9 +20,9 @@ export default abstract class IdentityService {
     public static async AuthenticateAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<boolean>> {
         const cookies = CookieParser(request.headers.cookie || '')
 
-        if (!cookies['sessionId']) return new Response<boolean>('Unregistered user')
+        if (!cookies['SessionId']) return new Response<boolean>('Unregistered user')
         
-        const validateToken: boolean = await SessionService.ValidateTokenSession(cookies['sessionId'])
+        const validateToken: boolean = await SessionService.ValidateTokenSession(cookies['SessionId'])
 
         return new Response<boolean>('Session authenticated successfully.', validateToken)
     }
@@ -30,7 +30,7 @@ export default abstract class IdentityService {
     public static async RemoveAsync(request: http.IncomingMessage, response: http.ServerResponse<http.IncomingMessage>): Promise<Response<boolean>> {
         const cookies = CookieParser(request.headers.cookie || '')
 
-        if (!cookies['sessionId']) return new Response<boolean>('Unregistered user')
+        if (!cookies['SessionId']) return new Response<boolean>('Unregistered user')
 
         const revokeToken = await SessionService.RevokeTokenSession(cookies['sessionId'])
         
