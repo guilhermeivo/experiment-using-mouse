@@ -31,9 +31,9 @@ import TransitionPages from "./Common/TransitionPages"
 
     window.onload = () => {
         // set token id in session for authentication
-        if(!localStorage.getItem('sessionToken')) {
+        if(!sessionStorage .getItem('sessionToken')) {
             ConnectionAPI.Register((data) => {
-                localStorage.setItem('sessionToken', data.Data)
+                sessionStorage .setItem('sessionToken', data.Data)
             })
         }
 
@@ -50,7 +50,7 @@ import TransitionPages from "./Common/TransitionPages"
                             type="text" 
                             name="input-name" 
                             placeholder=" " 
-                            value="${ localStorage.getItem('sessionToken') }" 
+                            value="${ sessionStorage .getItem('sessionToken') }" 
                             disabled />
                         <label for="inputToken">Token session</label>
                         <span class="${ classesForms['form__error-message'] }"></span>

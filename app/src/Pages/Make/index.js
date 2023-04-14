@@ -22,7 +22,7 @@ export default customElements.define('make-page',
             this.onSaveMazeHandler = this.onSaveMazeHandler.bind(this)
 
             this.state = {
-                idMaze: localStorage.getItem('mazeId') || '',
+                idMaze: sessionStorage.getItem('mazeId') || '',
                 maze: '',
                 resizeSelected: '',
                 initialPosition: ''
@@ -136,7 +136,7 @@ export default customElements.define('make-page',
                 try {
                     const inputName = document.querySelector('#inputName')
                     const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportEncodedString())
-                    localStorage.setItem('mazeId', response)
+                    sessionStorage.setItem('mazeId', response)
                     document.location.reload()
                 } catch { }
             }     
@@ -155,11 +155,11 @@ export default customElements.define('make-page',
             if (isValid) {
                 const inputName = document.querySelector('#inputName')
                 
-                // TODO: animate class
+                // TODO: animate classs 
                 targetClass.add(classesForms['button__submit--active'])
                 Promise.all([new Promise(async (resolve, reject) => {
                     try {
-                        await ConnectionAPI.UpdateMaze(localStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
+                        await ConnectionAPI.UpdateMaze(sessionStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
                         resolve()
                     } catch (exception) {
                         reject()
