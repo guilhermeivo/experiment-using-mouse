@@ -9,6 +9,8 @@ import "./Components/MazeBlocks"
 import "./Components/CardInfo"
 import "./Components/MessageInfo"
 
+import classesForms from "./assets/styles/forms_controls.module.scss"
+
 import Router from "./Services/Router"
 import ConnectionAPI from "./Services/ConnectionAPI"
 import { createElementFromHTML } from "./Common/common"
@@ -41,9 +43,18 @@ import TransitionPages from "./Common/TransitionPages"
         floatingMenu.addEventListener('click', () => { floatingVertical.toggle() })
         floatingVertical.addContentElement({ title: 'Session', element: createElementFromHTML(`
             <div id="wrapperSession">
-                <div class="input-control">
-                    <input id="inputToken" type="text" name="input-name" placeholder=" " value="${ localStorage.getItem('sessionToken') }" disabled />
-                    <label for="inputToken">Token session</label>
+                <div class="${ classesForms['form-controls'] }">
+                    <div class="${ classesForms['form__text-control'] }">
+                        <input 
+                            id="inputToken" 
+                            type="text" 
+                            name="input-name" 
+                            placeholder=" " 
+                            value="${ localStorage.getItem('sessionToken') }" 
+                            disabled />
+                        <label for="inputToken">Token session</label>
+                        <span class="${ classesForms['form__error-message'] }"></span>
+                    </div>
                 </div>
             </div>
         `)})

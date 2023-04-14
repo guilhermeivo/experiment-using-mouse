@@ -30,8 +30,4 @@ export default customElements.define('play-page',
             if (backMenu.classList.contains('back-menu--disabled')) 
                 backMenu.classList.remove('back-menu--disabled')
         }
-
-        update() {
-            
-        }
     })

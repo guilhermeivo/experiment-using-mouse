@@ -1,0 +1,291 @@
+@import 'variables.scss';
+
+.form-controls {
+    position: relative;
+    font-family: $body-font;
+    font-size: $body-2-font-size;
+    color: $medium-emphasis-color;
+    border-radius: 2px;
+
+    .form__text-control {
+        padding: 0 12px;
+        margin-bottom: 12px;
+
+        label {
+            background: $background-color;
+            color: $disabled-color;
+            font-size: $body-2-font-size;
+            padding: 0 4px;
+            position: absolute;
+            border-radius: 2px;
+            left: 16px;
+            top: 6px;
+            transition: .2s cubic-bezier(1, 0, 1, 1);
+        }
+
+        .form__error-message {
+            display: block;
+            opacity: 0;
+            transition: .2s ease-in-out;
+            color: $error-color;
+            font-size: $caption-font-size;
+            width: 100%;
+        }
+
+        &.form__text-control--error {
+            .form__error-message {
+                opacity: 1;
+            }
+
+            input[type="text"] {
+                border: 1px solid $error-color;
+            }
+        }
+
+        input[type="text"] {
+            width: 100%;
+            border-radius: 2px;
+            background: $background-color;
+            border: 1px solid $border-color;
+            outline: 3px solid transparent;
+            padding: 4px 12px;
+            transition: .2s cubic-bezier(1, 0, 1, 1);
+
+            &:focus {
+                border: 1px solid $primary-color;
+                transition: .2s ease-in;
+                outline: 3px solid $primary-color--variant;
+            }
+    
+            &:hover {
+                transition: .2s ease-in;
+                box-shadow: 0px 4px 16px $shadow-color;
+                background: $surface-color--variant;
+            }
+    
+            &:hover + label {
+                background: $surface-color--variant;
+            }
+    
+            &:focus + label,
+            &:not(:placeholder-shown) + label {
+                top: -12px;
+                color: $primary-color;
+                transition: .2s ease-in;
+                font-size: $caption-font-size;
+            }
+    
+            &:focus,
+            &:focus + label {
+                background: $background-color;
+            }
+    
+            &:not(:placeholder-shown) {
+                background: $background-color;
+            }
+    
+            &:not(:placeholder-shown):not(:focus) + label {
+                background: $background-color;
+                color: $disabled-color;
+            }
+
+            &:disabled {
+                color: $disabled-color;
+            }
+        }
+    }
+
+    .form__checkbox-control {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 0 12px;
+
+        &:hover {
+            background: $surface-color--variant;
+        }
+        
+        input[type="checkbox"] {
+            appearance: none;
+            margin: 0;
+            font: inherit;
+            color: $medium-emphasis-color;;
+            width: 1.15em;
+            height: 1.15em;
+            border: 0.15em solid $border-color;
+            border-radius: 0.15em;
+            display: grid;
+            place-content: center;
+            margin-right: 0.60em;
+    
+            &::before {
+                content: '';
+                width: 0.65em;
+                height: 0.65em;
+                transform: scale(.7);
+                opacity: 0;
+                transition: 120ms transform cubic-bezier(1, 0, 1, 1);
+                box-shadow: inset 1em 1em $primary-color;
+            }
+    
+            &:checked::before {
+                content: '';
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    }
+
+    .form__button-control {
+        input[type="button"], a, .button {
+            font-size: $body-2-font-size;
+            position: relative;
+        }
+    }
+}
+
+input[type="button"],
+.button {
+    position: relative;
+    font-size: $body-font-size;
+    font-family: $title-font;
+    text-decoration: none;
+    width: 100%;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: .2s cubic-bezier(1, 0, 1, 1);
+
+    &.button--small {
+        padding: 8px 12px;
+        border-radius: 2px;
+        font-size: $body-2-font-size;
+    }
+
+    &.button__primary {
+        background: $background-color;
+        border: 1px solid $primary-color;
+        outline: 3px solid transparent;
+
+        &:focus {
+            transition: .2s ease-in;
+            outline: 3px solid $primary-color--variant;
+        }
+    
+        &:hover {
+            transition: .2s ease-in;
+            box-shadow: 0px 4px 16px $shadow-color;
+            background: $surface-color--variant;
+        }
+    }
+
+    &.button__secondary {
+        color: $background-color;
+        background: $primary-color;
+        border: none;
+        outline: 3px solid transparent;
+
+        &:focus {
+            transition: .2s ease-in;
+            outline: 3px solid $primary-color--variant;
+        }
+    
+        &:hover {
+            transition: .2s ease-in;
+            opacity: .7;
+            box-shadow: 0px 4px 16px $shadow-color;
+        }
+    }
+
+
+    &.button__submit {
+        &::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: transparent;
+            width: 16px;
+            height: 16px;
+            border: 4px solid $background-color;
+            border-top: 4px solid transparent;
+            border-radius: 100%;   
+            opacity: 0;
+        }
+
+        &::after {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;  
+        }
+
+        &.button__submit--active,
+        &.button__submit--done,
+        &.button__submit--error {
+            color: transparent;
+        }
+
+        &.button__submit--active::before {
+            animation: loading 1s infinite ease-in-out;
+            transition-delay: .25s;
+            opacity: 1;
+        }
+
+        &.button__submit--done::after {
+            content: '';
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 16px;
+            height: 8px;
+            border: 4px solid $background-color;
+            border-right: 0;
+            border-top: 0;
+            opacity: 1;
+            transition: .2s cubic-bezier(1, 0, 1, 1);
+        }
+
+        &.button__submit--error {
+            transition: none;
+            background: $error-color;
+            animation: vibrate 1s ease-in-out;
+
+            &::after {
+                content: '!';
+                opacity: 1;
+                font-size: 1.25rem;
+                left: 50%;
+                top: 40%;
+                transform: translate(-50%, -50%);
+                width: 16px;
+                height: 16px;
+                color: $background-color;
+                transition: .2s cubic-bezier(1, 0, 1, 1);
+            }
+
+            &:focus {
+                outline: none
+            }
+        }
+
+        @keyframes loading {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    
+        @keyframes vibrate {
+            0%, 30%, 60%, 85%, 100% { 
+                transform: translateX(0);
+            }
+            10%, 40%, 90%, 70% { 
+                transform: translateX(-2px);
+            }
+            20%, 50%, 80%, 95% { 
+                transform: translateX(2px);
+            }
+        }
+    }
+}
