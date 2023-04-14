@@ -26,16 +26,14 @@ export default function DBSet<T extends object>(tableName: string) {
         }).filter(Boolean).join(', ')
 
         const values = Object.keys(entity).map((key, index) => {
-            if (entity[key as keyof typeof entity] && typeof entity[key as keyof typeof entity] === 'string')
-                return `'${ entity[key as keyof typeof entity] }'`
-            else return entity[key as keyof typeof entity]
-        }).filter(Boolean).join(', ')
+            if (entity[key as keyof typeof entity]) return entity[key as keyof typeof entity]
+        }).filter(Boolean)
 
-        const sqlInsert = `insert into ${ tableName } (${ valuesName }) values (${ values })`
-        
+        const sqlInsert = `insert into ${ tableName } (${ valuesName }) values (${ values.map(() => '?').filter(Boolean) })`
+
         return await new Promise((resolve, reject) => {
             _context.serialize(() => {
-                return _context.run(sqlInsert, function(error) {
+                return _context.run(sqlInsert, [...values], function(error) {
                     if (error) {
                         console.error(error.message)
                         return reject(error.message)
@@ -64,19 +62,17 @@ export default function DBSet<T extends object>(tableName: string) {
         }).filter(Boolean)
 
         const values = Object.keys(newEntity).map((key, index) => {
-            if (newEntity[key as keyof typeof newEntity] && typeof newEntity[key as keyof typeof newEntity] === 'string')
-                return `'${ newEntity[key as keyof typeof newEntity] }'`
-            else return newEntity[key as keyof typeof newEntity]
+            if (newEntity[key as keyof typeof newEntity]) return newEntity[key as keyof typeof newEntity]
         }).filter(Boolean)
 
-        const setValues = Object.keys(newEntity).map((key, index) => `${ valuesName[index] } = ${ values[index] }`).filter(Boolean).join(', ')
+        const setValues = Object.keys(newEntity).map((key, index) => `${ valuesName[index] } = ?`).filter(Boolean).join(', ')
         
         if (setValues) {
-            const sqlUpdate = `update ${ tableName } set ${ setValues } where ${ tableName }.rowid = '${ entity.id }'`
+            const sqlUpdate = `update ${ tableName } set ${ setValues } where ${ tableName }.rowid = ?`
 
             await new Promise((resolve, reject) => {
                 _context.serialize(() => {
-                    return _context.run(sqlUpdate, function(error) {
+                    return _context.run(sqlUpdate, [...values, entity.id], function(error) {
                         if (error) {
                             console.error(error.message)
                             return reject(error.message)
@@ -85,7 +81,7 @@ export default function DBSet<T extends object>(tableName: string) {
                     })
                 })
             })
-        }
+        } 
     }
 
     const Count = async (callbackWhere: Function): Promise<string> => {
