@@ -12,7 +12,7 @@ export default abstract class IdentityService {
         }
 
         const token = await SessionService.CreateTokenSession()
-        response.setHeader('Set-Cookie', `__Secure-SessionId=${ token }; Path=/; HttpOnly; Secure; SameSite=None`)
+        response.setHeader('Set-Cookie', `SessionId=${ token }; Path=/; HttpOnly; Secure; SameSite=None`)
         
         return new Response<string>('Successfully registered session', token)
     }
@@ -32,7 +32,7 @@ export default abstract class IdentityService {
 
         if (!cookies['SessionId']) return new Response<boolean>('Unregistered user')
 
-        const revokeToken = await SessionService.RevokeTokenSession(cookies['sessionId'])
+        const revokeToken = await SessionService.RevokeTokenSession(cookies['SessionId'])
         
         if (revokeToken) return new Response<boolean>('Successfully removed session.', revokeToken)
         return new Response<boolean>('Unable to remove session.', revokeToken)
