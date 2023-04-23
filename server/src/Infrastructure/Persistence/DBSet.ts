@@ -1,4 +1,4 @@
-import { _context } from '@Infrastructure/Persistence/Connection'
+import { _context } from '@Infrastructure/Persistence/connection'
 
 export default function DBSet<T extends object>(tableName: string) {
 

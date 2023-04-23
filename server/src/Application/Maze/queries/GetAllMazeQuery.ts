@@ -1,5 +1,5 @@
 import Response from '@Application/Common/Models/Response'
-import { Maze, Interaction } from '@Infrastructure/Persistence/Connection'
+import { Maze, Interaction } from '@Infrastructure/Persistence/connection'
 import MazeEntity from '@Domain/Entities/Maze'
 import InteractionEntity from '@Domain/Entities/Interaction'
 import MazeDto from '@Application/Maze/queries/MazeDto'

@@ -1,7 +1,7 @@
 import app from '@Api/Common/Server'
 import router from '@Api/routes'
-import { openConnection } from '@Infrastructure/Persistence/Connection'
-import { migrateAsync } from '@Infrastructure/Persistence/Migrate'
+import { openConnection } from '@Infrastructure/Persistence/connection'
+import { migrateAsync } from '@Infrastructure/Persistence/migrate'
 import AuthenticationConfiguration from '@Infrastructure/Common/Configuration/AuthenticationConfiguration'
 require('dotenv').config()
 

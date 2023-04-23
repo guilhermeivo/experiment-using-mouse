@@ -21,6 +21,5 @@
             "@Infrastructure/*": ["./src/Infrastructure/*"],
             "@Api/*": ["./src/Api/*"]
         }
-    },
-    "include": ["src"]
+    }
 }

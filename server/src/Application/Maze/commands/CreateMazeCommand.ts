@@ -1,6 +1,6 @@
 import Response from '@Application/Common/Models/Response'
 import MazeEntity from '@Domain/Entities/Maze'
-import { Maze } from '@Infrastructure/Persistence/Connection'
+import { Maze } from '@Infrastructure/Persistence/connection'
 
 export interface CreateMazeCommand {
     name: string

@@ -1,5 +1,5 @@
 import Response from '@Application/Common/Models/Response'
-import { Interaction, Maze } from '@Infrastructure/Persistence/Connection'
+import { Interaction, Maze } from '@Infrastructure/Persistence/connection'
 import MazeEntity from '@Domain/Entities/Maze'
 import InteractionEntity from '@Domain/Entities/Interaction'
 import MazeAddViewEvent from '@Domain/Events/MazeAddViewEvent'
