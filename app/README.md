@@ -5,5 +5,5 @@ $ npm i -D
 
 ## NPM Run
 ```bash
-$ npm run dev
+$ npm run start:dev
 ```

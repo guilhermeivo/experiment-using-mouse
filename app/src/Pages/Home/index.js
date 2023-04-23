@@ -29,6 +29,14 @@ export default customElements.define('home-page',
                     </div>
                 </div>
             </div>
+
+            <div class="${ classes['background'] } ${ classes['background--1'] }">
+                <div class="${ classes['background__orb'] }"></div>
+            </div>
+
+            <div class="${ classes['background'] } ${ classes['background--2'] }">
+                <div class="${ classes['background__orb'] }"></div>
+            </div>
             `
         }
     })
