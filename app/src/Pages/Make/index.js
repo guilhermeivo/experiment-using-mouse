@@ -309,7 +309,7 @@ export default customElements.define('make-page',
 
             this.append(createElementFromHTML(this.#createPage()))
             const mazeEdit = document.createElement('maze-edit')
-            mazeEdit.state.page = this
+            mazeEdit.state.overwolrdMazeEdit = this.state.overwolrdMazeEdit
             this.querySelector(`.${ classes['wrapper_content'] }`).append(mazeEdit)
             this.state = {
                 ...this.state,

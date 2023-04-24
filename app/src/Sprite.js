@@ -1,12 +1,17 @@
-import { uid } from './common'
-
 export default class Sprite {
 
     constructor(config) {
-        this.id = uid()
-        this.sprites = config.sprites || { }
+        this.variants = config.variants || { }
         this.imageSrc = config.src
         this.gridDimension = config.gridDimension || 32
+
+        this.image = new Image()
+        this.image.crossOrigin = 'Anonymous'
+        this.image.src = this.imageSrc
+        this.image.onload = () => {
+            this.isLoaded = true
+        }
+        this.image.onerror = event => { }
     }
 
     initialize() {
@@ -14,16 +19,7 @@ export default class Sprite {
         this.initialized = true
 
         return new Promise((resolve, reject) => {
-            this.image = new Image()
-            this.image.crossOrigin = 'Anonymous'
-            this.image.src = this.imageSrc
-            this.image.onload = () => {
-                this.isLoaded = true
-                resolve()
-            }
-            this.image.onerror = event => {
-                reject(event)
-            }
+            
         })
     }
 
@@ -33,13 +29,13 @@ export default class Sprite {
         canvas.height = this.gridDimension
         const ctx = canvas.getContext("2d")
 
-        let sx = this.sprites[typeImage][0], sy = this.sprites[typeImage][1]
+        let sx = this.variants[typeImage][0], sy = this.variants[typeImage][1]
 
-        if (typeof this.sprites[typeImage][0] == 'object') {
-            const number = Math.floor(Math.random() * this.sprites[typeImage].length)
+        if (typeof this.variants[typeImage][0] == 'object') {
+            const number = Math.floor(Math.random() * this.variants[typeImage].length)
            
-            sx = this.sprites[typeImage][number][0]
-            sy = this.sprites[typeImage][number][1]
+            sx = this.variants[typeImage][number][0]
+            sy = this.variants[typeImage][number][1]
         }
 
         this.isLoaded && ctx.drawImage(

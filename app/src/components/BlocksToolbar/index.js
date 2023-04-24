@@ -1,13 +1,7 @@
-import classes from './style.module.scss'
-import tags from '../../Common/tags'
 import CustomCursor from '../../Common/CustomCursor'
-import CheeseIcon from '../../assets/images/CheeseIcon.png'
-import MouseIcon from '../../assets/images/MouseIcon.png'
-import PathIcon from '../../assets/images/PathIcon.png'
-import WallIcon from '../../assets/images/WallIcon.png'
 import { createElementFromHTML } from '../../Common/common'
 
-const images = { CheeseIcon, MouseIcon, PathIcon, WallIcon }
+import classes from './style.module.scss'
 
 export default customElements.define('blocks-toolbar', 
     class extends HTMLElement {

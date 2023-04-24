@@ -4,11 +4,10 @@ import "./Pages/Play"
 
 import "./Components/BlocksToolbar"
 import "./Components/FloatingVertical"
-import "./Components/EditableMaze"
-import "./Components/MazeBlocks"
 import "./Components/CardInfo"
 import "./Components/MessageInfo"
 import "./Components/MazeEdit"
+import "./Components/MazeBlock"
 
 import classesForms from "./assets/styles/forms_controls.module.scss"
 

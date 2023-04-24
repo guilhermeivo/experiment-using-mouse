@@ -2,7 +2,7 @@ import { createElementFromHTML, getAroundBlocks } from '../../Common/common'
 
 import classes from './style.module.scss'
 
-export default customElements.define('maze-blocks', 
+export default customElements.define('maze-block', 
     class extends HTMLElement {
 
         static get observedAttributes() { return ['type'] }
@@ -16,10 +16,11 @@ export default customElements.define('maze-blocks',
             this.onMouseUpHanler = this.onMouseUpHanler.bind(this)
 
             this.state = {
-                type: this.getAttribute('type') || tag.allowedTags()[0].id,
-                maze: document.querySelector('editable-maze'),
-                spriteName: '',
-                primaryButton: false
+                items: window.editors,
+                type: this.getAttribute('type') || window.editors.air.id,
+                primaryButton: false,
+                position: this.getAttribute('position'),
+                overwolrdMazeEdit: document.querySelector('maze-edit').state.overwolrdMazeEdit
             }
         }
 
@@ -27,6 +28,7 @@ export default customElements.define('maze-blocks',
             if (!this.rendered) {
                 await this.render()
                 this.rendered = true
+                this.update()
             }
         }
 
@@ -38,35 +40,39 @@ export default customElements.define('maze-blocks',
             const changedValue = oldValue !== newValue
 
             if (changedValue) {
-                this.state.maze.updateMazeHandler({
-                    id: this.id,
-                    type: this.state.type
-                })            
-            }
-        }
-
-        setDefaultValue() {
-            this.state = {
-                ...this.state,
-                type: this.state.maze.state.tags[0].id,
-            }
-            this.update()
-        }
-
-        onSelectedHandler(event) {
-            const newTypeIndex = document.querySelector('blocks-toolbar').state.selectedItem
-            const newType = this.state.maze.state.tags[newTypeIndex]
-            if (newTypeIndex >= 0 && newType.id != this.state.type) {
-                this.state = {
-                    ...this.state,
-                    type: newType.id
-                }
                 this.update()
             }
         }
 
+        onSelectedHandler(event) {
+            const newTypeKey = document.querySelector('blocks-toolbar').state.selectedItem
+            const newType = this.state.items[newTypeKey]
+            const [ x, y ] = this.state.position.split(',')
+
+            if (newType && newType.type === 'Tile' && newTypeKey != this.state.type) {
+                this.state = {
+                    ...this.state,
+                    type: newTypeKey
+                }
+                this.setAttribute('type', newTypeKey)
+                this.state.overwolrdMazeEdit.addTile({ x, y, typeName: newTypeKey })
+            }
+
+            if (newType && newType.type === 'Object') {
+                this.state.overwolrdMazeEdit.addTile({ x, y, typeName: this.state.items.path.id })
+                this.state.overwolrdMazeEdit.setGameObject({ name: newTypeKey, x, y })
+                
+                this.state = {
+                    ...this.state,
+                    type: this.state.items.path.id
+                }
+                this.setAttribute('type', this.state.items.path.id)
+                this.state.overwolrdMazeEdit.addTile({ x, y, typeName: this.state.items.path.id })
+            }
+        }
+
         onMouseOverHandler(event) {
-            if (this.state.primaryButton) this.onSelectedHandler()
+            if (this.state.primaryButton) this.onSelectedHandler(event)
         }
 
         onMouseDownHandler(event) {
@@ -105,30 +111,19 @@ export default customElements.define('maze-blocks',
         }
 
         update() {
-            if (!this.rendered) return
+            const key = Object.keys(this.state.items).find((key, index) => this.state.items[key].id === this.state.type)
+            const item = this.state.items[key]
+            if (!item.sprite) return
 
-            const stateMaze = this.state.maze.state
-            const foundCurrentTag = stateMaze.tags.find(value => value.id === this.state.type)
-            const amountOfSprites = Object.keys(foundCurrentTag.sprite.sprites).length
-            let newSpriteName
-
-            if (amountOfSprites > 1) {
-                const currentBlock = stateMaze.blocks.find(block => block.id === this.id)
-                let blocksAround = getAroundBlocks(stateMaze.blocks, currentBlock.position)
-                blocksAround = blocksAround.map(block => block ? block.type : 'void')
-                newSpriteName = [foundCurrentTag.getSpriteName(blocksAround)]
+            const amountOfVariants = Object.keys(item.sprite.variants).length
+            
+            if (amountOfVariants > 1) {
+                
             } else {
-                newSpriteName = Object.getOwnPropertyNames(foundCurrentTag.sprite.sprites)
-            }
-
-            if (this.state.spriteName != newSpriteName[0]) {
                 const imageElement = this.querySelector('img')
 
-                this.setAttribute('type', this.state.type)
-                imageElement.src = foundCurrentTag.sprite.drawImage(newSpriteName).src
-                imageElement.alt = foundCurrentTag.id 
-
-                this.state.spriteName = newSpriteName
-            }
+                const newSpriteName = Object.getOwnPropertyNames(item.sprite.variants)
+                imageElement.src = item.sprite.drawImage(newSpriteName).src
+            }   
         }
     })
