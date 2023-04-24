@@ -8,6 +8,7 @@ import "./Components/EditableMaze"
 import "./Components/MazeBlocks"
 import "./Components/CardInfo"
 import "./Components/MessageInfo"
+import "./Components/MazeEdit"
 
 import classesForms from "./assets/styles/forms_controls.module.scss"
 

@@ -19,7 +19,7 @@ export default customElements.define('home-page',
         render() {
             this.innerHTML = `
             <div class="${ classes['wrapper'] }">
-                <h1>Experiment Using Mouse 🖱️ - Dev</h1>
+                <h1>Experiment Using Mouse 🖱️</h1>
                 <div class="${ classesForms['form-controls'] } ${ classes['flex'] }">
                     <div class="${ classesForms['form__button-control'] }">
                         <a href="/make" class="${ classesForms['button'] } ${ classesForms['button__secondary'] }" data-link>Make</a>

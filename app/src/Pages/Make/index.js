@@ -4,6 +4,7 @@ import validators from '../../Common/validators'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
+import OverworldMazeEdit from '../../OverworldMazeEdit'
 
 const DEFAULT_MAZE_ROWS = 8
 const DEFAULT_MAZE_COLUMNS = 8
@@ -25,7 +26,9 @@ export default customElements.define('make-page',
                 idMaze: sessionStorage.getItem('mazeId') || '',
                 maze: '',
                 resizeSelected: '',
-                initialPosition: ''
+                initialPosition: '',
+
+                overwolrdMazeEdit: new OverworldMazeEdit({ rows: DEFAULT_MAZE_ROWS, columns: DEFAULT_MAZE_COLUMNS })
             }
         }
 
@@ -61,13 +64,13 @@ export default customElements.define('make-page',
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.createRightColumnHandler()
+                        this.state.maze.createColumnHandler()
                     } else if (this.state.initialPosition - 32 > event.pageX) {
                         this.state = {
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.removeRightColumnHandler()
+                        this.state.maze.removeColumnHandler()
                     }
                     break
                 case 'left':
@@ -76,13 +79,13 @@ export default customElements.define('make-page',
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.removeLeftColumnHandler()
+                        this.state.maze.removeColumnHandler()
                     } else if (this.state.initialPosition - 32 > event.pageX) {
                         this.state = {
                             ...this.state,
                             initialPosition: event.pageX
                         }
-                        this.state.maze.createLeftColumnHandler()
+                        this.state.maze.createColumnHandler()
                     }
                     break
                 case 'bottom':
@@ -259,11 +262,9 @@ export default customElements.define('make-page',
             `)
         }
 
-        #createPage(encodedString) {
+        #createPage() {
             return (`
                 <div class="${ classes['wrapper_content'] }">
-                    <editable-maze rows="${ DEFAULT_MAZE_ROWS }" columns="${ DEFAULT_MAZE_COLUMNS }" ${ encodedString ? `encodedString="${ encodedString }"` : '' }  editable></editable-maze>
-
                     <div class="${ classes['resizable'] }">
                         <div class="${ classes['resizable__resizers'] }">
                             <div class="${ classes['resizer'] } ${ classes['resizer--right'] }" key="0"></div>
@@ -288,7 +289,7 @@ export default customElements.define('make-page',
             headerNavigation.querySelector('#toolbarMenu').append(document.createElement('blocks-toolbar'))
 
             // create maze
-            if (this.state.idMaze) {
+            /*if (this.state.idMaze) {
                 try {
                     const response = await ConnectionAPI.GetMazeById(this.state.idMaze)
                     this.append(createElementFromHTML(this.#createPage(response[0].encodedString)))
@@ -304,11 +305,15 @@ export default customElements.define('make-page',
                 } catch { }
             } else {
                 this.append(createElementFromHTML(this.#createPage()))
-            }
+            }*/
 
+            this.append(createElementFromHTML(this.#createPage()))
+            const mazeEdit = document.createElement('maze-edit')
+            mazeEdit.state.page = this
+            this.querySelector(`.${ classes['wrapper_content'] }`).append(mazeEdit)
             this.state = {
                 ...this.state,
-                maze: document.querySelector('editable-maze')
+                maze: mazeEdit
             }
 
             this.addEventsListener()
@@ -319,8 +324,8 @@ export default customElements.define('make-page',
 
             const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
             if (resizable) {
-                resizable.style.width = (this.state.maze.state.amountOfColumns * 66) + 'px'
-                resizable.style.height = (this.state.maze.state.amountOfRows * 66) + 'px'
+                resizable.style.width = (this.state.overwolrdMazeEdit.columns * 66) + 'px'
+                resizable.style.height = (this.state.overwolrdMazeEdit.rows * 66) + 'px'
             }
         }
     })

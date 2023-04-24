@@ -15,11 +15,12 @@ export default customElements.define('blocks-toolbar',
             super(props)
 
             this.state = {
-                items: tags.allowedTags(),
-                selectedItem: -1
+                items: window.editors,
+                selectedItem: null
             }
 
             this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
+            this.onSelectedItemHadler = this.onSelectedItemHadler.bind(this)
         }
 
         connectedCallback() {
@@ -45,40 +46,46 @@ export default customElements.define('blocks-toolbar',
         }
 
         unselectedItemHandler() {
-            if (this.state.selectedItem < 0) return
+            if (!this.state.selectedItem) return
 
-            const itemsToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
-            itemsToolbar[this.state.selectedItem].classList.remove(classes['toolbar__item--selected'])
+            const itemToolbar = [...this.querySelectorAll(`.${ classes['toolbar__item'] }`)]
+            const currentItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
+            currentItemToolbar.classList.remove(classes['toolbar__item--selected'])
             this.state = { 
                 ...this.state, 
-                selectedItem: -1
+                selectedItem: null
             }
 
             this.state.customCursor.disable()
         }
 
-        onSelectedItemHadler(event, key) {
-            const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
-
-            if (this.state.selectedItem >= 0) 
-                itemToolbar[this.state.selectedItem].classList.remove(classes['toolbar__item--selected'])
+        onSelectedItemHadler(event) {
+            const key = event.target.getAttribute('key')
+            const item = this.state.items[key]
+            const itemToolbar = [...this.querySelectorAll(`.${ classes['toolbar__item'] }`)]
+            const lastItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
+            const currentItemToolbar = itemToolbar.find(value => value.getAttribute('key') === key)
+            
+            if (this.state.selectedItem) {
+                lastItemToolbar.classList.remove(classes['toolbar__item--selected'])
+            }
 
             if (this.state.selectedItem != key) {
                 this.state = { 
                     ...this.state, 
                     selectedItem: key
                 }
-    
-                itemToolbar[this.state.selectedItem].classList.add(classes['toolbar__item--selected'])
+                
+                const cursorImage = this.querySelector(`.${ classes['custom_cursor'] }`).querySelector('img')
+                cursorImage.src = item.icon
                 this.state.customCursor.enable()
 
-                const item = this.state.items[this.state.selectedItem]
-                const cursorImage = this.querySelector(`.${ classes['custom_cursor'] }`).querySelector('img')
-                cursorImage.src = images[item.icon]
+                currentItemToolbar.classList.add(classes['toolbar__item--selected'])
+                
             } else {
                 this.state = { 
                     ...this.state, 
-                    selectedItem: -1
+                    selectedItem: null
                 }
                 this.state.customCursor.disable()
             }
@@ -86,16 +93,19 @@ export default customElements.define('blocks-toolbar',
 
         addEventsListener() {
             const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
-            this.state.items.map((item, key) => {
-                itemToolbar[key].addEventListener('click', event => {
-                    this.onSelectedItemHadler(event, key)
-                })
+            Object.keys(this.state.items).map((key, index) => {
+                itemToolbar[index].addEventListener('click', this.onSelectedItemHadler)
             })
 
             document.addEventListener('keydown', this.onKeyDownHandler)
         }
 
         removeEventsListener() {
+            const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
+            Object.keys(this.state.items).map((key, index) => {
+                itemToolbar[index].removeEventListener('click', this.onSelectedItemHadler)
+            })
+
             document.removeEventListener('keydown', this.onKeyDownHandler)
         }
 
@@ -111,9 +121,10 @@ export default customElements.define('blocks-toolbar',
             return (`
                 <div class="${ classes['toolbar'] }">
                     ${
-                        this.state.items.map((item, key) => {
+                        Object.keys(this.state.items).map((key, index) => {
+                            const item = this.state.items[key]
                             const selectedItem = this.state.selectedItem
-                            const isSelected = this.state.items.indexOf(item) === selectedItem
+                            const isSelected = index === selectedItem
                             return this.#createItemsHandler(key, isSelected, item)
                         }).join('')
                     }
@@ -130,7 +141,7 @@ export default customElements.define('blocks-toolbar',
                     tabIndex="0"
                     title="${ item.label }"
                 >
-                    <img src="${ images[item.icon] }" alt="${ item.id }">
+                    <img src="${ item.icon }" alt="${ item.label }">
                 </div>
             `)
         }
