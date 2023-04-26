@@ -1,10 +1,9 @@
-import { createElementFromHTML, importEncodedStringMaze } from '../../Common/common'
-import ConnectionAPI from '../../Services/ConnectionAPI'
+import { createElementFromHTML } from '../../Common/common'
 import validators from '../../Common/validators'
+import OverworldMazeEdit from '../../OverworldMazeEdit'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
-import OverworldMazeEdit from '../../OverworldMazeEdit'
 
 const DEFAULT_MAZE_ROWS = 8
 const DEFAULT_MAZE_COLUMNS = 8
@@ -28,7 +27,7 @@ export default customElements.define('make-page',
                 resizeSelected: '',
                 initialPosition: '',
 
-                overwolrdMazeEdit: new OverworldMazeEdit({ rows: DEFAULT_MAZE_ROWS, columns: DEFAULT_MAZE_COLUMNS })
+                overworldMazeEdit: new OverworldMazeEdit({ rows: DEFAULT_MAZE_ROWS, columns: DEFAULT_MAZE_COLUMNS })
             }
         }
 
@@ -137,10 +136,7 @@ export default customElements.define('make-page',
             
             if (isValid) {
                 try {
-                    const inputName = document.querySelector('#inputName')
-                    const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportEncodedString())
-                    sessionStorage.setItem('mazeId', response)
-                    document.location.reload()
+                    // ...
                 } catch { }
             }     
         }
@@ -158,12 +154,10 @@ export default customElements.define('make-page',
             if (isValid) {
                 const inputName = document.querySelector('#inputName')
                 
-                // TODO: animate classs 
                 targetClass.add(classesForms['button__submit--active'])
                 Promise.all([new Promise(async (resolve, reject) => {
                     try {
-                        await ConnectionAPI.UpdateMaze(sessionStorage.getItem('mazeId'), inputName.value, this.state.maze.exportEncodedString())
-                        resolve()
+                        reject()
                     } catch (exception) {
                         reject()
                     }
@@ -193,11 +187,6 @@ export default customElements.define('make-page',
                 resizer.addEventListener('mousedown', this.onResizersMovimentHandler)
             })
 
-            const buttonCreate = document.querySelector('#buttonCreate')
-            if (buttonCreate) {
-                buttonCreate.addEventListener('click', this.onCreateMazeHandler)
-            }
-
             const buttonSave = document.querySelector('#buttonSave')
             if (buttonSave) {
                 buttonSave.addEventListener('click', this.onSaveMazeHandler)
@@ -214,11 +203,6 @@ export default customElements.define('make-page',
             resizers.forEach(resizer => {
                 resizer.removeEventListener('mousedown', this.onResizersMovimentHandler)
             })
-
-            const buttonCreate = document.querySelector('#buttonCreate')
-            if (buttonCreate) {
-                buttonCreate.removeEventListener('click', this.onCreateMazeHandler)
-            }
 
             const buttonSave = document.querySelector('#buttonSave')
             if (buttonSave) {
@@ -244,19 +228,11 @@ export default customElements.define('make-page',
                             <input type="checkbox" name="checkboxEdges" id="checkboxEdges" checked />
                             <label for="checkboxEdges">Borders to limit the blocks</label>
                         </div>
-                        ${
-                            this.state.idMaze
-                                ? `<div class="${ classesForms['form__text-control'] }">
-                                    <button 
-                                        id="buttonSave" 
-                                        class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Save</button>
-                                </div>`
-                                : `<div class="${ classesForms['form__text-control'] }">
-                                    <button 
-                                        id="buttonCreate" 
-                                        class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__secondary'] }">Create</button>
-                                </div>`
-                        }
+                        <div class="${ classesForms['form__text-control'] }">
+                            <button 
+                                id="buttonSave" 
+                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Save</button>
+                        </div>
                     </div>
                 </div>
             `)
@@ -288,28 +264,11 @@ export default customElements.define('make-page',
             // toolbar menu create
             headerNavigation.querySelector('#toolbarMenu').append(document.createElement('blocks-toolbar'))
 
-            // create maze
-            /*if (this.state.idMaze) {
-                try {
-                    const response = await ConnectionAPI.GetMazeById(this.state.idMaze)
-                    this.append(createElementFromHTML(this.#createPage(response[0].encodedString)))
-                    const inputName = document.querySelector('#inputName')
-                    inputName.value = response[0].name
-    
-                    const encodedMaze = importEncodedStringMaze(response[0].encodedString)
-                    const lastBlock = encodedMaze[encodedMaze.length - 1]
-
-                    const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
-                    resizable.style.width = ((Number(lastBlock.position.split(',')[1]) + 1) * 66) + 'px'
-                    resizable.style.height = ((Number(lastBlock.position.split(',')[0]) + 1) * 66) + 'px'
-                } catch { }
-            } else {
-                this.append(createElementFromHTML(this.#createPage()))
-            }*/
-
             this.append(createElementFromHTML(this.#createPage()))
             const mazeEdit = document.createElement('maze-edit')
-            mazeEdit.state.overwolrdMazeEdit = this.state.overwolrdMazeEdit
+            mazeEdit.setAttribute('editable', '')
+            mazeEdit.onChangeVisibilityEdges()
+            mazeEdit.state.overworldMazeEdit = this.state.overworldMazeEdit
             this.querySelector(`.${ classes['wrapper_content'] }`).append(mazeEdit)
             this.state = {
                 ...this.state,
@@ -324,8 +283,8 @@ export default customElements.define('make-page',
 
             const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
             if (resizable) {
-                resizable.style.width = (this.state.overwolrdMazeEdit.columns * 66) + 'px'
-                resizable.style.height = (this.state.overwolrdMazeEdit.rows * 66) + 'px'
+                resizable.style.width = (this.state.overworldMazeEdit.columns * 66) + 'px'
+                resizable.style.height = (this.state.overworldMazeEdit.rows * 66) + 'px'
             }
         }
     })

@@ -5,25 +5,30 @@ export default class Sprite {
         this.imageSrc = config.src
         this.gridDimension = config.gridDimension || 32
 
-        this.image = new Image()
-        this.image.crossOrigin = 'Anonymous'
-        this.image.src = this.imageSrc
-        this.image.onload = () => {
-            this.isLoaded = true
-        }
-        this.image.onerror = event => { }
+        
     }
 
     initialize() {
-        if (this.initialized) return
-        this.initialized = true
-
         return new Promise((resolve, reject) => {
-            
+            if (this.isLoaded) resolve()
+              
+            this.image = new Image()
+            this.image.crossOrigin = 'Anonymous'
+            this.image.src = this.imageSrc
+
+            this.image.onload = () => {
+                this.isLoaded = true
+                resolve()
+            }     
+            this.image.onerror = event => { 
+                reject()
+            }
         })
     }
 
-    drawImage(typeImage) {
+    async drawImage(typeImage) {
+        await this.initialize()
+
         const canvas = document.createElement('canvas')
         canvas.width = this.gridDimension
         canvas.height = this.gridDimension
@@ -33,7 +38,7 @@ export default class Sprite {
 
         if (typeof this.variants[typeImage][0] == 'object') {
             const number = Math.floor(Math.random() * this.variants[typeImage].length)
-           
+        
             sx = this.variants[typeImage][number][0]
             sy = this.variants[typeImage][number][1]
         }
@@ -50,7 +55,7 @@ export default class Sprite {
 
     #convertCanvasToImage(canvas) {
         let image = new Image()
-        image.src = canvas.toDataURL('image/jpeg', 1.0)
+        image.src = canvas.toDataURL()
         return image
     }
 }

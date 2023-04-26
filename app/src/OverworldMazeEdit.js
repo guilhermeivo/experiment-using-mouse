@@ -6,6 +6,7 @@ import PathIcon from "./assets/images/PathIcon.png"
 import WallIcon from "./assets/images/WallIcon.png"
 import MouseIcon from "./assets/images/MouseIcon.png"
 import CheeseIcon from "./assets/images/CheeseIcon.png"
+import EraserIcon from "./assets/images/EraserIcon.png"
 
 import FileMapImage from './assets/images/FileMap.png'
 
@@ -65,7 +66,7 @@ export default class OverworldMazeEdit {
     }
 
     add({ x, y }) {
-        this.addTile({ x, y, typeName: window.editors.air.id })
+        this.addTile({ x, y, typeName: window.editors.path.id })
     }
 
     addTile({ x, y, typeName }) {
@@ -118,7 +119,46 @@ window.editors = {
                 'wall-bottom-edge-right-top': [ 6, 1 ],
                 'wall-bottom-edge-full': [ 7, 1 ],
             }
-        })
+        }),
+        getSpriteName: (tagsAround) => {
+            // tagsAround[0] - left
+            // tagsAround[1] - top
+            // tagsAround[2] - bottom
+            // tagsAround[3] - right
+            if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-edge'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-edge-left'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-edge-right'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-edge-top'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-edge-left-right'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-edge-left-top'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-edge-right-top'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] === 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-edge-full'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-bottom-edge'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-bottom-edge-left'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-bottom-edge-right'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-bottom-edge-top'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] !== 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-bottom-edge-left-right'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] !== 'wall') {
+                return 'wall-bottom-edge-left-top'
+            } else if (tagsAround[0] !== 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-bottom-edge-right-top'
+            } else if (tagsAround[0] === 'wall' && tagsAround[1] === 'wall' && tagsAround[2] !== 'wall' && tagsAround[3] === 'wall') {
+                return 'wall-bottom-edge-full'
+            }
+        }
     },
     path: {
         id: 'path',
@@ -133,14 +173,6 @@ window.editors = {
             }
         })
     },
-    air: {
-        id: 'air',
-        icon: '',
-        label: 'Erase',
-        description: '',
-        type: enumTypeEditors.Tile,
-        src: FileMapImage
-    },
     cheese: {
         id: 'cheese',
         icon: CheeseIcon,
@@ -154,5 +186,18 @@ window.editors = {
         label: 'Mouse', 
         description: 'Character who seeks the uncertain exit from the labyrinth (entrance).',
         type: enumTypeEditors.Object
-    }
+    },
+    air: {
+        id: 'air',
+        icon: EraserIcon,
+        label: 'Erase',
+        description: 'air',
+        type: enumTypeEditors.Tile,
+        sprite: new Sprite({
+            src: FileMapImage,
+            variants: {
+                'eraser-variants': [ [ 0, 5 ] ]
+            }
+        })
+    },
 }
