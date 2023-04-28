@@ -1,7 +1,7 @@
 import CustomCursor from '../../Common/CustomCursor'
 import { createElementFromHTML } from '../../Common/common'
 
-import classes from './style.module.scss'
+import classes from './style.module.scss';
 
 export default customElements.define('blocks-toolbar', 
     class extends HTMLElement {
