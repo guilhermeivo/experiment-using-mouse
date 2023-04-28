@@ -36,7 +36,7 @@ import TransitionPages from "./Common/TransitionPages"
                 sessionStorage.setItem('sessionToken', data.Data)
             })
         }*/
-        
+
         // add sessionToken to floating menu
         const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
         const floatingVertical = document.querySelector('floating-vertical')
