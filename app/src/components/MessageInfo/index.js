@@ -68,4 +68,6 @@ export default customElements.define('message-info',
             </div>
             `)
         }
+
+        render() { }
     })

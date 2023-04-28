@@ -14,7 +14,7 @@ export default customElements.define('blocks-toolbar',
             }
 
             this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
-            this.onSelectedItemHadler = this.onSelectedItemHadler.bind(this)
+            this.onClickedItemHadler = this.onClickedItemHadler.bind(this)
         }
 
         connectedCallback() {
@@ -34,27 +34,22 @@ export default customElements.define('blocks-toolbar',
             switch (event.key) {
                 case 'Escape':
                     event.preventDefault()
-                    this.unselectedItemHandler()
+                    if (this.state.selectedItem)
+                        this.selectedItemHadler(this.state.selectedItem)                        
                     break
             }
+
+            /*const eventKeyNumber = Number(event.key - 1)
+            if (typeof eventKeyNumber === 'number' && !Number.isNaN(eventKeyNumber)) {
+                const amountEditors = Object.keys(this.state.items).length
+                if (eventKeyNumber >= 0 && eventKeyNumber < amountEditors) {
+                    const key = Object.keys(this.state.items)[eventKeyNumber]
+                    this.selectedItemHadler(key)
+                }
+            }*/
         }
 
-        unselectedItemHandler() {
-            if (!this.state.selectedItem) return
-
-            const itemToolbar = [...this.querySelectorAll(`.${ classes['toolbar__item'] }`)]
-            const currentItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
-            currentItemToolbar.classList.remove(classes['toolbar__item--selected'])
-            this.state = { 
-                ...this.state, 
-                selectedItem: null
-            }
-
-            this.state.customCursor.disable()
-        }
-
-        onSelectedItemHadler(event) {
-            const key = event.target.getAttribute('key')
+        selectedItemHadler(key) {
             const item = this.state.items[key]
             const itemToolbar = [...this.querySelectorAll(`.${ classes['toolbar__item'] }`)]
             const lastItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
@@ -77,18 +72,34 @@ export default customElements.define('blocks-toolbar',
                 currentItemToolbar.classList.add(classes['toolbar__item--selected'])
                 
             } else {
-                this.state = { 
-                    ...this.state, 
-                    selectedItem: null
-                }
-                this.state.customCursor.disable()
+                this.unselectedItemHandler()
             }
+        }
+
+        unselectedItemHandler() {
+            if (!this.state.selectedItem) return
+
+            const itemToolbar = [...this.querySelectorAll(`.${ classes['toolbar__item'] }`)]
+            const currentItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
+            if (currentItemToolbar.classList.contains(classes['toolbar__item--selected']))
+                currentItemToolbar.classList.remove(classes['toolbar__item--selected'])
+            this.state = { 
+                ...this.state, 
+                selectedItem: null
+            }
+
+            this.state.customCursor.disable()
+        }
+
+        onClickedItemHadler(event) {
+            const key = event.target.getAttribute('key')
+            this.selectedItemHadler(key)
         }
 
         addEventsListener() {
             const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
             Object.keys(this.state.items).map((key, index) => {
-                itemToolbar[index].addEventListener('click', this.onSelectedItemHadler)
+                itemToolbar[index].addEventListener('click', this.onClickedItemHadler)
             })
 
             document.addEventListener('keydown', this.onKeyDownHandler)
@@ -97,7 +108,7 @@ export default customElements.define('blocks-toolbar',
         removeEventsListener() {
             const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
             Object.keys(this.state.items).map((key, index) => {
-                itemToolbar[index].removeEventListener('click', this.onSelectedItemHadler)
+                itemToolbar[index].removeEventListener('click', this.onClickedItemHadler)
             })
 
             document.removeEventListener('keydown', this.onKeyDownHandler)
@@ -143,7 +154,6 @@ export default customElements.define('blocks-toolbar',
         render() {
             this.append(createElementFromHTML(this.#createBlocksToolbar()))
             this.appendChild(createElementFromHTML(this.#createCursorItem()))
-            this.addEventsListener()
 
             this.state = {
                 ...this.state,
@@ -155,5 +165,7 @@ export default customElements.define('blocks-toolbar',
                 })
             }
             this.state.customCursor.initialize()
+
+            this.addEventsListener()
         }
     })

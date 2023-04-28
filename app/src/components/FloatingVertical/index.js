@@ -41,8 +41,10 @@ export default customElements.define('floating-vertical',
                     if (this.state.isOpen) this.toggle()
                     break
                 case 'e':
-                    event.preventDefault()
-                    this.toggle()
+                    if (!this.state.isOpen) {
+                        event.preventDefault()
+                        this.toggle()
+                    }
                     break
             }
         }

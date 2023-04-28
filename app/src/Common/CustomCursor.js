@@ -14,22 +14,28 @@ export default class CustomCursor {
     initialize() {
         if (!document.querySelector(this.element)) throw new Error(`Need to create element (${ this.element }).`)
 
+        this.enabled = false
+
         const customCursor = document.querySelector(this.element)
         customCursor.classList.add(this.initializedClass)
         document.addEventListener('mousemove', this.onMouseMove)
     }
 
     onMouseMove(event) {
+        this.mouseClientX = event.clientX
+        this.mouseClientY = event.clientY
+
+        if (this.enabled) this.updateCursorPosition()
+    }
+
+    updateCursorPosition() {
         const customCursor = document.querySelector(this.element)
         customCursor.style.transform = `
             translate3d(
-                calc(${ event.clientX }px - 50%), 
-                calc(${ event.clientY }px - 50%), 
+                calc(${ this.mouseClientX }px - 50%), 
+                calc(${ this.mouseClientY }px - 50%), 
                 0)
         `
-
-        if (customCursor.classList.contains(this.disableClass))
-            customCursor.classList.remove(this.disableClass)
     }
 
     onMouseEnter(event) {
@@ -45,10 +51,13 @@ export default class CustomCursor {
     }
 
     enable() {
+        this.enabled = true
+        this.updateCursorPosition()
+
         const customCursor = document.querySelector(this.element)
         if (customCursor.classList.contains(this.disableClass))
-            document.addEventListener('mousemove', this.onMouseMove)
-
+            customCursor.classList.remove(this.disableClass)
+        
         document.querySelectorAll(...this.focusElements).forEach(element => {
             element.addEventListener('mouseenter', this.onMouseEnter)
             element.addEventListener('mouseleave', this.onMouseLeave)
@@ -56,9 +65,10 @@ export default class CustomCursor {
     }
 
     disable() {
+        this.enabled = false
+
         const customCursor = document.querySelector(this.element)
         if (!customCursor.classList.contains(this.disableClass)) {
-            document.removeEventListener('mousemove', this.onMouseMove)
             customCursor.classList.add(this.disableClass)
         }
 
@@ -69,6 +79,8 @@ export default class CustomCursor {
     }
 
     remove() {
+        this.enabled = false
+
         document.removeEventListener('mousemove', this.onMouseMove)
 
         document.querySelectorAll(...this.focusElements).forEach(element => {

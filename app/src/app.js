@@ -12,7 +12,6 @@ import "./Components/MazeBlock"
 import classesForms from "./assets/styles/forms_controls.module.scss"
 
 import Router from "./Services/Router"
-import ConnectionAPI from "./Services/ConnectionAPI"
 import { createElementFromHTML } from "./Common/common"
 import TransitionPages from "./Common/TransitionPages"
 
@@ -36,7 +35,7 @@ import TransitionPages from "./Common/TransitionPages"
                 sessionStorage.setItem('sessionToken', data.Data)
             })
         }*/
-
+        
         // add sessionToken to floating menu
         const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
         const floatingVertical = document.querySelector('floating-vertical')

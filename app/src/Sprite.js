@@ -1,5 +1,4 @@
 export default class Sprite {
-
     constructor(config) {
         this.variants = config.variants || { }
         this.imageSrc = config.src

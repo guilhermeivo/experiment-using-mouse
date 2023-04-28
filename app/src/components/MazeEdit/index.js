@@ -128,12 +128,20 @@ export default customElements.define('maze-edit',
             }</div>`)
         }
 
-        #createMazeObjects(object) {
+        #createMazeObjects(object) {            
             const objectId = Object.keys(window.editors).find(editor => editor === object.id)
             const editor = window.editors[objectId]
             
             return (`
-                <div id="${ objectId }" class="${ classes['maze__object'] }">
+                <div 
+                    id="${ objectId }" 
+                    class="${ classes['maze__object'] }" 
+                    ${
+                        (object.x > -1 && object.y > -1) 
+                            ? (`style="top: ${ (object.x - 1) * 64 }px;left: ${ (object.y - 1) * 64 }px"`)
+                            : ''
+                    }
+                    >
                     <div class="${ classes['block__content'] }">
                         <img src="${ editor.icon }" alt="${ editor.label }">
                     </div>
