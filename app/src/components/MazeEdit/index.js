@@ -74,6 +74,25 @@ export default customElements.define('maze-edit',
             })
         }
 
+        exportImageTiles() {
+            const canvas = document.createElement('canvas')
+            canvas.width = this.state.overworldMazeEdit.rows * 64
+            canvas.height = this.state.overworldMazeEdit.columns * 64
+            const ctx = canvas.getContext('2d')
+
+            const allBlocks = document.querySelectorAll('maze-block')
+            Array.from(allBlocks).map(block => {
+                const image = block.querySelector('img')
+                const [ x, y ] = block.state.position.split(',').map(string => Number(string))
+                ctx.drawImage(
+                    image, // image
+                    (y - 1) * 64, (x - 1) * 64, // sx, sy
+                    64, 64, // sWidth, sHeight
+                    )
+            })
+            return canvas.toDataURL()
+        }
+
         #createBlock({ x, y }) {
             const block = document.createElement('maze-block')
             block.classList.add(classes['maze__block'])
@@ -109,8 +128,24 @@ export default customElements.define('maze-edit',
             }</div>`)
         }
 
+        #createMazeObjects(object) {
+            const objectId = Object.keys(window.editors).find(editor => editor === object.id)
+            const editor = window.editors[objectId]
+            
+            return (`
+                <div id="${ objectId }" class="${ classes['maze__object'] }">
+                    <div class="${ classes['block__content'] }">
+                        <img src="${ editor.icon }" alt="${ editor.label }">
+                    </div>
+                </div>
+            `)
+        }
+
         render() {
             this.append(createElementFromHTML(this.#createMaze()))
+            
+            Object.keys(this.state.overworldMazeEdit.mazeObjects)
+                .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
             this.update()
         }
 
@@ -125,7 +160,10 @@ export default customElements.define('maze-edit',
                 maze.append(line)
 
                 for (let j = 0; j < this.state.overworldMazeEdit.columns; j++) {
-                    this.state.overworldMazeEdit.add({ x: maze.children.length, y: j + 1 })
+                    if (!this.state.overworldMazeEdit.getTile({ x: maze.children.length, y: j + 1 })) {
+                        this.state.overworldMazeEdit.add({ x: maze.children.length, y: j + 1 })
+                    }
+                    
                     line.append(this.#createBlock({ x: maze.children.length, y: j + 1 }))
                 }
             }
@@ -143,7 +181,10 @@ export default customElements.define('maze-edit',
 
             for (let i = 0; i < remainingColumns; i++) {
                 Array.from(maze.children).forEach((line, key) => {
-                    this.state.overworldMazeEdit.add({ x: key + 1, y: maze.children[key].children.length + 1 })
+                    if (!this.state.overworldMazeEdit.getTile({ x: key + 1, y: maze.children[key].children.length + 1 })) {
+                        this.state.overworldMazeEdit.add({ x: key + 1, y: maze.children[key].children.length + 1 })
+                    }
+                    
                     line.append(this.#createBlock({ x: key + 1, y: maze.children[key].children.length + 1 }))
                 })
             }

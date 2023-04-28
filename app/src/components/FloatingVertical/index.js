@@ -1,4 +1,5 @@
 import { createElementFromHTML } from '../../Common/common'
+
 import classes from './style.module.scss'
 
 export default customElements.define('floating-vertical', 
@@ -6,11 +7,11 @@ export default customElements.define('floating-vertical',
         constructor(...props) {
             super(props)
 
+            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
+
             this.state = {
                 isOpen: false
             }
-
-            this.onClickOutside = this.onClickOutside.bind(this)
         }
 
         connectedCallback() {
@@ -20,41 +21,56 @@ export default customElements.define('floating-vertical',
             }
         }
 
-        disconnectedCallback() { }
-
-        onClickOutside(event) {
-            event.preventDefault()
-            if (this.state.isOpen && !this.contains(event.target)) {
-                this.toggle()
-            }
+        disconnectedCallback() { 
+            this.removeEventsListener()
         }
 
         addContentElement({ title, element }) {
             this.querySelector('#floatingVertical').prepend(element)
             element.prepend(createElementFromHTML(`
-                <div class="${ classes['floating-vertical__title'] }"><h4>${ title }</h4></div>
+                <div class="${ classes['floating-vertical__title'] }">
+                    <h4>${ title }</h4>
+                </div>
             `))
         }
 
+        onKeyDownHandler(event) {
+            switch (event.key) {
+                case 'Escape':
+                    event.preventDefault()
+                    if (this.state.isOpen) this.toggle()
+                    break
+                case 'e':
+                    event.preventDefault()
+                    this.toggle()
+                    break
+            }
+        }
+
         toggle() {
-            this.querySelector('#floatingVertical').classList.toggle(classes['floating-vertical__disable']) 
+            const floatingVertical = this.querySelector('#floatingVertical')
+            floatingVertical.classList.toggle(classes['floating-vertical__disable']) 
             this.state = {
                 ...this.state,
-                isOpen: !this.querySelector('#floatingVertical').classList.contains(classes['floating-vertical__disable']) 
+                isOpen: !floatingVertical.classList.contains(classes['floating-vertical__disable']) 
             }
-            
-            /*if (this.state.isOpen) {
-                setTimeout(() => {
-                    window.addEventListener('click', this.onClickOutside)
-                }, 1)
-            } else {
-                window.removeEventListener('click', this.onClickOutside)
-            }*/
+        }
+
+        addEventsListener() {
+            document.addEventListener('keydown', this.onKeyDownHandler)
+        }
+
+        removeEventsListener() {
+            document.removeEventListener('keydown', this.onKeyDownHandler)
         }
 
         render() {
             this.append(createElementFromHTML(`
-                <div id="floatingVertical" class="${ classes['floating-vertical'] } ${ classes['floating-vertical__disable'] }"></div>
+                <div 
+                    id="floatingVertical" 
+                    class="${ classes['floating-vertical'] } ${ classes['floating-vertical__disable'] }"></div>
             `))
+
+            this.addEventsListener()
         }
     })

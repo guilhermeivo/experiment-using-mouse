@@ -41,8 +41,6 @@ export default customElements.define('maze-block',
             const changedValue = oldValue !== newValue
 
             if (changedValue) {
-                this.update()
-
                 const [ x, y ] = this.state.position.split(',').map(string => Number(string))
                 const indexValuesX = [0, -1, +1, 0]
                 const indexValuesY = [-1, 0, 0, +1]
@@ -74,6 +72,7 @@ export default customElements.define('maze-block',
                     ...this.state,
                     type: newTypeKey
                 }
+                this.update()
                 this.setAttribute('type', newTypeKey)
             }
 
@@ -83,9 +82,14 @@ export default customElements.define('maze-block',
                 
                 this.state = {
                     ...this.state,
-                    type: this.state.items.path.id
+                    type: this.state.items.path.id,
                 }
+                this.update()
                 this.setAttribute('type', this.state.items.path.id)
+
+                const object = document.querySelector(`#${ newTypeKey }`)
+                object.style.top = `${ (x - 1) * 64 }px`
+                object.style.left = `${ (y - 1) * 64 }px`
             }
         }
 
@@ -129,7 +133,7 @@ export default customElements.define('maze-block',
         }
 
         update() {
-            if (!this.rendered) return 
+            if (!this.rendered) return
 
             const key = Object.keys(this.state.items).find((key, index) => this.state.items[key].id === this.state.type)
             const item = this.state.items[key]

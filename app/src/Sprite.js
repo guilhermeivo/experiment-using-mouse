@@ -4,8 +4,6 @@ export default class Sprite {
         this.variants = config.variants || { }
         this.imageSrc = config.src
         this.gridDimension = config.gridDimension || 32
-
-        
     }
 
     initialize() {

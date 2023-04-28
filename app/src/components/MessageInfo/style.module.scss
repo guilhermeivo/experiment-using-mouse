@@ -24,21 +24,36 @@ message-info {
     transition: .5s cubic-bezier(1, 0, 1, 1);
     display: flex;
     padding: 12px;
+    right: 0;
 
     &.message-info__remove {
+        right: -20px;
         opacity: 0;
     }
+
+    &.message-info--info {
+        .type-info span {
+            color: $primary-color;
+            text-shadow: 0 4px 12px rgba($primary-color, .3);
+        }
+    }
+
+    &.message-info--warn  {
+        background: #ffe1e8;
+        border: 1px solid #ffa1b9;
+
+        .type-info span {
+            color: $error-color;
+            text-shadow: 0 4px 12px rgba($error-color, .3);
+        }
+    } 
 
     .type-info {
         margin-right: 8px;
         padding: 4px;
 
-        &.type-info--info span {
-            color: $primary-color
-        }
-
-        &.type-info--warn span {
-            color: $error-color;
+        span {
+            user-select: none;
         }
     }
 
@@ -56,5 +71,15 @@ message-info {
         top: 12px;
         right: 12px;
         cursor: pointer;
+        
+        span {
+            transition: .2s ease-in;
+            user-select: none;
+            color: $medium-emphasis-color
+        }
+
+        &:hover span {
+            color: $high-emphasis-color
+        }
     }
 }

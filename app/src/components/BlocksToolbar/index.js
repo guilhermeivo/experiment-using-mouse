@@ -150,7 +150,7 @@ export default customElements.define('blocks-toolbar',
                 customCursor: new CustomCursor(`.${ classes['custom_cursor'] }`, { 
                     disableClass: classes['custom_cursor--disable'],
                     initializedClass: classes['custom_cursor--initialized'],
-                    focusElements: [ 'maze-blocks' ],
+                    focusElements: [ 'maze-block' ],
                     focusClass: classes['custom_cursor--focused']
                 })
             }

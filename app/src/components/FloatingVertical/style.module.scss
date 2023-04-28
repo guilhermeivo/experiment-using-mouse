@@ -7,7 +7,7 @@
     padding: 32px 4px;
     background-color: $background-color;
     border: 1px solid $border-color;
-    box-shadow: 0px 4px 16px $shadow-color;
+    box-shadow: 0 4px 16px $shadow-color;
     max-height: 640px;
     max-width: 260px;
     border-radius: 4px;
@@ -16,6 +16,30 @@
     opacity: 1;
     z-index: 1000;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: .8em;
+    }
+     
+    &::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: $surface-color--variant;
+        border: 1px solid $border-color;
+
+        &:hover {
+            background: $surface-color;
+            box-shadow: 0 4px 16px $shadow-color;
+        }
+    }
+
+    &.floating-vertical__disable {
+        transform: scale(.7);
+        transition: .2s ease-in;
+
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
+    }
 
     > div {
         padding: 6px 12px;
@@ -29,13 +53,5 @@
         h4 {
             margin-bottom: 0;
         }
-    }
-
-    &.floating-vertical__disable {
-        transform: scale(.7);
-        opacity: 0;
-        transition: .2s ease-in;
-        pointer-events: none;
-        user-select: none;
     }
 }

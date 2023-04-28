@@ -18,16 +18,21 @@ export default customElements.define('make-page',
 
             this.onMouseMoveHandler = this.onMouseMoveHandler.bind(this)
             this.onResizersMovimentHandler = this.onResizersMovimentHandler.bind(this)
-            this.onCreateMazeHandler = this.onCreateMazeHandler.bind(this)
             this.onSaveMazeHandler = this.onSaveMazeHandler.bind(this)
+            this.onExportMazeHandler = this.onExportMazeHandler.bind(this)
 
+            const OverworldMaze = JSON.parse(localStorage.getItem('OverworldMaze')) || { }
+            
             this.state = {
-                idMaze: sessionStorage.getItem('mazeId') || '',
                 maze: '',
                 resizeSelected: '',
                 initialPosition: '',
-
-                overworldMazeEdit: new OverworldMazeEdit({ rows: DEFAULT_MAZE_ROWS, columns: DEFAULT_MAZE_COLUMNS })
+                overworldMazeEdit: new OverworldMazeEdit({ 
+                    rows: OverworldMaze.rows || DEFAULT_MAZE_ROWS, 
+                    columns: OverworldMaze.columns || DEFAULT_MAZE_COLUMNS,
+                    mazeObjects: OverworldMaze.mazeObjects || null,
+                    tilesMaze: OverworldMaze.tilesMaze || null
+                })
             }
         }
 
@@ -128,17 +133,15 @@ export default customElements.define('make-page',
             })
         }
 
-        async onCreateMazeHandler(event) {
-            const validatorInputName = validators(
-                '#inputName', { formElement: '#formTextName', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
-            
-            const isValid = validatorInputName.isValidNotEmpty() && validatorInputName.isValidNotSpecialCharacters()
-            
-            if (isValid) {
-                try {
-                    // ...
-                } catch { }
-            }     
+        onExportMazeHandler(event) {
+            const dataUrl = this.state.maze.exportImageTiles()
+
+            const link = document.createElement('a')
+            link.style.display = 'none'
+            document.body.appendChild(link)
+            link.setAttribute('href', dataUrl)
+            link.setAttribute('download', 'maze.png')
+            link.click()
         }
 
         async onSaveMazeHandler(event) {
@@ -157,7 +160,15 @@ export default customElements.define('make-page',
                 targetClass.add(classesForms['button__submit--active'])
                 Promise.all([new Promise(async (resolve, reject) => {
                     try {
-                        reject()
+                        const json = JSON.stringify({ 
+                            name: inputName.value, 
+                            rows: this.state.overworldMazeEdit.rows, 
+                            columns: this.state.overworldMazeEdit.columns, 
+                            mazeObjects: this.state.overworldMazeEdit.mazeObjects, 
+                            tilesMaze: this.state.overworldMazeEdit.tilesMaze
+                        })
+                        localStorage.setItem('OverworldMaze', json)
+                        resolve()
                     } catch (exception) {
                         reject()
                     }
@@ -192,6 +203,11 @@ export default customElements.define('make-page',
                 buttonSave.addEventListener('click', this.onSaveMazeHandler)
             }
 
+            const buttonExportImage = document.querySelector('#buttonExportImage')
+            if (buttonExportImage) {
+                buttonExportImage.addEventListener('click', this.onExportMazeHandler)
+            }
+
             const checkbox = document.querySelector('#checkboxEdges')
             if (checkbox && this.state.maze) {
                 checkbox.addEventListener('change', this.state.maze.onChangeVisibilityEdges)
@@ -209,6 +225,12 @@ export default customElements.define('make-page',
                 buttonSave.removeEventListener('click', this.onSaveMazeHandler)
             }
 
+            const buttonExportImage = document.querySelector('#buttonExportImage')
+            if (buttonExportImage) {
+                buttonExportImage.removeEventListener('click', this.onExportMazeHandler)
+            }
+
+
             const checkbox = document.querySelector('#checkboxEdges')
             if (checkbox && this.state.maze) {
                 checkbox.removeEventListener('change', this.state.maze.onChangeVisibilityEdges)
@@ -220,7 +242,7 @@ export default customElements.define('make-page',
                 <div id="wrapperMaze">
                     <div class="${ classesForms['form-controls'] }">
                         <div id="formTextName" class="${ classesForms['form__text-control'] }">
-                            <input type="text" name="inputName" id="inputName" placeholder=" " autocomplete="off" required />
+                            <input type="text" name="inputName" id="inputName" placeholder=" " autocomplete="off" required value="${ localStorage.getItem('OverworldMaze') ? JSON.parse(localStorage.getItem('OverworldMaze')).name : '' }" />
                             <label for="inputName">Name maze</label>
                             <span class="${ classesForms['form__error-message'] }"></span>
                         </div>
@@ -232,6 +254,11 @@ export default customElements.define('make-page',
                             <button 
                                 id="buttonSave" 
                                 class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Save</button>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <button 
+                                id="buttonExportImage" 
+                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">Export Image</button>
                         </div>
                     </div>
                 </div>

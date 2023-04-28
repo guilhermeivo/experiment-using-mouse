@@ -61,14 +61,16 @@
     
     left: 0;
     top: 0;
-    transition: 25ms ease-in-out,
-                width .2s cubic-bezier(1, 0, 1, 1);
+
+    transition: 25ms ease-in;
     z-index: 1000;
 
     img {
         image-rendering: pixelated;
         max-width: 100%;
         width: 100%;
+        transform: scale(1);
+        transition: .2s cubic-bezier(1, 0, 1, 1);
     }
 
     &.custom_cursor--initialized {
@@ -80,9 +82,8 @@
     }
 
     &.custom_cursor--focused {
-        transition: 25ms ease-in-out, 
-                    width .2s ease-in;
-        width: 72px;
-        height: 72px;
+        img {
+            transform: scale(1.3);
+        }
     }
 }

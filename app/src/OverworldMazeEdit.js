@@ -27,15 +27,17 @@ export default class OverworldMazeEdit {
 
         this.mazeObjects = config.mazeObjects || {
             cheese: new MazeObject({
+                id: window.editors.cheese.id,
                 x: -1,
                 y: -1
             }),
             mouse: new MazeObject({
+                id: window.editors.mouse.id,
                 x: -1,
                 y: -1
             })
         }
-        this.tilesMaze = config.tiles || { }
+        this.tilesMaze = config.tilesMaze || { }
         if (Object.keys(this.tilesMaze).length === 0) {
             for (let i = 0; i < this.rows; i++) {
                 for (let j = 0; j < this.columns; j++) {

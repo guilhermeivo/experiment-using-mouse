@@ -13,9 +13,9 @@ export default customElements.define('message-info',
             this.onClickCloseHandler = this.onClickCloseHandler.bind(this)
         }
 
-        async connectedCallback() {
+        connectedCallback() {
             if (!this.rendered) {
-                await this.render()
+                this.render()
                 this.rendered = true
             }
         }
@@ -45,8 +45,8 @@ export default customElements.define('message-info',
 
         #createdMessage({ description, type }) {
             return(`
-            <div class="${ classes['message-info'] }">
-                <div class="${ classes['type-info'] } ${ type == 'info' ? classes['type-info--info'] : classes['type-info--warn'] }">
+            <div class="${ classes['message-info'] } ${ type == 'info' ? classes['message-info--info'] : classes['message-info--warn'] }">
+                <div class="${ classes['type-info'] }">
                     ${
                         (type == 'info')
                             ? `<span class="material-symbols-outlined">
@@ -67,9 +67,5 @@ export default customElements.define('message-info',
                 </div>
             </div>
             `)
-        }
-
-        async render() {
-            //this.append(createElementFromHTML(this.#createdListMessages()))
         }
     })

@@ -31,12 +31,12 @@ import TransitionPages from "./Common/TransitionPages"
 
     window.onload = () => {
         // set token id in session for authentication
-        if(!sessionStorage .getItem('sessionToken')) {
+        /*if(!sessionStorage.getItem('sessionToken')) {
             ConnectionAPI.Register((data) => {
-                sessionStorage .setItem('sessionToken', data.Data)
+                sessionStorage.setItem('sessionToken', data.Data)
             })
-        }
-
+        }*/
+        
         // add sessionToken to floating menu
         const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
         const floatingVertical = document.querySelector('floating-vertical')
@@ -50,7 +50,7 @@ import TransitionPages from "./Common/TransitionPages"
                             type="text" 
                             name="input-name" 
                             placeholder=" " 
-                            value="${ sessionStorage .getItem('sessionToken') }" 
+                            value="${ sessionStorage.getItem('sessionToken') }" 
                             disabled />
                         <label for="inputToken">Token session</label>
                         <span class="${ classesForms['form__error-message'] }"></span>
