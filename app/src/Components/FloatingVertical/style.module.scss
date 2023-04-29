@@ -24,21 +24,6 @@
         height: calc(100vh - 96px);
     }
 
-    &::-webkit-scrollbar {
-        width: .8em;
-    }
-     
-    &::-webkit-scrollbar-thumb {
-        border-radius: 8px;
-        background-color: $surface-color--variant;
-        border: 1px solid $border-color;
-
-        &:hover {
-            background: $surface-color;
-            box-shadow: 0 4px 16px $shadow-color;
-        }
-    }
-
     &.floating-vertical__disable {
         transform: scale(.7);
         transition: .2s ease-in;

@@ -36,10 +36,11 @@ export default customElements.define('make-page',
             }
         }
 
-        connectedCallback() {
+        async connectedCallback() {
             if (!this.rendered) {
-                this.render()
+                await this.render()
                 this.rendered = true
+                this.update()
             }
         }
 

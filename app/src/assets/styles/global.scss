@@ -101,6 +101,21 @@ div {
     }
 }
 
+*::-webkit-scrollbar {
+    width: .6em;
+}
+ 
+*::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: $surface-color--variant;
+    border: 1px solid $border-color;
+
+    &:hover {
+        background: $surface-color;
+        box-shadow: 0 4px 16px $shadow-color;
+    }
+}
+
 /* content */
 body {
     min-height: 100vh;
