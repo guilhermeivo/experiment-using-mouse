@@ -111,7 +111,7 @@ export default customElements.define('maze-block',
             document.addEventListener('mousedown', this.onMouseDownHandler)
             document.addEventListener('mouseup', this.onMouseUpHanler)
 
-            this.addEventListener('touchmove', this.onMouseOverHandler)
+            this.addEventListener('touchmove', this.onMouseOverHandler, { passive: true})
             document.addEventListener('touchstart', this.onMouseDownHandler)
             document.addEventListener('touchend', this.onMouseUpHanler)
         }

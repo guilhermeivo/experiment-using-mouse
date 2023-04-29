@@ -3,29 +3,33 @@ export default class Sprite {
         this.variants = config.variants || { }
         this.imageSrc = config.src
         this.gridDimension = config.gridDimension || 32
+
+        this.queueAwaiting = []
     }
 
-    initialize() {
+    async initialize() {
         return new Promise((resolve, reject) => {
-            if (this.isLoaded) resolve()
-              
+            if (this.isLoaded) return resolve()
+            if (this.image) return this.queueAwaiting.push(() => resolve())
+            
             this.image = new Image()
             this.image.crossOrigin = 'Anonymous'
             this.image.src = this.imageSrc
-
+            
             this.image.onload = () => {
                 this.isLoaded = true
-                resolve()
-            }     
+                this.queueAwaiting.forEach(_function => _function())
+                return resolve()
+            }
             this.image.onerror = event => { 
-                reject()
+                return reject()
             }
         })
     }
 
     async drawImage(typeImage) {
         await this.initialize()
-
+        
         const canvas = document.createElement('canvas')
         canvas.width = this.gridDimension
         canvas.height = this.gridDimension
