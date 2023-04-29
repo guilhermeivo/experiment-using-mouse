@@ -102,9 +102,9 @@ div {
 }
 
 /* content */
-
 body {
     min-height: 100vh;
+    height: 100vh;
     overflow: hidden;
 }
 
@@ -120,9 +120,8 @@ img {
 }
 
 main#app {
-    height: calc(100vh - 100px);
+    height: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
@@ -132,6 +131,12 @@ main#app {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 1000;
+    background: $background-color;
+
+    .toolbar-menu {
+        background: $background-color;
+    }
 
     @media (max-width: $breakpoint-sm) {
         padding: 12px;
