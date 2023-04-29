@@ -135,8 +135,8 @@ export default customElements.define('maze-edit',
             this.addEventListener('mouseup', this.onMouseUpHandler)
 
             this.addEventListener('click', this.onSelectedHandler)
-            this.addEventListener('touchstart', this.onTouchStartHandler)
-            this.addEventListener('touchend', this.onTouchEndHandler)
+            this.addEventListener('touchstart', this.onTouchStartHandler, { passive: true })
+            this.addEventListener('touchend', this.onTouchEndHandler, { passive: true })
         }
 
         removeEventsListener() {

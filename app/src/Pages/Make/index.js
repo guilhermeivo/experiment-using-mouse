@@ -5,6 +5,9 @@ import OverworldMazeEdit from '../../OverworldMazeEdit'
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 
+const SMALLEST_POSSIBLE_SIZE = 4
+const LARGEST_POSSIBLE_SIZE = 20
+
 const DEFAULT_MAZE_ROWS = 8
 const DEFAULT_MAZE_COLUMNS = 8
 
@@ -20,6 +23,8 @@ export default customElements.define('make-page',
             this.onResizersMovimentHandler = this.onResizersMovimentHandler.bind(this)
             this.onSaveMazeHandler = this.onSaveMazeHandler.bind(this)
             this.onExportMazeHandler = this.onExportMazeHandler.bind(this)
+            this.onInputRowsHandler = this.onInputRowsHandler.bind(this)
+            this.onInputColumnsHandler = this.onInputColumnsHandler.bind(this)
 
             const OverworldMaze = JSON.parse(localStorage.getItem('OverworldMaze')) || { }
             
@@ -28,6 +33,8 @@ export default customElements.define('make-page',
                 resizeSelected: '',
                 initialPosition: '',
                 overworldMazeEdit: new OverworldMazeEdit({ 
+                    smallestSize: SMALLEST_POSSIBLE_SIZE,
+                    LARGEST_POSSIBLE_SIZE: LARGEST_POSSIBLE_SIZE,
                     rows: OverworldMaze.rows || DEFAULT_MAZE_ROWS, 
                     columns: OverworldMaze.columns || DEFAULT_MAZE_COLUMNS,
                     mazeObjects: OverworldMaze.mazeObjects || null,
@@ -45,6 +52,8 @@ export default customElements.define('make-page',
         }
 
         disconnectedCallback() { 
+            this.removeEventsListener()
+            
             const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
             if (!backMenu.classList.contains('back-menu--disabled')) 
                 backMenu.classList.add('back-menu--disabled')
@@ -54,8 +63,6 @@ export default customElements.define('make-page',
 
             const floatingVertical = document.querySelector('#floatingVertical')
             floatingVertical.removeChild(document.querySelector('#wrapperMaze'))
-
-            this.removeEventsListener()
         }
 
         onMouseMoveHandler(event) {
@@ -193,6 +200,22 @@ export default customElements.define('make-page',
             }
         }
 
+        onInputRowsHandler(event) {
+            if (event.target.value > this.state.overworldMazeEdit.rows) this.state.maze.createRowHandler()
+            else this.state.maze.removeRowHandler()
+
+            event.target.value = this.state.overworldMazeEdit.rows
+            this.update()
+        }
+
+        onInputColumnsHandler(event) {
+            if (event.target.value > this.state.overworldMazeEdit.columns) this.state.maze.createColumnHandler()
+            else this.state.maze.removeColumnHandler()
+
+            event.target.value = this.state.overworldMazeEdit.columns
+            this.update()
+        }
+
         addEventsListener() {
             const resizers = document.querySelectorAll(`.${ classes['resizer'] }`)
             resizers.forEach(resizer => {
@@ -200,19 +223,21 @@ export default customElements.define('make-page',
             })
 
             const buttonSave = document.querySelector('#buttonSave')
-            if (buttonSave) {
-                buttonSave.addEventListener('click', this.onSaveMazeHandler)
-            }
+            buttonSave.addEventListener('click', this.onSaveMazeHandler)
 
             const buttonExportImage = document.querySelector('#buttonExportImage')
-            if (buttonExportImage) {
-                buttonExportImage.addEventListener('click', this.onExportMazeHandler)
-            }
+            buttonExportImage.addEventListener('click', this.onExportMazeHandler)
 
             const checkbox = document.querySelector('#checkboxEdges')
-            if (checkbox && this.state.maze) {
+            if (this.state.maze) {
                 checkbox.addEventListener('change', this.state.maze.onChangeVisibilityEdges)
             }
+
+            const numberRows = document.querySelector('#numberRows')
+            numberRows.addEventListener('input', this.onInputRowsHandler)
+
+            const numberColumns = document.querySelector('#numberColumns')
+            numberColumns.addEventListener('input', this.onInputColumnsHandler)
         }
 
         removeEventsListener() {
@@ -222,20 +247,22 @@ export default customElements.define('make-page',
             })
 
             const buttonSave = document.querySelector('#buttonSave')
-            if (buttonSave) {
-                buttonSave.removeEventListener('click', this.onSaveMazeHandler)
-            }
+            buttonSave.removeEventListener('click', this.onSaveMazeHandler)
 
             const buttonExportImage = document.querySelector('#buttonExportImage')
-            if (buttonExportImage) {
-                buttonExportImage.removeEventListener('click', this.onExportMazeHandler)
-            }
-
+            if (buttonExportImage)
+            buttonExportImage.removeEventListener('click', this.onExportMazeHandler)
 
             const checkbox = document.querySelector('#checkboxEdges')
-            if (checkbox && this.state.maze) {
+            if (this.state.maze) {
                 checkbox.removeEventListener('change', this.state.maze.onChangeVisibilityEdges)
             }
+
+            const numberRows = document.querySelector('#numberRows')
+            numberRows.removeEventListener('input', this.onInputRowsHandler)
+
+            const numberColumns = document.querySelector('#numberColumns')
+            numberColumns.removeEventListener('input', this.onInputColumnsHandler)
         }
 
         #sectionScrollerMenu() {
@@ -246,6 +273,14 @@ export default customElements.define('make-page',
                             <input type="text" name="inputName" id="inputName" placeholder=" " autocomplete="off" required value="${ localStorage.getItem('OverworldMaze') ? JSON.parse(localStorage.getItem('OverworldMaze')).name : '' }" />
                             <label for="inputName">Name maze</label>
                             <span class="${ classesForms['form__error-message'] }"></span>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <input type="number" name="numberRows" id="numberRows" min="${ SMALLEST_POSSIBLE_SIZE }" max="${ LARGEST_POSSIBLE_SIZE }" value="${ this.state.overworldMazeEdit.rows }" />
+                            <label for="numberRows">Rows</label>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <input type="number" name="numberColumns" id="numberColumns" min="${ SMALLEST_POSSIBLE_SIZE }" max="${ LARGEST_POSSIBLE_SIZE }" value="${ this.state.overworldMazeEdit.columns }" />
+                            <label for="numberColumns">Column</label>
                         </div>
                         <div class="${ classesForms['form__checkbox-control'] }">
                             <input type="checkbox" name="checkboxEdges" id="checkboxEdges" checked />
@@ -308,6 +343,11 @@ export default customElements.define('make-page',
 
         update() {
             if (!this.rendered) return
+
+            const numberRows = document.querySelector('#numberRows')
+            numberRows.value = this.state.overworldMazeEdit.rows
+            const numberColumns = document.querySelector('#numberColumns')
+            numberColumns.value = this.state.overworldMazeEdit.columns
 
             const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
             if (resizable) {

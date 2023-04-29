@@ -22,8 +22,11 @@ export default class OverworldMazeEdit {
         this.lowerSrc = config.lowerSrc || null
         this.upperSrc = config.upperSrc || null
 
-        this.rows = config.rows || SMALLEST_POSSIBLE_SIZE
-        this.columns = config.columns || SMALLEST_POSSIBLE_SIZE
+        this.smallestSize = config.smallestSize || SMALLEST_POSSIBLE_SIZE
+        this.largestSize = config.largestSize || LARGEST_POSSIBLE_SIZE
+
+        this.rows = config.rows || this.smallestSize
+        this.columns = config.columns || this.smallestSize
 
         this.mazeObjects = config.mazeObjects || {
             cheese: new MazeObject({
@@ -52,7 +55,7 @@ export default class OverworldMazeEdit {
     }
 
     set rows(value) {
-        if (value >= SMALLEST_POSSIBLE_SIZE && value <= LARGEST_POSSIBLE_SIZE) {
+        if (value >= this.smallestSize && value <= this.largestSize) {
             this.#rows = value
         }
     }
@@ -62,7 +65,7 @@ export default class OverworldMazeEdit {
     }
 
     set columns(value) {
-        if (value >= SMALLEST_POSSIBLE_SIZE && value <= LARGEST_POSSIBLE_SIZE) {
+        if (value >= this.smallestSize && value <= this.largestSize) {
             this.#columns = value
         }
     }
