@@ -8,7 +8,7 @@ export default async () => {
         name string not null,
         description string,
         createdOn date,
-        encodedString string not null,
+        base64image string not null,
         foreign key (sessionId)
             references session (id)
     )`

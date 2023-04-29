@@ -5,7 +5,7 @@ import { Maze } from '@Infrastructure/Persistence/connection'
 export interface CreateMazeCommand {
     name: string
     description: string
-    encodedString: string
+    base64image: string
     sessionId: string
 }
 
@@ -13,13 +13,13 @@ export abstract class CreateMazeCommandHandler {
     public static async handle(request: CreateMazeCommand): Promise<Response<string>> {
         try {
             if (!request.sessionId) throw new Error('Session invalid.')
-            if (!request.name || !request.encodedString) throw new Error('Missing values.')
+            if (!request.name || !request.base64image) throw new Error('Missing values.')
             
             let entity: MazeEntity = {
                 name: request.name,
                 sessionId: request.sessionId,
                 description: request.description,
-                encodedString: request.encodedString,
+                base64image: request.base64image,
                 createdOn: new Date().toISOString()
             }
 

@@ -5,5 +5,5 @@ export default interface Maze extends BaseEntity {
     name: string
     description?: string
     createdOn?: string
-    encodedString: string
+    base64image: string
 }

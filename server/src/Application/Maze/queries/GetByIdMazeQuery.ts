@@ -34,7 +34,7 @@ export abstract class GetByIdMazeQueryHadler {
                         view: amountViews,
                         isLiked: isLiked.length ? true : false,
                         createdOn: maze.createdOn,
-                        encodedString: maze.encodedString
+                        base64image: maze.base64image
                     }
     
                     result.push(entity)

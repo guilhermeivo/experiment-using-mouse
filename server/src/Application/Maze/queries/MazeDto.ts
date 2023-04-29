@@ -7,5 +7,5 @@ export default interface Maze extends BaseEntity {
     isLiked?: boolean
     description?: string
     createdOn?: string
-    encodedString: string
+    base64image: string
 }
