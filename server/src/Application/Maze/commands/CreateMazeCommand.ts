@@ -5,8 +5,8 @@ import { Maze } from '@Infrastructure/Persistence/connection'
 export interface CreateMazeCommand {
     name: string
     description: string
-    base64image: string
     sessionId: string
+    base64image: string
 }
 
 export abstract class CreateMazeCommandHandler {
@@ -14,7 +14,7 @@ export abstract class CreateMazeCommandHandler {
         try {
             if (!request.sessionId) throw new Error('Session invalid.')
             if (!request.name || !request.base64image) throw new Error('Missing values.')
-            
+
             let entity: MazeEntity = {
                 name: request.name,
                 sessionId: request.sessionId,

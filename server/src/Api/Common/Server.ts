@@ -27,6 +27,15 @@ export default abstract class Server {
 
             let responseBodyResponse: any
 
+            const bodyChunk: Array<any> = []
+            let body: object
+
+            request.on('data', chunk => {
+                bodyChunk.push(chunk)
+            }).on('end', () => {
+                let parsedBody = Buffer.concat(bodyChunk).toString() || '{}'
+                body = JSON.parse(parsedBody)
+            })
             await this.authenticationHandler(request, response)
             
             this.routes.map(async (route) => {
@@ -42,7 +51,7 @@ export default abstract class Server {
                                 urlComponents.path.length)
                             
                             urlComponents.queries[routeParam] = queryString
-                            responseBodyResponse = await route.callback(urlComponents.queries, request, response)
+                            responseBodyResponse = await route.callback(urlComponents.queries, request, response, body)
 
                             response.writeHead(StatusCodes.Success, headers)
                             response.end(JSON.stringify(responseBodyResponse))
@@ -50,7 +59,7 @@ export default abstract class Server {
                         break
                     case TypesRequests.Query:
                         if (urlComponents.path === route.url && request.method === route.methods) {
-                            responseBodyResponse = await route.callback(urlComponents.queries, request, response)
+                            responseBodyResponse = await route.callback(urlComponents.queries, request, response, body)
 
                             response.writeHead(StatusCodes.Success, headers)
                             response.end(JSON.stringify(responseBodyResponse))

@@ -8,14 +8,14 @@ const accountController = new AccountController()
 
 routes.get('/api', () => { return { message: 'Route found' } })
 
-routes.post('/account/register', (query, request, response) => accountController.Register(request, response))
-routes.put('/account/remove', (query, request, response) => accountController.Remove(request, response))
+routes.post('/account/register', (query, request, response, body) => accountController.Register(request, response))
+routes.put('/account/remove', (query, request, response, body) => accountController.Remove(request, response))
 
-routes.get('/api/maze', (request) => mazeController.GetAll(request))
-routes.get('/api/maze/{id}', (request) => mazeController.GetById(request))
-routes.post('/api/maze', (request) => mazeController.Create(request))
-routes.post('/api/maze/{id}', (request) => mazeController.Update(request))
-routes.put('/api/maze/addLikes/{id}', (request) => mazeController.AddLikes(request))
-routes.put('/api/maze/addViews/{id}', (request) => mazeController.AddViews(request))
+routes.get('/api/maze', (query, request, response, body) => mazeController.GetAll(query))
+routes.get('/api/maze/{id}', (query, request, response, body) => mazeController.GetById(query))
+routes.post('/api/maze', (query, request, response, body) => mazeController.Create(query, body))
+routes.post('/api/maze/{id}', (query, request, response, body) => mazeController.Update(query, body))
+routes.put('/api/maze/addLikes/{id}', (query, request, response, body) => mazeController.AddLikes(query))
+routes.put('/api/maze/addViews/{id}', (query, request, response, body) => mazeController.AddViews(query))
 
 export default routes

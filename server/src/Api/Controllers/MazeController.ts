@@ -28,8 +28,8 @@ export default class MazeController {
         return response       
     }
 
-    async Create(request: CreateMazeCommand): Promise<Response<string>> {
-        const response = await CreateMazeCommandHandler.handle(request)
+    async Create(request: CreateMazeCommand, body: CreateMazeCommand): Promise<Response<string>> {
+        const response = await CreateMazeCommandHandler.handle({ ...request, ...body })
 
         if (response.Succeeded) {
             return response
@@ -38,8 +38,8 @@ export default class MazeController {
         return response   
     }
 
-    async Update(request: UpdateMazeCommand): Promise<Response<string>> {
-        const response = await UpdateMazeCommandHandler.handle(request)
+    async Update(request: UpdateMazeCommand, body: CreateMazeCommand): Promise<Response<string>> {
+        const response = await UpdateMazeCommandHandler.handle({ ...request, ...body })
 
         if (response.Succeeded) {
             return response
