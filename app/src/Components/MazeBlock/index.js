@@ -110,6 +110,10 @@ export default customElements.define('maze-block',
             this.addEventListener('mouseover', this.onMouseOverHandler)
             document.addEventListener('mousedown', this.onMouseDownHandler)
             document.addEventListener('mouseup', this.onMouseUpHanler)
+
+            this.addEventListener('touchmove', this.onMouseOverHandler)
+            document.addEventListener('touchstart', this.onMouseDownHandler)
+            document.addEventListener('touchend', this.onMouseUpHanler)
         }
 
         removeEventsListener() {
@@ -117,6 +121,10 @@ export default customElements.define('maze-block',
             this.removeEventListener('mouseover', this.onMouseOverHandler)
             document.removeEventListener('mousedown', this.onMouseDownHandler)
             document.removeEventListener('mouseup', this.onMouseUpHanler)
+
+            this.removeEventListener('touchmove', this.onMouseOverHandler)
+            document.removeEventListener('touchstart', this.onMouseDownHandler)
+            document.removeEventListener('touchend', this.onMouseUpHanler)
         }
 
         #createdBlocks() {
