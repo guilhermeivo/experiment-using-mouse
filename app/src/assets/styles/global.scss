@@ -120,9 +120,14 @@ img {
 }
 
 main#app {
-    height: 100%;
+    height: calc(100% - 72px);
     display: flex;
     justify-content: center;
+    overflow: auto;
+
+    @media (max-width: $breakpoint-sm) { 
+        height: calc(100% - 138px);
+    }
 }
 
 .header-navigation {
@@ -132,7 +137,6 @@ main#app {
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: $background-color;
 
     .toolbar-menu {
         background: $background-color;
