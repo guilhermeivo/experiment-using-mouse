@@ -1,14 +1,16 @@
 @import '../../assets/styles/variables';
 
 .toolbar {
-    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     user-select: none;
+    overflow-x: auto;
     
     .toolbar__item {
+        min-width: 64px;
         width: 64px;
+        min-height: 64px;
         height: 64px;
         cursor: pointer;
         padding: 12px;

@@ -15,6 +15,7 @@ $regular-font: 400;
 $semi-bold-font: 600;
 $bold-font: 700;
 
+/* white theme */
 /* color schema */
 $primary-color: #7a09fa;
 $primary-color--variant: #caa2f8;
@@ -30,3 +31,9 @@ $border-color--variant: #7a09fa;
 $high-emphasis-color: #1C1C1C;
 $medium-emphasis-color: #37352f;
 $disabled-color: #9E9E9E;
+
+/* breakpoint */
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1280px;

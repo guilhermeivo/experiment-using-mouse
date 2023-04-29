@@ -129,11 +129,28 @@ main#app {
 .header-navigation {
     width: 100%;
     padding: 12px 32px;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 
+    @media (max-width: $breakpoint-sm) {
+        padding: 12px;
+
+        .toolbar-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+
+            > * {
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+
     & > div:last-child {
+        position: relative;
         display: flex;
         justify-content: end;
     }
@@ -152,6 +169,11 @@ main#app {
     position: absolute;
     bottom: 4px;
     width: 100%;
+
+    @media (max-width: $breakpoint-sm) {
+        display: none;
+        pointer-events: none;
+    }
 }
 
 /* animation */
@@ -159,44 +181,48 @@ main#app {
 .transitionAnimation {
     position: absolute;
     top: 0;
-    right: 100%;
+    left: 0;
     height: 100vh;
     width: 100%;
     background: $primary-color;
     z-index: 10000;
+    display: none;
 }
 
 .transitionAnimation--left {
+    transform: translate3d(100%, 0, 0);
+    display: block;
     animation: transitionAnimation--left 850ms ease-in-out;
     animation-delay: 300ms
 }
 
 @keyframes transitionAnimation--left {
     0% {
-        left: 100%;
+        transform: translate3d(100%, 0, 0);
     }
     45%, 55% {
-        left: 0;
+        transform: translate3d(0, 0, 0);
     }
     100% {
-        left: -100%;
+        transform: translate3d(-100%, 0, 0);
     }
 }
 
 .transitionAnimation--right {
+    transform: translate3d(-100%, 0, 0);
+    display: block;
     animation: transitionAnimation--right 850ms ease-in-out;
     animation-delay: 300ms
 }
 
 @keyframes transitionAnimation--right {
     0% {
-        left: -100%;
+        transform: translate3d(-100%, 0, 0);
     }
-    45%,
-    55% {
-        left: 0;
+    45%, 55% {
+        transform: translate3d(0, 0, 0);
     }
     100% {
-        left: 100%;
+        transform: translate3d(100%, 0, 0);
     }
 }
