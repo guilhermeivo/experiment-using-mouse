@@ -8,6 +8,11 @@
     position: absolute;
     width: 100%;
     top: 0;
+
+    @media (max-width: $breakpoint-sm) { 
+        display: none;
+        pointer-events: none;
+    }
     
     .resizable__resizers {
         position: absolute;
