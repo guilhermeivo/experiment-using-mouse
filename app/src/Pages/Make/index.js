@@ -4,6 +4,7 @@ import OverworldMazeEdit from '../../OverworldMazeEdit'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
+import ConnectionAPI from '../../Services/ConnectionAPI'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
@@ -176,6 +177,16 @@ export default customElements.define('make-page',
                             tilesMaze: this.state.overworldMazeEdit.tilesMaze
                         })
                         localStorage.setItem('OverworldMaze', json)
+
+                        if (sessionStorage.getItem('sessionToken')) {
+                            if(!sessionStorage.getItem('mazeId')) {
+                                const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportImageTiles())
+                                sessionStorage.setItem('mazeId', response)
+                            } else {
+                                const response = await ConnectionAPI.UpdateMaze(sessionStorage.getItem('mazeId'), inputName.value, this.state.maze.exportImageTiles())
+                            }
+                        }
+                        
                         resolve()
                     } catch (exception) {
                         reject()

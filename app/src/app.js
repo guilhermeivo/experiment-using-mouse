@@ -14,6 +14,7 @@ import classesForms from "./assets/styles/forms_controls.module.scss"
 import Router from "./Services/Router"
 import { createElementFromHTML } from "./Common/common"
 import TransitionPages from "./Common/TransitionPages"
+import ConnectionAPI from "./Services/ConnectionAPI"
 
 (() => {
     `strict`
@@ -30,11 +31,11 @@ import TransitionPages from "./Common/TransitionPages"
 
     window.onload = () => {
         // set token id in session for authentication
-        /*if(!sessionStorage.getItem('sessionToken')) {
+        if(!sessionStorage.getItem('sessionToken')) {
             ConnectionAPI.Register((data) => {
                 sessionStorage.setItem('sessionToken', data.Data)
             })
-        }*/
+        }
         
         // add sessionToken to floating menu
         const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild

@@ -19,16 +19,16 @@ export default (() => {
         }
     }
 
-    const CreateMaze = (name, encodedString, description = '') => {
-        const path = `${ urlServer }/api/maze?name=${ name }&description=${ description }&encodedString=${ encodedString }`
+    const CreateMaze = (name, base64image, description = 'description') => {
+        const path = `${ urlServer }/api/maze?name=${ name }&description=${ description }`
         
-        return httpConnection(path, 'POST')
+        return httpConnection(path, 'POST', { base64image: base64image })
     }
 
-    const UpdateMaze = (id, name, encodedString) => {
-        const path = `${ urlServer }/api/maze/${ id }?name=${ name }&encodedString=${ encodedString }`
+    const UpdateMaze = (id, name, base64image) => {
+        const path = `${ urlServer }/api/maze/${ id }?name=${ name }`
         
-        return httpConnection(path, 'POST')
+        return httpConnection(path, 'POST', { base64image: base64image })
     }
 
     const GetMazeById = (id) => {
@@ -37,14 +37,14 @@ export default (() => {
         return httpConnection(path, 'GET')
     }
 
-    const httpConnection = (url, method) => {
+    const httpConnection = (url, method, body = { }) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await fetch(url, {
                     method: method,
-                    credentials: 'include'
-                })
-                .then(response => response.json())
+                    credentials: 'include',
+                    body: JSON.stringify(body)
+                }).then(response => response.json())
                 .catch(() => { throw new Error('Error when trying to connect to the server, probably the server is off.') })
 
                 if (response.Succeeded) {
