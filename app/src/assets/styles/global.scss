@@ -120,13 +120,9 @@ img {
 }
 
 main#app {
-    height: calc(100% - 72px);
+    height: calc(100% - 138px);
     overflow: auto;
     display: flex;
-
-    @media (max-width: $breakpoint-sm) { 
-        height: calc(100% - 138px);
-    }
 }
 
 .header-navigation {
