@@ -11,9 +11,6 @@ export default customElements.define('maze-block',
             super(props)
 
             this.onSelectedHandler = this.onSelectedHandler.bind(this)
-            this.onMouseOverHandler = this.onMouseOverHandler.bind(this)
-            this.onMouseDownHandler = this.onMouseDownHandler.bind(this)
-            this.onMouseUpHanler = this.onMouseUpHanler.bind(this)
 
             this.state = {
                 items: window.editors,
@@ -31,10 +28,6 @@ export default customElements.define('maze-block',
                 this.rendered = true
                 this.update()
             }
-        }
-
-        disconnectedCallback() {
-            this.removeEventsListener()
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -63,6 +56,9 @@ export default customElements.define('maze-block',
 
         onSelectedHandler(event) {
             const newTypeKey = document.querySelector('blocks-toolbar').state.selectedItem
+
+            if (newTypeKey == this.state.type) return
+
             const newType = this.state.items[newTypeKey]
             const [ x, y ] = this.state.position.split(',')
 
@@ -93,40 +89,6 @@ export default customElements.define('maze-block',
             }
         }
 
-        onMouseOverHandler(event) {
-            if (this.state.primaryButton) this.onSelectedHandler(event)
-        }
-
-        onMouseDownHandler(event) {
-            this.state.primaryButton = true
-        }
-
-        onMouseUpHanler(event) {
-            this.state.primaryButton = false
-        }
-
-        addEventsListener() {
-            this.addEventListener('click', this.onSelectedHandler)
-            this.addEventListener('mouseover', this.onMouseOverHandler)
-            document.addEventListener('mousedown', this.onMouseDownHandler)
-            document.addEventListener('mouseup', this.onMouseUpHanler)
-
-            this.addEventListener('touchmove', this.onMouseOverHandler, { passive: true})
-            document.addEventListener('touchstart', this.onMouseDownHandler)
-            document.addEventListener('touchend', this.onMouseUpHanler)
-        }
-
-        removeEventsListener() {
-            this.removeEventListener('click', this.onSelectedHandler)
-            this.removeEventListener('mouseover', this.onMouseOverHandler)
-            document.removeEventListener('mousedown', this.onMouseDownHandler)
-            document.removeEventListener('mouseup', this.onMouseUpHanler)
-
-            this.removeEventListener('touchmove', this.onMouseOverHandler)
-            document.removeEventListener('touchstart', this.onMouseDownHandler)
-            document.removeEventListener('touchend', this.onMouseUpHanler)
-        }
-
         #createdBlocks() {
             return (`
                 <div class="${ classes['block__content'] }">
@@ -137,7 +99,6 @@ export default customElements.define('maze-block',
 
         async render() {
             this.append(createElementFromHTML(this.#createdBlocks()))
-            this.addEventsListener()
         }
 
         update() {

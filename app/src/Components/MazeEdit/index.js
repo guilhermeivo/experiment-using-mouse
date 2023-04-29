@@ -9,6 +9,10 @@ export default customElements.define('maze-edit',
             super(props)
             
             this.onChangeVisibilityEdges = this.onChangeVisibilityEdges.bind(this)
+            this.onSelectedHandler = this.onSelectedHandler.bind(this)
+            this.onMouseUpHandler = this.onMouseUpHandler.bind(this)
+            this.onMouseDownHandler = this.onMouseDownHandler.bind(this)
+            this.onTouchMoveHandler = this.onTouchMoveHandler.bind(this)
 
             this.state = {
                 editable: this.hasAttribute('editable') || true,
@@ -22,6 +26,10 @@ export default customElements.define('maze-edit',
                 this.render()
                 this.rendered = true
             }
+        }
+
+        disconnectedCallback() {
+            this.removeEventsListener()
         }
 
         createColumnHandler() {
@@ -93,6 +101,43 @@ export default customElements.define('maze-edit',
             return canvas.toDataURL()
         }
 
+        onSelectedHandler(event) {
+            const mazeblock = event.target.parentElement
+            if (mazeblock.tagName === 'MAZE-BLOCK') mazeblock.onSelectedHandler(event)
+        }
+
+        onMouseDownHandler(event) {
+            this.addEventListener('mousemove', this.onSelectedHandler)
+        }
+
+        onMouseUpHandler(event) {
+            this.removeEventListener('mousemove', this.onSelectedHandler)
+        }
+
+        onTouchMoveHandler(event) {
+            this.addEventListener('touchmove', this.onSelectedHandler)
+        }
+
+        addEventsListener() {
+            this.addEventListener('click', this.onSelectedHandler)
+            this.addEventListener('mousedown', this.onMouseDownHandler)
+            this.addEventListener('mouseup', this.onMouseUpHandler)
+
+            this.addEventListener('click', this.onSelectedHandler)
+            this.addEventListener('touchstart', event => {
+                this.addEventListener('mousemove', this.onTouchMoveHandler)
+            })
+            this.addEventListener('touchend', event => {
+                this.removeEventListener('mousemove', this.onTouchMoveHandler)
+            })
+        }
+
+        removeEventsListener() {
+            this.removeEventListener('click', this.onSelectedHandler)
+            this.removeEventListener('mousedown', this.onMouseDownHandler)
+            this.removeEventListener('mouseup', this.onMouseUpHandler)
+        }
+
         #createBlock({ x, y }) {
             const block = document.createElement('maze-block')
             block.classList.add(classes['maze__block'])
@@ -155,6 +200,8 @@ export default customElements.define('maze-edit',
             Object.keys(this.state.overworldMazeEdit.mazeObjects)
                 .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
             this.update()
+
+            this.addEventsListener()
         }
 
         update() {
