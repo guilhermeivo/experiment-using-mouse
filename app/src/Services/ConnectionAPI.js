@@ -1,4 +1,4 @@
-const urlServer = import.meta.env.VITE_API_URL_SERVER
+const urlServer = import.meta.env.VITE_API_URL
 
 const typeMethods = {
     POST: 'POST',
