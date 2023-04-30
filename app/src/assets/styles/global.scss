@@ -103,6 +103,7 @@ div {
 
 *::-webkit-scrollbar {
     width: .6em;
+    height: .6em;
 }
  
 *::-webkit-scrollbar-thumb {
@@ -219,7 +220,7 @@ main#app {
     0% {
         transform: translate3d(100%, 0, 0);
     }
-    45%, 55% {
+    40%, 70% {
         transform: translate3d(0, 0, 0);
     }
     100% {
@@ -238,7 +239,7 @@ main#app {
     0% {
         transform: translate3d(-100%, 0, 0);
     }
-    45%, 55% {
+    40%, 70% {
         transform: translate3d(0, 0, 0);
     }
     100% {

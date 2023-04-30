@@ -1,4 +1,10 @@
-const urlServer = 'http://127.0.0.1:8000'
+const urlServer = import.meta.env.VITE_API_URL_SERVER
+
+const typeMethods = {
+    POST: 'POST',
+    GET: 'GET',
+    PUT: 'POST'
+}
 
 export default (() => {
     const Register = (callback) => {
@@ -10,7 +16,7 @@ export default (() => {
                     callback(JSON.parse(client.responseText))
                 }
             }
-            client.open('POST', path, false)
+            client.open(typeMethods.POST, path, false)
             client.withCredentials = true
             client.send()
         }  catch {
@@ -22,19 +28,25 @@ export default (() => {
     const CreateMaze = (name, base64image, description = 'description') => {
         const path = `${ urlServer }/api/maze?name=${ name }&description=${ description }`
         
-        return httpConnection(path, 'POST', { base64image: base64image })
+        return httpConnection(path, typeMethods.POST, { base64image: base64image })
     }
 
     const UpdateMaze = (id, name, base64image) => {
         const path = `${ urlServer }/api/maze/${ id }?name=${ name }`
         
-        return httpConnection(path, 'POST', { base64image: base64image })
+        return httpConnection(path, typeMethods.PUT, { base64image: base64image })
+    }
+
+    const GetMaze = () => {
+        const path = `${ urlServer }/api/maze`
+        
+        return httpConnection(path, typeMethods.GET)
     }
 
     const GetMazeById = (id) => {
         const path = `${ urlServer }/api/maze/${ id }`
         
-        return httpConnection(path, 'GET')
+        return httpConnection(path, typeMethods.GET)
     }
 
     const httpConnection = (url, method, body = { }) => {
@@ -50,7 +62,7 @@ export default (() => {
                 if (response.Succeeded) {
                     resolve(response.Data)
                 } else {
-                    throw new Error(response.Message)
+                    throw new Error(`There was an error processing the request (${ response.Message })`)
                 }
             } catch (exception) {
                 const message = document.querySelector('message-info')

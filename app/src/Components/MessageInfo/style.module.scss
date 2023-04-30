@@ -2,9 +2,10 @@
 
 message-info {
     position: absolute;
-    top: 24px;
-    right: 24px;
+    top: 12px;
+    right: 12px;
     max-width: 378px;
+    width: calc(100% - 24px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -12,7 +13,7 @@ message-info {
 }
 
 .message-info {
-    width: 378px;
+    width: 100%;
     background: $background-color;
     border-radius: 12px;
     border: 1px solid $border-color;

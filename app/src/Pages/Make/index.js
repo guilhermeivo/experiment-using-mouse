@@ -1,4 +1,4 @@
-import { createElementFromHTML } from '../../Common/common'
+import { createElementFromHTML, downloadData } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 
@@ -9,8 +9,16 @@ import ConnectionAPI from '../../Services/ConnectionAPI'
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
 
-const DEFAULT_MAZE_ROWS = 8
-const DEFAULT_MAZE_COLUMNS = 8
+let _defaultMazeRows = Math.round(window.innerHeight/66)-3
+if (_defaultMazeRows < SMALLEST_POSSIBLE_SIZE) _defaultMazeRows = SMALLEST_POSSIBLE_SIZE
+else if (_defaultMazeRows > LARGEST_POSSIBLE_SIZE) _defaultMazeRows = LARGEST_POSSIBLE_SIZE
+
+let _defaultMazeColumns = window.innerWidth > 1280 ? Math.round(1280/66)-2 : Math.round(window.innerWidth/66)-2
+if (_defaultMazeColumns < SMALLEST_POSSIBLE_SIZE) _defaultMazeColumns = SMALLEST_POSSIBLE_SIZE
+else if (_defaultMazeColumns > LARGEST_POSSIBLE_SIZE) _defaultMazeColumns = LARGEST_POSSIBLE_SIZE
+
+const DEFAULT_MAZE_ROWS = _defaultMazeRows
+const DEFAULT_MAZE_COLUMNS = _defaultMazeColumns
 
 const TIME_SHOWING_MESSAGE = 1000
 const MINIMUM_TIME_WAIT = 1000
@@ -144,17 +152,10 @@ export default customElements.define('make-page',
 
         onExportMazeHandler(event) {
             const dataUrl = this.state.maze.exportImageTiles()
-
-            const link = document.createElement('a')
-            link.style.display = 'none'
-            document.body.appendChild(link)
-            link.setAttribute('href', dataUrl)
-            link.setAttribute('download', 'maze.png')
-            link.click()
+            downloadData(dataUrl, 'maze.png')
         }
 
         async onSaveMazeHandler(event) {
-            
             const targetClass = event.target.classList
             if (targetClass.contains(classesForms['button__submit--active']) || targetClass.contains(classesForms['button__submit--done']) || targetClass.contains(classesForms['button__submit--error'])) return
 

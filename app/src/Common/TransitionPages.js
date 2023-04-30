@@ -12,7 +12,7 @@ export default class TransitionPages {
             }, 1150)
             setTimeout(() => {
                 resolve()
-            }, 725)
+            }, 575)
         })
     }
 
@@ -25,7 +25,7 @@ export default class TransitionPages {
             }, 1150)
             setTimeout(() => {
                 resolve()
-            }, 725)
+            }, 575)
         })
     }
 }

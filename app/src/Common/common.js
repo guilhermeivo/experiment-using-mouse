@@ -8,3 +8,12 @@ export function createElementFromHTML(htmlString) {
 export function uid() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2)
 }
+
+export function downloadData(dataUrl, nameFile = '') {
+    const link = document.createElement('a')
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.setAttribute('href', dataUrl)
+    link.setAttribute('download', nameFile)
+    link.click()
+}

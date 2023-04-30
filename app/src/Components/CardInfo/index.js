@@ -18,9 +18,9 @@ export default customElements.define('card-info',
             }
         }
 
-        async connectedCallback() {
+        connectedCallback() {
             if (!this.rendered) {
-                await this.render()
+                this.render()
                 this.rendered = true
             }
         }
@@ -52,7 +52,7 @@ export default customElements.define('card-info',
             `)
         }
 
-        async render() {
+        render() {
             this.append(createElementFromHTML(this.#createdCard()))
         }
     })

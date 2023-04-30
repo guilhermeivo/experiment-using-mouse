@@ -85,14 +85,16 @@ export default customElements.define('maze-edit',
 
         exportImageTiles() {
             const canvas = document.createElement('canvas')
-            canvas.width = this.state.overworldMazeEdit.rows * 64
-            canvas.height = this.state.overworldMazeEdit.columns * 64
+            console.log(this.state.overworldMazeEdit.rows, this.state.overworldMazeEdit.columns)
+            canvas.width = this.state.overworldMazeEdit.columns * 64
+            canvas.height = this.state.overworldMazeEdit.rows * 64
             const ctx = canvas.getContext('2d')
 
             const allBlocks = document.querySelectorAll('maze-block')
             Array.from(allBlocks).map(block => {
                 const image = block.querySelector('img')
                 const [ x, y ] = block.state.position.split(',').map(string => Number(string))
+
                 ctx.drawImage(
                     image, // image
                     (y - 1) * 64, (x - 1) * 64, // sx, sy
@@ -106,6 +108,7 @@ export default customElements.define('maze-edit',
             let xCoord = event.touches ? event.touches[0].pageX : event.pageX
             let yCoord = event.touches ? event.touches[0].pageY : event.pageY
 
+            if (!document.elementFromPoint(xCoord, yCoord)) return
             const targetElement = document.elementFromPoint(xCoord, yCoord).parentElement
             if (targetElement.tagName === 'MAZE-BLOCK') targetElement.onSelectedHandler(event)
         }
@@ -183,14 +186,16 @@ export default customElements.define('maze-edit',
         #createMazeObjects(object) {            
             const objectId = Object.keys(window.editors).find(editor => editor === object.id)
             const editor = window.editors[objectId]
+
+            const { x, y } = object
             
             return (`
                 <div 
                     id="${ objectId }" 
                     class="${ classes['maze__object'] }" 
                     ${
-                        (object.x > -1 && object.y > -1) 
-                            ? (`style="top: ${ (object.x - 1) * 64 }px;left: ${ (object.y - 1) * 64 }px"`)
+                        (x > -1 && y > -1) 
+                            ? (`style="top: ${ (x - 1) * 64 }px;left: ${ (y - 1) * 64 }px"`)
                             : ''
                     }
                     >

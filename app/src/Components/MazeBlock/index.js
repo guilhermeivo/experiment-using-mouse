@@ -22,9 +22,9 @@ export default customElements.define('maze-block',
             }
         }
 
-        async connectedCallback() {
+        connectedCallback() {
             if (!this.rendered) {
-                await this.render()
+                this.render()
                 this.rendered = true
                 this.update()
             }
@@ -38,10 +38,6 @@ export default customElements.define('maze-block',
                 const indexValuesX = [0, -1, +1, 0]
                 const indexValuesY = [-1, 0, 0, +1]
 
-                // typesAround[0] -> left
-                // typesAround[1] -> top
-                // typesAround[2] -> bottom
-                // typesAround[3] -> right
                 const positonsAround = []
 
                 for (let i = 0; i < 4; i++) {
@@ -97,7 +93,7 @@ export default customElements.define('maze-block',
             `)
         }
 
-        async render() {
+        render() {
             this.append(createElementFromHTML(this.#createdBlocks()))
         }
 
