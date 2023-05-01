@@ -30,36 +30,36 @@ import ConnectionAPI from "./Services/ConnectionAPI"
     }).initialize()
 
     window.onload = () => {
-        Promise.resolve().then(() => {
+        /*Promise.resolve().then(() => {
             // set token id in session for authentication
             if(!sessionStorage.getItem('sessionToken')) {
                 ConnectionAPI.Register((data) => {
                     sessionStorage.setItem('sessionToken', data.Data)
                 })
-            }
-            
-            // add sessionToken to floating menu
-            const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
-            const floatingVertical = document.querySelector('floating-vertical')
-            floatingMenu.addEventListener('click', () => { floatingVertical.toggle() })
-            floatingVertical.addContentElement({ title: 'Session', element: createElementFromHTML(`
-                <div id="wrapperSession">
-                    <div class="${ classesForms['form-controls'] }">
-                        <div class="${ classesForms['form__text-control'] }">
-                            <input 
-                                id="inputToken" 
-                                type="text" 
-                                name="input-name" 
-                                placeholder=" " 
-                                value="${ sessionStorage.getItem('sessionToken') }" 
-                                disabled />
-                            <label for="inputToken">Token session</label>
-                            <span class="${ classesForms['form__error-message'] }"></span>
-                        </div>
+            }       
+        })*/
+
+        // add sessionToken to floating menu
+        const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
+        const floatingVertical = document.querySelector('floating-vertical')
+        floatingMenu.addEventListener('click', () => { floatingVertical.toggle() })
+        floatingVertical.addContentElement({ title: 'Session', element: createElementFromHTML(`
+            <div id="wrapperSession">
+                <div class="${ classesForms['form-controls'] }">
+                    <div class="${ classesForms['form__text-control'] }">
+                        <input 
+                            id="inputToken" 
+                            type="text" 
+                            name="input-name" 
+                            placeholder=" " 
+                            value="${ sessionStorage.getItem('sessionToken') }" 
+                            disabled />
+                        <label for="inputToken">Token session</label>
+                        <span class="${ classesForms['form__error-message'] }"></span>
                     </div>
                 </div>
-            `)})
-        })
+            </div>
+        `)})
     }
     
 })()

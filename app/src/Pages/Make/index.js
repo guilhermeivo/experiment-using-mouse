@@ -1,10 +1,10 @@
 import { createElementFromHTML, downloadData } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
+import ConnectionAPI from '../../Services/ConnectionAPI'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
-import ConnectionAPI from '../../Services/ConnectionAPI'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
