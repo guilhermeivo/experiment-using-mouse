@@ -88,7 +88,7 @@ export default customElements.define('maze-block',
         #createdBlocks() {
             return (`
                 <div class="${ classes['block__content'] }">
-                    <img src="" alt="">
+                    <img alt="">
                 </div>
             `)
         }
@@ -135,6 +135,7 @@ export default customElements.define('maze-block',
                 new Promise(async () => {
                     const imageElement = this.querySelector('img')
                     imageElement.src = await item.sprite.drawImage(newSpriteVariantName).then(image => image.src)
+                    imageElement.alt = newSpriteVariantName
                     this.state.spriteVariantName = newSpriteVariantName
                 })
             }

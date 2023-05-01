@@ -209,9 +209,9 @@ export default customElements.define('maze-edit',
         render() {
             this.append(createElementFromHTML(this.#createMaze()))
             
-            Object.keys(this.state.overworldMazeEdit.mazeObjects)
-                .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
             this.update()
+                Object.keys(this.state.overworldMazeEdit.mazeObjects)
+                    .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
 
             this.addEventsListener()
         }
