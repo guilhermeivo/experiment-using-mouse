@@ -31,6 +31,6 @@ VITE_URL=VITE_URL
     - Generate the font (File > Generate Fonts...)
     - To keep the ligas it is necessary to activate the option: `OpenType > Dummy 'DSIG'`
 
-|       | Starting Size KB | Final Size KB |   |   |
-|-------|------------------|---------------|---|---|
-| Woff2 | 2.512 KB         | 4 KB          |   |   |
+|       | Starting Size KB | Final Size KB |
+|-------|------------------|---------------|
+| Woff2 | 2.512 KB         | 4 KB          |
