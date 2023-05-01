@@ -1,6 +1,6 @@
 import { createElementFromHTML } from '../../Common/common'
 
-import classes from './style.module.scss'
+import classes from './style.scss'
 
 export default customElements.define('floating-vertical', 
     class extends HTMLElement {
