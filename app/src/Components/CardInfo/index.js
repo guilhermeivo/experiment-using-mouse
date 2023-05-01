@@ -34,7 +34,7 @@ export default customElements.define('card-info',
                 <div class="${ classes['card__image'] }"></div>
                 <div id="buttonLike" class="${ classes['card__marker'] }">
                     <div class="${ classes['marker__like'] }  ${ this.state.liked ? classes['marker__like--liked'] : '' }">
-                        <span class="material-symbols-outlined">favorite</span>
+                        <span class="material-symbols">favorite</span>
                     </div>
                 </div>
                 
