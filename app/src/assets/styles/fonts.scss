@@ -2,13 +2,13 @@
 
 @font-face {
   font-family: 'Fira Sans Condensed';
-  src: url('../fonts/FiraSansCondensed-SemiBold.ttf') format('truetype');
+  src: url('/FiraSansCondensed-SemiBold.ttf') format('truetype');
   font-weight: $semi-bold-font;
 }
 
 @font-face {
   font-family: 'Fira Sans Condensed';
-  src: url('../fonts/FiraSansCondensed-Bold.ttf') format('truetype');
+  src: url('/FiraSansCondensed-Bold.ttf') format('truetype');
   font-weight: $bold-font;
 }
 
@@ -18,8 +18,8 @@
   font-weight: $regular-font;
   src: local('Material Icons'),
     local('MaterialIcons-Outlined'),
-    url(../fonts/MaterialSymbolsOutlined.woff2) format('woff2'),
-    url(../fonts/MaterialSymbolsOutlined.ttf) format('truetype');
+    url('/MaterialSymbolsOutlined.woff2') format('woff2'),
+    url('/MaterialSymbolsOutlined.ttf') format('truetype');
 }
   
 .material-symbols-outlined {
