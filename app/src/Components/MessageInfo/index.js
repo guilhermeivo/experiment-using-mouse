@@ -49,10 +49,10 @@ export default customElements.define('message-info',
                 <div class="${ classes['type-info'] }">
                     ${
                         (type == 'info')
-                            ? `<span class="material-symbols-outlined">
+                            ? `<span class="material-symbols-outlined notranslate">
                                 info
                                </span>`
-                            : `<span class="material-symbols-outlined">
+                            : `<span class="material-symbols-outlined notranslate">
                                 error
                                </span>`
                     }
@@ -61,7 +61,7 @@ export default customElements.define('message-info',
                     ${ description }
                 </div>
                 <div class="${ classes['close-button'] }">
-                    <span class="material-symbols-outlined">
+                    <span class="material-symbols-outlined notranslate">
                     close
                     </span>
                 </div>
