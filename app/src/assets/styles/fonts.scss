@@ -1,0 +1,43 @@
+@import 'variables.scss';
+
+@font-face {
+  font-family: 'Fira Sans Condensed';
+  src: url('../fonts/FiraSansCondensed-SemiBold.ttf') format('truetype');
+  font-weight: $semi-bold-font;
+}
+
+@font-face {
+  font-family: 'Fira Sans Condensed';
+  src: url('../fonts/FiraSansCondensed-Bold.ttf') format('truetype');
+  font-weight: $bold-font;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: $regular-font;
+  src: local('Material Icons'),
+    local('MaterialIcons-Outlined'),
+    url(../fonts/MaterialSymbolsOutlined.woff2) format('woff2'),
+    url(../fonts/MaterialSymbolsOutlined.ttf) format('truetype');
+}
+  
+.material-symbols-outlined {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48
+}
