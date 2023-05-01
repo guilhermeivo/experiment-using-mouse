@@ -1,7 +1,12 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 
 export default defineConfig({
-    build: {
-        cssCodeSplit: false,
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData: `@import "./src/assets/styles/_variables.scss";`,
+            },
+        },
     },
 })
