@@ -2,8 +2,8 @@
 
 @font-face {
     font-family: 'Fira Sans Condensed';
-    src: local('Fira Sans'),
-        local('FiraSans-Condensed') 
+    src: local('Fira Sans Condensed'),
+        local('FiraSans-Condensed'),
         url('/FiraSansCondensed-Bold.ttf') format('truetype');
     font-weight: $bold-font;
     font-display: swap;
