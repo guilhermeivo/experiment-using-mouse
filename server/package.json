@@ -1,24 +1,29 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
-  "main": "dist/Api/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/Api/index.js",
+    "start": "node dist/index.js",
     "start:dev": "npx nodemon",
-    "build": "npx tsc"
+    "build": "tsc",
+    "test:dev": "node --watch --test test/api.test.mjs",
+    "test": "node --test test/api.test.mjs"
   },
-  "author": "Guilherme Ivo",
+  "author": "guilhermeivo",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.15.3",
-    "nodemon": "^2.0.21",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^18.16.3",
+    "@types/nodemailer": "^6.4.7",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.1.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
+    "jsonwebtoken": "^9.0.0",
+    "nodemailer": "^6.9.1",
     "sqlite3": "^5.1.6"
   }
 }

@@ -1,25 +1,20 @@
 {
-    "ts-node": {
-        "require": ["tsconfig-paths/register"]
-    },
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "lib": ["es6"],
-        "allowJs": true,
-        "outDir": "dist",
-        "rootDir": "src",
-        "strict": true,
-        "noImplicitAny": true,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "baseUrl": ".", 
-        "paths": {
-            "@Application/*": ["./src/Application/*"],
-            "@Domain/*": ["./src/Domain/*"],
-            "@Infrastructure/*": ["./src/Infrastructure/*"],
-            "@Api/*": ["./src/Api/*"]
-        }
-    }
+  "compilerOptions": {
+    "target": "es6", 
+    "module": "commonjs", 
+    "lib": ["es6"],
+    "rootDir": "src", 
+    "allowJs": true,
+    "outDir": "dist",
+    "removeComments": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true, 
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true, 
+    "skipLibCheck": true 
+  },
+  "include": ["src/**/*"],
+  "exclude": ["test/*"]
 }

@@ -1,5 +1,6 @@
 ## Architecture
 - `app/`
+    - `dist/`
     - `public/`
     - `src/`
         - [Overview - Client side](#overview---client-side)
@@ -22,22 +23,19 @@
     - [Overview - Server Side](#overview---server-side)
     - `dist/`
     - `src/`
-        - `Api/`
-            - `Controllers/`
-                - `[ControllerName].ts`
-            - `routes.ts`
-            - `index.ts`
-        - `Application/`
-            - `[CQSName]/`
-                - `commands/`
-                - `queries/`
-        - `Domain/`
-            - `Entities/`
-                - `[EntitiesName].ts`
-        - `Infrastructure/`
-            - `Persistence/`
-                - `migrations/`
-                - `connection.ts`
+        - `controllers/`
+            - `[controllerName].ts`
+        - `db/`
+            - `migrations/`
+            - `connection.ts`
+        - `entities/`
+            - `[entityName].ts`
+        - `middleware/`
+            - `authGuard.ts`
+        - `repository/`
+            - `[repositoryName].ts`
+        - `index.ts`
+    - `test/`
 
 ## Overview - Client side
 

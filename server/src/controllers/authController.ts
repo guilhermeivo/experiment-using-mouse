@@ -1,0 +1,210 @@
+import Result from "../common/models/Result"
+import controllerProps from "../common/interfaces/controllerProps"
+import { isEmailValid, sendMail } from "../common/helpers/mailHelper"
+import user from "../entities/user"
+import userRepository from "../repository/userRepository"
+import crypto from 'node:crypto'
+import token from "../entities/token"
+import tokenRepository from "../repository/tokenRepository"
+import * as dotenv from 'dotenv'
+import { generateJwtToken } from "../common/helpers/jwtHelper"
+import { templateMail } from "../common/templates/templateMail"
+dotenv.config()
+
+const baseUrl = process.env.BASE_URL
+const emailUser = process.env.EMAIL_USER
+
+export default () => {
+    interface requestRegister {
+        username: string
+        email: string
+        ip: string
+        redirectUri: string
+    }
+
+    const register: controllerProps = {
+        method: `POST('register')`,
+        async handle(request: requestRegister) {
+            if (!request.email || !request.username || !request.redirectUri) return new Result(`Not all data was provided.`)
+            if (!isEmailValid(request.email)) return new Result(`You didn't enter a valid email address.`)
+
+            const emailExist: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
+            if (emailExist.length > 0) return new Result(`There is already a registered user with this email adress.`)
+
+            const currentTime = new Date()
+            const addUser = await userRepository.Add({
+                email: request.email,
+                username: request.username,
+                createdAt: currentTime,
+                emailConfirmed: false,
+                createdByIp: request.ip
+            })
+            
+            if (!addUser) return new Result(`An error occurred while executing the function.`)
+
+            const expirationTime = new Date()
+            expirationTime.setTime(currentTime.getTime() + (10 * 60 * 1000)) // 10 minutes
+
+            const addToken = await tokenRepository.Add({
+                userId: addUser.id,
+                token: crypto.randomBytes(32).toString('hex'),
+                expirationTime: expirationTime,
+                createdAt: currentTime,
+                type: 'email',
+                createdByIp: request.ip
+            })
+
+            if (!addToken) return new Result(`An error occurred while executing the function.`)
+            
+            const mailOptions = {
+                from: `Experiment Using Mouse <${ emailUser }>`,
+                html: templateMail(
+                    'Your Verification Link',
+                    request.email,
+                    'Your verification link is:',
+                    '',
+                    `${ baseUrl }/auth/verify-email?userId=${ addUser.id }&emailToken=${ addToken.token }&redirectUri=${ request.redirectUri }`,
+                    'Click Here!'),
+                subject: 'Your Verification Link',
+                to: `${ request.username } <${ request.email }>`,
+            }
+
+            try {
+                sendMail(mailOptions)
+                return new Result('A link to verify authenticity has been sent to your email.', addUser.id)
+            } catch {
+                return new Result(`Can't send confirmation email.`)
+            }            
+        }
+    }
+
+    const logout: controllerProps = {
+        method: `POST('logout')`,
+        async handle() { 
+            return new Result('Logout')
+        }
+    }
+
+    interface requestVerifyEmail {
+        userId: string
+        emailToken: string
+        redirectUri: string
+    }
+
+    const verifyEmail: controllerProps = {
+        method: `GET('verify-email')`,
+        async handle(request: requestVerifyEmail) {
+            if (!request.userId || !request.emailToken || !request.redirectUri) return new Result(`Not all data was provided.`)
+
+            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.id === Number(request.userId))
+            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+            
+            const findToken: Array<token> = await tokenRepository.Where((entity: token) => entity.userId === Number(request.userId) && entity.token === request.emailToken)
+            if (findToken.length <= 0) return new Result(`Invalid auth credentials.`)
+
+            const currentdate = new Date()
+            if (findToken[0].expirationTime < currentdate) return new Result('Expired token.')
+            if (findToken[0].revokedAt && findToken[0].revokedAt < currentdate) return new Result('Expired token.')
+
+            const updateUser = await userRepository.Update({
+                emailConfirmed: true
+            }, (entity: user) => entity.id === Number(request.userId))
+            
+            if (!updateUser) return new Result('An error occurred while executing the function.')
+
+            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId === Number(request.userId) && entity.token === request.emailToken)
+
+            return new Result('Email confirmed successfully.', { redirectLocation: request.redirectUri })
+        }
+    }
+
+    interface requestLogin {
+        email: string,
+        ip: string
+    }
+
+    const login: controllerProps = {
+        method: `POST('login')`,
+        async handle(request: requestLogin) {
+            if (!request.email) return new Result(`Not all data was provided.`)
+
+            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
+            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+            if (!findUser[0].emailConfirmed) return new Result(`Waiting for email confirmation.`)
+
+            const currentTime = new Date()
+            const expirationTime = new Date()
+            expirationTime.setTime(currentTime.getTime() + (10 * 60 * 1000)) // 10 minutes
+
+            const addToken = await tokenRepository.Add({ 
+                token: crypto.randomBytes(3).toString('hex'),
+                userId: findUser[0].id,
+                expirationTime: expirationTime,
+                createdAt: currentTime,
+                type: 'otc',
+                createdByIp: request.ip
+            })
+
+            if (!addToken) return new Result(`An error occurred while executing the function.`)
+
+            const mailOptions = {
+                from: `Experiment Using Mouse <${ emailUser }>`,
+                html: templateMail(
+                    'Your Verification Link',
+                    request.email,
+                    `Your verification code is <b>${ addToken.token }</b>`,
+                    '', '', ''),
+                subject: 'Your Verification Link',
+                to: `${ findUser[0].username } <${ findUser[0].email }>`,
+            }
+
+            try {
+                sendMail(mailOptions)
+                return new Result('Verification code send to e-mail.', findUser[0].id)
+            } catch {
+                return new Result(`Can't send code email.`)
+            }
+        }
+    }
+
+    interface requestAuthenticate {
+        email: string
+        token: string
+        ip: string
+    }
+
+    const authenticate: controllerProps = {
+        method: `POST('authenticate')`,
+        async handle(request: requestAuthenticate, response) {
+            if (!request.email || !request.token) return new Result(`Not all data was provided.`)
+
+            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
+            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+
+            const findCode: Array<token> = await tokenRepository.Where((entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+            if (findCode.length <= 0) return new Result(`Invalid auth credentials.`)
+
+            const currentdate = new Date()
+            if (findCode[0].expirationTime < currentdate) return new Result('Expired code.')
+            if (findCode[0].revokedAt && findCode[0].revokedAt < currentdate) return new Result('Expired code.')
+
+            if (findCode[0].token !== request.token) return new Result(`Invalid auth credentials.`) 
+
+            const updateToken = await tokenRepository.Update({
+                revokedAt: currentdate,
+                revokedByIp: request.ip
+            }, (entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+
+            if (!updateToken) return new Result('An error occurred while executing the function.')
+
+            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+
+            const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
+            if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure`)
+
+            return new Result<string>(`User has been validated.`, findUser[0].email)
+        }
+    }
+
+    return [ register, logout, verifyEmail, login, authenticate ]
+}
