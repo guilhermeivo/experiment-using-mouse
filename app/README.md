@@ -1,22 +1,9 @@
-## NPM Install
-```bash
-$ npm i -D
-$ npm i
-```
-
 ## NPM Run
 ```bash
 $ npm run start:dev
 
 $ npm run build
 $ npm run preview
-```
-
-## Environment configuration
-`.env.local`
-```
-VITE_API_URL=VITE_API_URL
-VITE_URL=VITE_URL
 ```
 
 ## Reduce Material Design Icons Font

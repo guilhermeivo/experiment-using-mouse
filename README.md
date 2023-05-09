@@ -16,5 +16,7 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
+<img src="https://github.githubassets.com/images/mona-whisper.gif" align="right" />
+
 ## License
 This project is under license. See the [`LICENSE`](./LICENSE) file for details.

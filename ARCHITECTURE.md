@@ -1,23 +1,17 @@
 ## Architecture
 - `app/`
-    - `dist/`
-    - `public/`
     - `src/`
-        - [Overview - Client side](#overview---client-side)
+        - [Overview - Client side](app/README.md)
         - `assets/`
-            - `images/`
-            - `styles/`
         - `Common/`
         - `Components/`
-            - `[ComponentName]`
+            - `[ComponentName]/`
                 - `index.js`
                 - `style.module.scss`
         - `Pages/`
-            - `[PageName]`
+            - `[PageName]/`
                 - `index.js`
                 - `style.module.scss`
-        - `Services/`
-        - `app.js`
     - `index.html`
 - `server/`
     - [Overview - Server Side](server/README.md)
