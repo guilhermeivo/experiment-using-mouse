@@ -80,7 +80,7 @@ Set-Cookie: access_token={ accessToken }; Path=/; HttpOnly; SameSite=None; Secur
 To perform testing in development mode (NODE_ENV=DEVELOPMENT) you can use the [`Ethereal smtp service`](https://ethereal.email/), a fake smtp service aimed at testing, in which messages are never delivered. The messages will be displayed in the terminal in the form: `Preview URL: <URL>`.
 
 ## Construction the fetch api
-```js
+```JavaScript
 const response = fetch(URL, {
     method: "POST", // GET, POST, etc
     credentials: "include", // for include cookie (access_token)
