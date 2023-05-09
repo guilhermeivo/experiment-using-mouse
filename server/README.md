@@ -53,7 +53,7 @@ Content-Type: application/json
 #### POST auth/authenticate
 Used to exchange the otc for authentication tokens, after the user inserts the code, it makes the call with the following parameters:
 
-```json
+```HTTP
 POST https://{ domain }/auth/authenticate
 Content-Type: application/json
 {
@@ -65,7 +65,7 @@ Content-Type: application/json
 
 After the successful call, the response will have the following properties:
 
-```json
+```HTTP
 HTTP/2.0 200 OK
 Content-Type: application/json
 Set-Cookie: access_token={ accessToken }; Path=/; HttpOnly; SameSite=None; Secure
