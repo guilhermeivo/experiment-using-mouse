@@ -119,15 +119,20 @@ export default () => {
     }
 
     interface requestLogin {
-        email: string,
+        connection: string // email
+        email: string // connection=email
+        send: string // code
         ip: string
     }
 
     const login: controllerProps = {
         method: `POST('login')`,
         async handle(request: requestLogin) {
-            if (!request.email) return new Result(`Not all data was provided.`)
-
+            if (!request.connection || request.connection !== 'email') 
+                return new Result(`The type of communication was not provided (email).`)
+            if (request.connection === 'email' && !request.email)
+                return new Result(`The form of communication was not provided.`)
+            
             const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
             if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
             if (!findUser[0].emailConfirmed) return new Result(`Waiting for email confirmation.`)
@@ -146,6 +151,7 @@ export default () => {
             })
 
             if (!addToken) return new Result(`An error occurred while executing the function.`)
+
 
             const mailOptions = {
                 from: `Experiment Using Mouse <${ emailUser }>`,
@@ -169,35 +175,36 @@ export default () => {
 
     interface requestAuthenticate {
         email: string
-        token: string
+        otc: string // code
+        realm: string // email
         ip: string
     }
 
     const authenticate: controllerProps = {
         method: `POST('authenticate')`,
         async handle(request: requestAuthenticate, response) {
-            if (!request.email || !request.token) return new Result(`Not all data was provided.`)
+            if (!request.email || !request.otc || !request.realm) return new Result(`Not all data was provided.`)
 
             const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
             if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
 
-            const findCode: Array<token> = await tokenRepository.Where((entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+            const findCode: Array<token> = await tokenRepository.Where((entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
             if (findCode.length <= 0) return new Result(`Invalid auth credentials.`)
 
             const currentdate = new Date()
             if (findCode[0].expirationTime < currentdate) return new Result('Expired code.')
             if (findCode[0].revokedAt && findCode[0].revokedAt < currentdate) return new Result('Expired code.')
 
-            if (findCode[0].token !== request.token) return new Result(`Invalid auth credentials.`) 
+            if (findCode[0].token !== request.otc) return new Result(`Invalid auth credentials.`) 
 
             const updateToken = await tokenRepository.Update({
                 revokedAt: currentdate,
                 revokedByIp: request.ip
-            }, (entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+            }, (entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
 
             if (!updateToken) return new Result('An error occurred while executing the function.')
 
-            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId == findUser[0].id && entity.token === request.token)
+            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
 
             const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
             if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure`)
