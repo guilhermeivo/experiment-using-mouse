@@ -1,30 +1,11 @@
-## NPM Install
-```bash
-$ npm i
-$ npm i -D
-```
-
 ## NPM Run
 ```bash
 $ npm start
 # OR DEV MODE
 $ npm run start:dev
-```
 
-## Environment configuration
-`.env`
-```
-JWT_SECRET_KEY=SECRET
-EMAIL_HOST=EMAIL_HOST
-EMAIL_USER=EMAIL_USER
-EMAIL_PASSWORD=EMAIL_PASSWORD
-BASE_HOSTNAME=BASE_HOSTNAME
-BASE_PORT=BASE_PORT
-BASE_URL=BASE_URL
-DATABASE_URL=DATABASE_URL
-NODE_ENV=DEVELOPMENT
-# OR
-NODE_ENV=PRODUCTION
+$ npm run build
+$ npm run test
 ```
 
 ## Authentication
