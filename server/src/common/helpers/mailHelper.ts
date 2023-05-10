@@ -5,6 +5,7 @@ dotenv.config()
 const emailHost = process.env.EMAIL_HOST
 const emailUser = process.env.EMAIL_USER
 const emailPassword = process.env.EMAIL_PASSWORD
+const emailPort = Number(process.env.EMAIL_PORT)
 
 const nodeEnv = process.env.NODE_ENV
 
@@ -30,7 +31,7 @@ export const isEmailValid = (email: string) => {
 export const sendMail = async (mailOptions: object) => {
     let configOptions = {
         host: emailHost,
-        port: 587,
+        port: emailPort,
         auth: {
             user: emailUser, 
             pass: emailPassword,
