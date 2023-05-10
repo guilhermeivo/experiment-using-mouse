@@ -6,7 +6,7 @@ dotenv.config()
 
 const HOST = process.env.BASE_HOSTNAME || 'localhost'
 const PORT = Number(process.env.BASE_PORT) || 8000
-const CORS = process.env.BASE_HOSTNAME || ''
+const CORS = process.env.CORS_URL || ''
 
 if (process.env.NODE_ENV === 'DEVELOPMENT') {
     app.useCors({
