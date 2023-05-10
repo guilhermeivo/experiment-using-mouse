@@ -247,3 +247,26 @@ main#app {
         transform: translate3d(100%, 0, 0);
     }
 }
+
+.pinBox {
+    --width: 296px;
+    --height: 74px;
+    --spacing: 47px;
+    
+    display: inline-block;
+    position: relative;
+    width: var(--width);
+    height: var(--height);
+    background-image: url(https://i.stack.imgur.com/JbkZl.png); 
+  }
+
+.pinEntry {
+    font-family: courier, monospaced;
+    font-size: var(--spacing);
+    height: var(--height);
+    letter-spacing: var(--spacing);
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    clip: rect(0px, calc(var(--width) - 21px), var(--height), 0px);
+  }

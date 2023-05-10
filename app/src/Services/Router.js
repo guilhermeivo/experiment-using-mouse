@@ -24,7 +24,7 @@ export default class Router {
         if (route) {
             this.navigateToRoute(route)
         } else {
-            history.replaceState({ }, '', '/')
+            history.replaceState({ }, '', '/404')
             this.handleChangeRoute()
         }
     }

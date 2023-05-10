@@ -1,4 +1,4 @@
-import { createElementFromHTML, downloadData } from '../../Common/common'
+import { checkToken, createElementFromHTML, downloadData } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
@@ -179,16 +179,17 @@ export default customElements.define('make-page',
                         })
                         localStorage.setItem('OverworldMaze', json)
 
-                        if (sessionStorage.getItem('sessionToken')) {
-                            if(!sessionStorage.getItem('mazeId')) {
-                                const response = await ConnectionAPI.CreateMaze(inputName.value, this.state.maze.exportImageTiles())
-                                sessionStorage.setItem('mazeId', response)
-                            } else {
-                                const response = await ConnectionAPI.UpdateMaze(sessionStorage.getItem('mazeId'), inputName.value, this.state.maze.exportImageTiles())
-                            }
-                        }
+                        if (!checkToken(JSON.parse(sessionStorage.getItem('auth'))))
+                            window.location.href = `/login`
+
+                        const response = await ConnectionAPI.CreateMaze(inputName.value, ' ', this.state.maze.exportImageTiles())
+
+                        if (response) {
+                            localStorage.clear()    
+                            window.location.href = `/play`                    
+                            resolve()
+                        } else reject()
                         
-                        resolve()
                     } catch (exception) {
                         reject()
                     }

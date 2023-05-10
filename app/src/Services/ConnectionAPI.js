@@ -1,4 +1,5 @@
 const urlServer = import.meta.env.VITE_API_URL
+const url = import.meta.env.VITE_URL
 
 const typeMethods = {
     POST: 'POST',
@@ -7,55 +8,63 @@ const typeMethods = {
 }
 
 export default (() => {
-    const Register = (callback) => {
-        try {
-            const path = `${ urlServer }/account/register`
-            const client = new XMLHttpRequest()
-            client.onreadystatechange = () => {
-                if (client.readyState == XMLHttpRequest.DONE) {
-                    callback(JSON.parse(client.responseText))
-                }
-            }
-            client.open(typeMethods.POST, path, false)
-            client.withCredentials = true
-            client.send()
-        }  catch {
-            const message = document.querySelector('message-info')
-            message.addMessageInfo({ description: 'Error when trying to connect to the server, probably the server is off.', type: 'warn' })
-        }
+
+    const RegisterUser = (username, email) => {
+        const path = `${ urlServer }/auth/register`
+
+        return httpConnection(path, typeMethods.POST, 
+            { 
+                username: username,
+                email: email,
+                redirectUri: `${ url }/login`
+            })
     }
 
-    const CreateMaze = (name, base64image, description = 'description') => {
-        const path = `${ urlServer }/api/maze?name=${ name }&description=${ description }`
-        
-        return httpConnection(path, typeMethods.POST, { base64image: base64image })
+    const LoginUser = (email) => {
+        const path = `${ urlServer }/auth/login`
+
+        return httpConnection(path, typeMethods.POST, 
+            { 
+                connection: 'email',
+                email: email,
+                send: 'code'
+            })
     }
 
-    const UpdateMaze = (id, name, base64image) => {
-        const path = `${ urlServer }/api/maze/${ id }?name=${ name }`
-        
-        return httpConnection(path, typeMethods.PUT, { base64image: base64image })
+    const CodeUser = (email, otc) => {
+        const path = `${ urlServer }/auth/authenticate`
+
+        return httpConnection(path, typeMethods.POST, 
+            { 
+                email: email,
+                otc: otc,
+                realm: 'email'
+            })
     }
 
-    const GetMaze = () => {
-        const path = `${ urlServer }/api/maze`
-        
+    const GetMazes = () => {
+        const path = `${ urlServer }/maze`
+
         return httpConnection(path, typeMethods.GET)
     }
 
-    const GetMazeById = (id) => {
-        const path = `${ urlServer }/api/maze/${ id }`
-        
-        return httpConnection(path, typeMethods.GET)
+    const CreateMaze = (name, description, image) => {
+        const path = `${ urlServer }/maze`
+
+        return httpConnection(path, typeMethods.POST, {
+            name: name,
+            description: description,
+            image: image
+        })
     }
 
-    const httpConnection = (url, method, body = { }) => {
+    const httpConnection = (url, method, body) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await fetch(url, {
                     method: method,
                     credentials: 'include',
-                    body: JSON.stringify(body)
+                    body: body ? JSON.stringify(body) : null
                 }).then(response => response.json())
                 .catch(() => { throw new Error('Error when trying to connect to the server, probably the server is off.') })
 
@@ -74,9 +83,6 @@ export default (() => {
     }
     
     return {
-        Register,
-        CreateMaze,
-        UpdateMaze,
-        GetMazeById
+        RegisterUser, LoginUser, CodeUser, GetMazes, CreateMaze
     }
 })()

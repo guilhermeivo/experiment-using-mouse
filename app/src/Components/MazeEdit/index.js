@@ -85,7 +85,6 @@ export default customElements.define('maze-edit',
 
         exportImageTiles() {
             const canvas = document.createElement('canvas')
-            console.log(this.state.overworldMazeEdit.rows, this.state.overworldMazeEdit.columns)
             canvas.width = this.state.overworldMazeEdit.columns * 64
             canvas.height = this.state.overworldMazeEdit.rows * 64
             const ctx = canvas.getContext('2d')

@@ -17,3 +17,14 @@ export function downloadData(dataUrl, nameFile = '') {
     link.setAttribute('download', nameFile)
     link.click()
 }
+
+export function checkToken(auth) {
+    if (!auth) return false
+
+    const currentDate = new Date()
+    const createAt = new Date(auth.createAt)
+    createAt.setSeconds(createAt.getSeconds() + parseInt(auth.expires_in))
+    
+    if (currentDate < createAt) return true
+    else return false
+}
