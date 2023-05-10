@@ -6,16 +6,17 @@ dotenv.config()
 
 const HOST = process.env.BASE_HOSTNAME || 'localhost'
 const PORT = Number(process.env.BASE_PORT) || 8000
+const CORS = process.env.BASE_HOSTNAME || ''
 
 if (process.env.NODE_ENV === 'DEVELOPMENT') {
     app.useCors({
-        origins: 'http://localhost:5173',
+        origins: CORS,
         headers: '*',
         methods: '*'
     })
 } else {
     app.useCors({
-        origins: 'LINK_ORIGIN',
+        origins: CORS,
         headers: '*',
         methods: '*'
     })
