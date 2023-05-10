@@ -209,7 +209,7 @@ export default () => {
             const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
             if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure`)
 
-            return new Result<string>(`User has been validated.`, findUser[0].email)
+            return new Result<object>(`User has been validated.`, { auth: true, token_type: 'jwt', expires_in: 86400 })
         }
     }
 
