@@ -38,7 +38,6 @@ export default customElements.define('verify-page',
             `
 
             const response = await ConnectionAPI.VerifyEmail(this.state.userId, this.state.emailToken)
-            if (response) this.innerHTML += 'Success'
-            else this.innerHTML += 'Error'
+            if (response) window.location.href = `/`
         }
     })
