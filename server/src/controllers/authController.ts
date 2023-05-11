@@ -63,7 +63,7 @@ export default () => {
                     request.email,
                     'Experiment using mouse received a registration request with email. Use this link to complete initial account setup:',
                     'The link is valid for 10 minutes.',
-                    `${ baseUrl }/auth/verify-email?userId=${ addUser.id }&emailToken=${ addToken.token }&redirectUri=${ request.redirectUri }`,
+                    `${ request.redirectUri }?userId=${ addUser.id }&emailToken=${ addToken.token }`,
                     'Click Here!'),
                 subject: 'Your Verification Link',
                 to: `${ request.username } <${ request.email }>`,
@@ -88,13 +88,12 @@ export default () => {
     interface requestVerifyEmail {
         userId: string
         emailToken: string
-        redirectUri: string
     }
 
     const verifyEmail: controllerProps = {
         method: `POST('verify-email')`,
         async handle(request: requestVerifyEmail) {
-            if (!request.userId || !request.emailToken || !request.redirectUri) return new Result(`Not all data was provided.`)
+            if (!request.userId || !request.emailToken) return new Result(`Not all data was provided.`)
 
             const findUser: Array<user> = await userRepository.Where((entity: user) => entity.id === Number(request.userId))
             if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
