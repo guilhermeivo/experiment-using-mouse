@@ -51,7 +51,7 @@ export default customElements.define('login-page',
                     const response = await ConnectionAPI.LoginUser(inputEmail.value)
 
                     if (response) {
-                        window.location.href = `/code?email=${ inputEmail.value }`
+                        window.location.href = `/login/code?email=${ inputEmail.value }`
                         resolve()
                     } else reject()
                 } catch (exception) {

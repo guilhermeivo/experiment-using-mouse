@@ -30,8 +30,9 @@ import TransitionPages from "./Common/TransitionPages"
         '/make': { name: 'Make', nameTag: 'make-page', transition: transition.wipeRight },
         '/play': { name: 'Play', nameTag: 'play-page', transition: transition.wipeRight },
         '/register': { name: 'Register', nameTag: 'register-page' },
+        '/register/verify-email': { name: 'Verify Email', nameTag: 'verify-page' },
         '/login': { name: 'Login', nameTag: 'login-page' },
-        '/code': { name: 'Code', nameTag: 'code-page' },
+        '/login/code': { name: 'Code', nameTag: 'code-page' },
         '/404': { name: '404', nameTag: 'error-page' }
     }).initialize()    
 

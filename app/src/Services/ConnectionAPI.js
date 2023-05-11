@@ -16,7 +16,17 @@ export default (() => {
             { 
                 username: username,
                 email: email,
-                redirectUri: `${ url }/login`
+                redirectUri: `${ url }/register/verify-email`
+            })
+    }
+
+    const VerifyEmail = (userId, emailToken) => {
+        const path = `${ urlServer }/auth/verify-email`
+
+        return httpConnection(path, typeMethods.POST, 
+            { 
+                userId: userId,
+                emailToken: emailToken
             })
     }
 
@@ -83,6 +93,6 @@ export default (() => {
     }
     
     return {
-        RegisterUser, LoginUser, CodeUser, GetMazes, CreateMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, CreateMaze
     }
 })()
