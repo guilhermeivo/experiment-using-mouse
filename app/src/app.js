@@ -5,6 +5,7 @@ import "./Pages/Register"
 import "./Pages/Error"
 import "./Pages/Login"
 import "./Pages/Code"
+import "./Pages/VerifyEmail"
 
 import "./Components/BlocksToolbar"
 import "./Components/FloatingVertical"

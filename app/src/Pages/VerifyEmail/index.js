@@ -2,10 +2,7 @@ import classes from './style.module.scss'
 import { checkToken } from "../../Common/common"
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
-const TIME_SHOWING_MESSAGE = 1000
-const MINIMUM_TIME_WAIT = 1000
-
-export default customElements.define('register-page', 
+export default customElements.define('verify-page', 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
