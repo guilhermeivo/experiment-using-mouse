@@ -179,17 +179,24 @@ export default customElements.define('make-page',
                         })
                         localStorage.setItem('OverworldMaze', json)
 
-                        if (!checkToken(JSON.parse(sessionStorage.getItem('auth'))))
-                            window.location.href = `/login`
-
-                        const response = await ConnectionAPI.CreateMaze(inputName.value, ' ', this.state.maze.exportImageTiles())
-
-                        if (response) {
-                            localStorage.clear()    
-                            window.location.href = `/play`                    
+                        if (!checkToken(JSON.parse(sessionStorage.getItem('auth')))) {
+                            document.body.appendChild(createElementFromHTML(`
+                                <pop-up 
+                                    data-title="Account is required!" 
+                                    data-description="To save this labyrinth it is necessary to login or register to proceed:" 
+                                    data-anchorlink="/login"
+                                    data-anchortext="Sign In"></pop-up>
+                            `))
                             resolve()
-                        } else reject()
-                        
+                        } else {
+                            const response = await ConnectionAPI.CreateMaze(inputName.value, ' ', this.state.maze.exportImageTiles())
+
+                            if (response) {
+                                localStorage.clear()    
+                                window.location.href = `/play`                    
+                                resolve()
+                            } else reject()
+                        }
                     } catch (exception) {
                         reject()
                     }

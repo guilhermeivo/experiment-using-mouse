@@ -29,7 +29,7 @@ export default customElements.define('login-page',
             if (!backMenu.classList.contains('back-menu--disabled')) 
                 backMenu.classList.add('back-menu--disabled')
 
-            this.removeEventListener()
+            this.removeEventsListener()
         }
 
         onLoginHandler(event) {
@@ -105,7 +105,7 @@ export default customElements.define('login-page',
                     </div>
                 </div>
 
-                <p class="caption">Don't have account? <a class="land__link caption" href="/register">Sign in<a/></p>
+                <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign in<a/></p>
             </div>
             `
 

@@ -53,7 +53,11 @@ export default customElements.define('register-page',
             Promise.all([new Promise(async (resolve, reject) => {
                 try {
                     const response = await ConnectionAPI.RegisterUser(inputUsername.value, inputEmail.value)
-                    if (response) resolve()
+                    if (response) {
+                        const message = document.querySelector('message-info')
+                        message.addMessageInfo({ description: `The registration was carried out successfully. A confirmation email has been sent to: ${ inputEmail.value }`, type: 'info' })
+                        resolve()
+                    }
                     else reject()
                 } catch (exception) {
                     reject()
@@ -111,7 +115,7 @@ export default customElements.define('register-page',
                     </div>
                 </div>
 
-                <p class="caption">Have an account? <a class="land__link caption" href="/login">Login<a/></p>
+                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Login<a/></p>
             </div>
             `
 

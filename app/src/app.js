@@ -13,6 +13,7 @@ import "./Components/CardInfo"
 import "./Components/MessageInfo"
 import "./Components/MazeEdit"
 import "./Components/MazeBlock"
+import "./Components/PopUp"
 
 import classesForms from "./assets/styles/forms_controls.module.scss"
 
