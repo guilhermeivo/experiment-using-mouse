@@ -55,7 +55,7 @@ export const Remove = async <T extends object>(tableName: string, callbackWhere:
     if (entity) {
         const sqlRemove = `delete from ${ tableName } where ${ tableName }.rowid = ?`
 
-        await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             db.serialize(() => {
                 return db.run(sqlRemove, entity.id, function(error) {
                     if (error) {
