@@ -61,8 +61,8 @@ export default () => {
                 html: templateMail(
                     'Your Verification Link',
                     request.email,
-                    'Your verification link is:',
-                    '',
+                    'Experiment using mouse received a registration request with email. Use this link to complete initial account setup:',
+                    'The link is valid for 10 minutes.',
                     `${ baseUrl }/auth/verify-email?userId=${ addUser.id }&emailToken=${ addToken.token }&redirectUri=${ request.redirectUri }`,
                     'Click Here!'),
                 subject: 'Your Verification Link',
@@ -92,7 +92,7 @@ export default () => {
     }
 
     const verifyEmail: controllerProps = {
-        method: `GET('verify-email')`,
+        method: `POST('verify-email')`,
         async handle(request: requestVerifyEmail) {
             if (!request.userId || !request.emailToken || !request.redirectUri) return new Result(`Not all data was provided.`)
 
@@ -113,8 +113,9 @@ export default () => {
             if (!updateUser) return new Result('An error occurred while executing the function.')
 
             const removeToken = await tokenRepository.Remove((entity: token) => entity.userId === Number(request.userId) && entity.token === request.emailToken)
+            if (!removeToken) return new Result('An error occurred while executing the function.')
 
-            return new Result('Email confirmed successfully.', { redirectLocation: request.redirectUri })
+            return new Result('Email confirmed successfully.', findUser[0].id)
         }
     }
 
@@ -156,11 +157,12 @@ export default () => {
             const mailOptions = {
                 from: `Experiment Using Mouse <${ emailUser }>`,
                 html: templateMail(
-                    'Your Verification Link',
+                    'Email verification code',
                     request.email,
                     `Your verification code is <b>${ addToken.token }</b>`,
-                    '', '', ''),
-                subject: 'Your Verification Link',
+                    'The link is valid for 10 minutes.', 
+                    '', ''),
+                subject: `Email verification code: ${ addToken.token }`,
                 to: `${ findUser[0].username } <${ findUser[0].email }>`,
             }
 

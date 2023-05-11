@@ -61,10 +61,6 @@ export default abstract class Server {
             if (!isFind) return reject()
         })
         .then((result: Result<any>) => {
-            if (result.Data.hasOwnProperty('redirectLocation')) {
-                response.writeHead(enumHttpStatusCode.movedPermanently, { Location: result.Data.redirectLocation })
-                return response.end()
-            }
             response.writeHead(enumHttpStatusCode.ok)
             response.end(JSON.stringify(result))
         })
