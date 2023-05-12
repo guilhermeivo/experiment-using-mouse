@@ -115,7 +115,7 @@ export default customElements.define('register-page',
                     </div>
                 </div>
 
-                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Login<a/></p>
+                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In<a/></p>
             </div>
             `
 

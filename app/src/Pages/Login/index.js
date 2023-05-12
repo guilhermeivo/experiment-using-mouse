@@ -101,11 +101,11 @@ export default customElements.define('login-page',
                     <div class="${ classesForms['form__text-control'] }">
                         <button 
                             id="buttonLogin" 
-                            class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign Up</button>
+                            class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign In</button>
                     </div>
                 </div>
 
-                <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign in<a/></p>
+                <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign Up<a/></p>
             </div>
             `
 
