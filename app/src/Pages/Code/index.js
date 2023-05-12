@@ -99,6 +99,10 @@ export default customElements.define('code-page',
                         }
                     }
                 })
+                
+                input.addEventListener('keydown', event => {
+                    event.stopPropagation()
+                })
             })
 
             const buttonCode = document.querySelector('#buttonCode')

@@ -77,6 +77,11 @@ export default customElements.define('login-page',
         }
 
         addEventsListener() {
+            const inputEmail = document.querySelector('#inputEmail')
+            inputEmail.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
+
             const buttonLogin = document.querySelector('#buttonLogin')
             buttonLogin.addEventListener('click', this.onLoginHandler)
         }

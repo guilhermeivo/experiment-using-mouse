@@ -276,7 +276,6 @@ export default customElements.define('make-page',
             buttonSave.removeEventListener('click', this.onSaveMazeHandler)
 
             const buttonExportImage = document.querySelector('#buttonExportImage')
-            if (buttonExportImage)
             buttonExportImage.removeEventListener('click', this.onExportMazeHandler)
 
             const checkbox = document.querySelector('#checkboxEdges')
