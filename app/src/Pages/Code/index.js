@@ -101,7 +101,7 @@ export default customElements.define('code-page',
                 })
 
                 input.addEventListener('focus', event => {
-                    if (input.value) input.value = ''
+                    if (input.value) input.select()
                 })
                 
                 input.addEventListener('keydown', event => {
