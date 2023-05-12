@@ -1,10 +1,8 @@
-@import 'variables.scss';
-
 .form-controls {
     position: relative;
     font-family: $body-font;
     font-size: $body-2-font-size;
-    color: $medium-emphasis-color;
+    color: var(--medium-emphasis-color);
     border-radius: 2px;
 
     .form__pin-control {
@@ -18,7 +16,7 @@
         position: relative;
 
         label {
-            color: $disabled-color;
+            color: var(--disabled-color);
             font-size: $body-2-font-size;
             padding: 0 4px;
             position: absolute;
@@ -27,13 +25,27 @@
             top: 6px;
             transition: .2s cubic-bezier(1, 0, 1, 1);
             transform-style: preserve-3d;
+
+            
+        }
+
+        label::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -.5px;
+            display: block;
+            width: 100%;
+            height: 7px;
+            background: transparent;
+            transform: translateZ(-1px);
         }
 
         .form__error-message {
             display: block;
             opacity: 0;
             transition: .2s ease-in-out;
-            color: $error-color;
+            color: var(--error-color);
             font-size: $caption-font-size;
             width: 100%;
             text-align: left;
@@ -46,67 +58,66 @@
 
             input[type="text"],
             input[type="text"] {
-                border: 1px solid $error-color;
+                border: 1px solid var(--error-color);
             }
         }
 
+        select {
+            padding: 6px 12px !important;
+        }
+
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        select {
             width: 100%;
             border-radius: 2px;
-            background: $background-color;
-            border: 1px solid $border-color;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
             outline: 3px solid transparent;
             padding: 4px 12px;
             transition: .2s cubic-bezier(1, 0, 1, 1);
+            font-size: $body-font-size;
 
             &:focus {
-                border: 1px solid $primary-color;
+                border: 1px solid var(--primary-color);
                 transition: .2s ease-in;
-                outline: 3px solid $primary-color--variant;
+                outline: 3px solid var(--primary-color--variant);
             }
     
             &:hover {
                 transition: .2s ease-in;
-                box-shadow: 0px 4px 16px $shadow-color;
-                background: $surface-color--variant;
+                box-shadow: 0px 4px 16px var(--shadow-color);
+                background: var(--surface-color--variant);
             }
 
             &:focus + label::after,
             &:not(:placeholder-shown):not(:focus) + label::after {
-                content: '';
-                position: absolute;
-                top: 45%;
-                left: -.5px;
-                display: block;
-                width: 100%;
-                height: 6px;
-                background: $background-color;
-                transform: translateZ(-1px);
+                top: 40%;
+                background: var(--surface-color);
             }
     
             &:focus + label,
             &:not(:placeholder-shown) + label {
                 top: -12px;
-                color: $primary-color;
+                color: var(--primary-color);
                 transition: .2s ease-in;
                 font-size: $caption-font-size;
             }
     
             &:focus {
-                background: $background-color;
+                background: var(--surface-color);
             }
     
             &:not(:placeholder-shown) {
-                background: $background-color;
+                background: var(--surface-color);
             }
     
             &:not(:placeholder-shown):not(:focus) + label {
-                color: $disabled-color;
+                color: var(--disabled-color);
             }
 
             &:disabled {
-                color: $disabled-color;
+                color: var(--disabled-color);
             }
         }
     }
@@ -118,17 +129,17 @@
         padding: 0 12px;
 
         &:hover {
-            background: $surface-color--variant;
+            background: var(--surface-color--variant);
         }
         
         input[type="checkbox"] {
             appearance: none;
             margin: 0;
             font: inherit;
-            color: $medium-emphasis-color;;
+            color: var(--medium-emphasis-color);
             width: 1.15em;
             height: 1.15em;
-            border: 0.15em solid $border-color;
+            border: 0.15em solid var(--border-color);
             border-radius: 0.15em;
             display: grid;
             place-content: center;
@@ -141,7 +152,7 @@
                 transform: scale(.7);
                 opacity: 0;
                 transition: 120ms transform cubic-bezier(1, 0, 1, 1);
-                box-shadow: inset 1em 1em $primary-color;
+                box-shadow: inset 1em 1em var(--primary-color);
             }
     
             &:checked::before {
@@ -180,37 +191,37 @@ input[type="button"],
     }
 
     &.button__primary {
-        background: $background-color;
-        border: 1px solid $primary-color;
+        background: var(--surface-color);
+        border: 1px solid var(--primary-color);
         outline: 3px solid transparent;
 
         &:focus {
             transition: .2s ease-in;
-            outline: 3px solid $primary-color--variant;
+            outline: 3px solid var(--primary-color--variant);
         }
     
         &:hover {
             transition: .2s ease-in;
-            box-shadow: 0px 4px 16px $shadow-color;
-            background: $surface-color--variant;
+            box-shadow: 0px 4px 16px var(--shadow-color);
+            background: var(--surface-color--variant);
         }
     }
 
     &.button__secondary {
-        color: $background-color;
-        background: $primary-color;
+        color: var(--background-color);
+        background: var(--primary-color);
         border: none;
         outline: 3px solid transparent;
 
         &:focus {
             transition: .2s ease-in;
-            outline: 3px solid $primary-color--variant;
+            outline: 3px solid var(--primary-color--variant);
         }
     
         &:hover {
             transition: .2s ease-in;
             opacity: .7;
-            box-shadow: 0px 4px 16px $shadow-color;
+            box-shadow: 0px 4px 16px var(--shadow-color);
         }
     }
 
@@ -225,7 +236,7 @@ input[type="button"],
             background: transparent;
             width: 16px;
             height: 16px;
-            border: 4px solid $background-color;
+            border: 4px solid var(--surface-color);
             border-top: 4px solid transparent;
             border-radius: 100%;   
             opacity: 0;
@@ -256,7 +267,7 @@ input[type="button"],
             transform: translate(-50%, -50%) rotate(-45deg);
             width: 16px;
             height: 8px;
-            border: 4px solid $background-color;
+            border: 4px solid var(--surface-color);
             border-right: 0;
             border-top: 0;
             opacity: 1;
@@ -265,7 +276,7 @@ input[type="button"],
 
         &.button__submit--error {
             transition: none;
-            background: $error-color;
+            background: var(--error-color);
             animation: vibrate 1s ease-in-out;
 
             &::after {
@@ -277,7 +288,7 @@ input[type="button"],
                 transform: translate(-50%, -50%);
                 width: 16px;
                 height: 16px;
-                color: $background-color;
+                color: var(--background-color);
                 transition: .2s cubic-bezier(1, 0, 1, 1);
             }
 

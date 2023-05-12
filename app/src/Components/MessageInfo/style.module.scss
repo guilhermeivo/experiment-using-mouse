@@ -12,10 +12,10 @@ message-info {
 
 .message-info {
     width: 100%;
-    background: $background-color;
+    background: var(--surface-color);
     border-radius: 12px;
-    border: 1px solid $border-color;
-    box-shadow: 0px 4px 16px $shadow-color;
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 4px 16px var(--shadow-color);
     overflow: hidden;
     margin-bottom: 8px;
     position: relative;
@@ -45,8 +45,8 @@ message-info {
         border: 1px solid #ffa1b9;
 
         .type-info span {
-            color: $error-color;
-            text-shadow: 0 4px 12px rgba($error-color, .3);
+            color: var(--error-color);
+            text-shadow: 0 4px 12px rgba(var(--error-color), .3);
         }
     } 
 
@@ -77,11 +77,11 @@ message-info {
         span {
             transition: .2s ease-in;
             user-select: none;
-            color: $medium-emphasis-color
+            color: var(--medium-emphasis-color)
         }
 
         &:hover span {
-            color: $high-emphasis-color
+            color: var(--high-emphasis-color)
         }
     }
 }

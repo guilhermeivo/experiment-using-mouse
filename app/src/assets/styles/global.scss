@@ -1,13 +1,28 @@
-@import 'variables.scss';
+@import 'variables';
+@import 'mixins';
+
+body[data-theme="light"], body {
+    @include spread-map($theme-map-light);
+}
+
+body[data-theme="dark"] {
+    @include spread-map($theme-map-dark);
+}
+
+body[data-theme="dark-dimmed"] {
+    @include spread-map($theme-map-dark-dimmed);
+}
+
+body[data-theme="contrast"] {
+    @include spread-map($theme-map-contrast);
+}
+
 
 * {
     box-sizing: border-box;
 }
 
 /* text */
-
-
-
 h1,
 h2,
 h3,
@@ -18,7 +33,7 @@ h6 {
     font-weight: $bold-font;
     line-height: 1.2;
 
-    color: $high-emphasis-color;
+    color: var(--high-emphasis-color);
     margin-bottom: 12px;
 }
 
@@ -45,11 +60,14 @@ span,
 input,
 label,
 textarea,
+div,
+button,
+select,
 div {
     font-family: $body-font;
     font-size: $body-font-size;
 
-    color: $medium-emphasis-color;
+    color: var(--medium-emphasis-color);
 
     line-height: 1.6;
     letter-spacing: -.02em;
@@ -61,18 +79,21 @@ div {
 
 .bold {
     font-weight: $semi-bold-font;
-    color: $high-emphasis-color;
+    color: var(--high-emphasis-color);
 }
 
 .link:hover {
-    color: $primary-color--variant;
+    color: var(--primary-color--variant);
     text-decoration: underline;
 }
 
 .land__link {
-    color: $primary-color;
+    color: var(--primary-color);
     font-weight: $bold-font;
-    border-bottom: 1px solid $primary-color;
+    background: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--primary-color);
     cursor: pointer;
     text-decoration: none
 }
@@ -80,11 +101,11 @@ div {
 .icon {
     width: 48px;
     height: 48px;
-    background: $background-color;
-    border: 1px solid $border-color;
-    box-shadow: 0px 4px 16px $shadow-color;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 4px 16px var(--shadow-color);
     border-radius: 12px;
-    color: $high-emphasis-color;
+    color: var(--high-emphasis-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,12 +114,12 @@ div {
     user-select: none;
 
     span {
-        color: $high-emphasis-color;
+        color: var(--high-emphasis-color);
     }
 
     &:hover {
         transition: .2s ease-in;
-        border: 1px solid $primary-color;
+        border: 1px solid var(--primary-color);
     }
 }
 
@@ -109,12 +130,12 @@ div {
  
 *::-webkit-scrollbar-thumb {
     border-radius: 8px;
-    background-color: $surface-color--variant;
-    border: 1px solid $border-color;
+    background-color: var(--surface-color--variant);
+    border: 1px solid var(--border-color);
 
     &:hover {
-        background: $surface-color;
-        box-shadow: 0 4px 16px $shadow-color;
+        background: var(--surface-color);
+        box-shadow: 0 4px 16px var(--shadow-color);
     }
 }
 
@@ -123,6 +144,7 @@ body {
     min-height: 100vh;
     height: 100vh;
     overflow: hidden;
+    background: var(--background-color);
 }
 
 img {
@@ -151,7 +173,7 @@ main#app {
     z-index: 1000;
 
     .toolbar-menu {
-        background: $background-color;
+        background: var(--background-color);
     }
 
     @media (max-width: $breakpoint-sm) {
@@ -205,68 +227,89 @@ main#app {
     left: 0;
     height: 100vh;
     width: 100%;
-    background: $primary-color;
+    background: var(--primary-color);
     z-index: 10000;
     display: none;
+    transition: .4s ease-in-out opacity;
 }
 
-.transitionAnimation--left {
+.transitionAnimation--setLeft {
     transform: translate3d(100%, 0, 0);
     display: block;
-    animation: transitionAnimation--left 850ms ease-in-out;
-    animation-delay: 300ms
 }
 
-@keyframes transitionAnimation--left {
-    0% {
-        transform: translate3d(100%, 0, 0);
-    }
-    40%, 70% {
-        transform: translate3d(0, 0, 0);
-    }
-    100% {
-        transform: translate3d(-100%, 0, 0);
-    }
-}
-
-.transitionAnimation--right {
+.transitionAnimation--setRight {
     transform: translate3d(-100%, 0, 0);
     display: block;
-    animation: transitionAnimation--right 850ms ease-in-out;
-    animation-delay: 300ms
 }
 
-@keyframes transitionAnimation--right {
-    0% {
-        transform: translate3d(-100%, 0, 0);
-    }
-    40%, 70% {
-        transform: translate3d(0, 0, 0);
-    }
-    100% {
+.transitionAnimation--moveToLeft {
+    animation: transitionAnimation--moveToLeft 200ms forwards;
+    display: block;
+}
+
+@keyframes transitionAnimation--moveToLeft {
+    to {
         transform: translate3d(100%, 0, 0);
     }
 }
 
-.pinBox {
-    --width: 296px;
-    --height: 74px;
-    --spacing: 47px;
-    
+.transitionAnimation--moveToRight {
+    animation: transitionAnimation--moveToRight 200ms forwards;
+    display: block;
+}
+
+@keyframes transitionAnimation--moveToRight {
+    to {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+.transitionAnimation--moveToCenter {
+    animation: transitionAnimation--moveToCenter 200ms forwards;
+    display: block;
+}
+
+@keyframes transitionAnimation--moveToCenter {
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.transitionAnimation--opacity {
+    opacity: 0;
+    display: block;
+    animation: transitionAnimation--opacity 1000ms ease-in-out;
+    animation-delay: 0ms
+}
+
+@keyframes transitionAnimation--opacity {
+    0% {
+        opacity: 0;
+    }
+    40%, 70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.pinBox {    
     display: inline-block;
     position: relative;
-    width: var(--width);
-    height: var(--height);
+    width: 296px;
+    height: 74px;
     background-image: url(https://i.stack.imgur.com/JbkZl.png); 
   }
 
 .pinEntry {
     font-family: courier, monospaced;
-    font-size: var(--spacing);
-    height: var(--height);
-    letter-spacing: var(--spacing);
+    font-size: 47px;
+    height: 74px;
+    letter-spacing: 47px;
     background-color: transparent;
     border: 0;
     outline: none;
-    clip: rect(0px, calc(var(--width) - 21px), var(--height), 0px);
+    clip: rect(0px, calc(296px - 21px), 74px, 0px);
   }

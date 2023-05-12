@@ -52,9 +52,9 @@ export default customElements.define('make-page',
             }
         }
 
-        async connectedCallback() {
+        connectedCallback() {
             if (!this.rendered) {
-                await this.render()
+                this.render()
                 this.rendered = true
                 this.update()
             }
@@ -192,10 +192,10 @@ export default customElements.define('make-page',
                             const response = await ConnectionAPI.CreateMaze(inputName.value, ' ', this.state.maze.exportImageTiles())
 
                             if (response) {
-                                localStorage.clear()    
-                                window.location.href = `/play`                    
+                                localStorage.removeItem('OverworldMaze')  
+                                window.location.href = `/play`
                                 resolve()
-                            } else reject()
+                            } else throw new Error(response)
                         }
                     } catch (exception) {
                         reject()
@@ -258,6 +258,12 @@ export default customElements.define('make-page',
 
             const numberColumns = document.querySelector('#numberColumns')
             numberColumns.addEventListener('input', this.onInputColumnsHandler)
+
+            const buttonClearMaze = document.querySelector('#buttonClearMaze')
+            buttonClearMaze.addEventListener('click', () => {
+                localStorage.removeItem('OverworldMaze')  
+                document.location.reload(false)
+            })
         }
 
         removeEventsListener() {
@@ -316,6 +322,11 @@ export default customElements.define('make-page',
                                 id="buttonExportImage" 
                                 class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">Export Image</button>
                         </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <button 
+                                id="buttonClearMaze" 
+                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">Clear maze</button>
+                        </div>
                     </div>
                 </div>
             `)
@@ -334,7 +345,7 @@ export default customElements.define('make-page',
             `)
         }
 
-        async render() {
+        render() {
             // floating vertical menu configurations local
             const floatingVertical = document.querySelector('floating-vertical')
             floatingVertical.addContentElement({ title: 'Maze Configurations', element: createElementFromHTML(this.#sectionScrollerMenu())})

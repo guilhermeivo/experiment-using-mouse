@@ -31,11 +31,17 @@ export default class Router {
 
     navigateToRoute(route) {
         if (this.lastRoute.transition) {
-            this.lastRoute.transition().then(() => {
-                document.title = route.name
-                this.rootElement.innerHTML = `<${ route.nameTag }/>`
-                this.lastRoute = route
-            })
+            this.lastRoute.transition(new Promise(resolve => {
+                setTimeout(() => {
+                    const nextPage = document.createElement(route.nameTag)
+                    this.rootElement.firstElementChild.remove()
+                    this.rootElement.append(nextPage)
+                    document.title = route.name
+                    this.lastRoute = route
+                    
+                    resolve()
+                }, 200)
+            }))
         } else {
             document.title = route.name
             this.rootElement.innerHTML = `<${ route.nameTag }/>`

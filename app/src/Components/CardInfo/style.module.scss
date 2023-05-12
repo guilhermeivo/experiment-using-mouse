@@ -1,10 +1,10 @@
 .card-info {
     width: 252px;
     height: 265px;
-    background: $background-color;
+    background: var(--surface-color);
     border-radius: 12px;
-    border: 1px solid $border-color;
-    box-shadow: 0px 4px 16px $shadow-color;
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 4px 16px var(--shadow-color);
     overflow: hidden;
     margin-bottom: 8px;
     position: relative;
@@ -18,10 +18,10 @@
         justify-content: right;
 
         .marker__like {
-            background: $background-color;
+            background: var(--surface-color);
             border-radius: 12px;
-            border: 1px solid $border-color;
-            color: $medium-emphasis-color;
+            border: 1px solid var(--border-color);
+            color: var(--medium-emphasis-color);
             margin: 20px;
             width: 30px;
             height: 30px;
@@ -43,7 +43,7 @@
 
             &.marker__like--liked span {
                 font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-                color: $error-color;
+                color: var(--error-color);
             }
         }
     }
@@ -66,12 +66,12 @@
 
         h3 {
             margin: 0;
-            color: $high-emphasis-color;
+            color: var(--high-emphasis-color);
         }
 
         p {
             margin: 0;
-            color: $medium-emphasis-color;
+            color: var(--medium-emphasis-color);
         }
     }
 

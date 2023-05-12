@@ -29,7 +29,7 @@ make-page {
         position: relative;
         width: 64px;
         height: 64px;
-        border: 1px solid $primary-color;
+        border: 1px solid var(--primary-color);
         overflow: hidden;
         z-index: 998;
 
