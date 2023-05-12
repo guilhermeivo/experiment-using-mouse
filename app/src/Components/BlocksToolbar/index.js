@@ -39,14 +39,14 @@ export default customElements.define('blocks-toolbar',
                     break
             }
 
-            /*const eventKeyNumber = Number(event.key - 1)
+            const eventKeyNumber = Number(event.key - 1)
             if (typeof eventKeyNumber === 'number' && !Number.isNaN(eventKeyNumber)) {
                 const amountEditors = Object.keys(this.state.items).length
                 if (eventKeyNumber >= 0 && eventKeyNumber < amountEditors) {
                     const key = Object.keys(this.state.items)[eventKeyNumber]
                     this.selectedItemHadler(key)
                 }
-            }*/
+            }
         }
 
         selectedItemHadler(key) {

@@ -84,6 +84,16 @@ export default customElements.define('register-page',
         addEventsListener() {
             const buttonRegister = document.querySelector('#buttonRegister')
             buttonRegister.addEventListener('click', this.onRegisterHandler)
+
+            const inputUsername = document.querySelector('#inputUsername')
+            inputUsername.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
+
+            const inputEmail = document.querySelector('#inputEmail')
+            inputEmail.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
         }
 
         removeEventsListener() {

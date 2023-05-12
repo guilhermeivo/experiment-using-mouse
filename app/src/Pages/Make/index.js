@@ -264,6 +264,21 @@ export default customElements.define('make-page',
                 localStorage.removeItem('OverworldMaze')  
                 document.location.reload(false)
             })
+
+            const inputEmail = document.querySelector('#inputName')
+            inputEmail.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
+
+            const inputRows = document.querySelector('#numberRows')
+            inputRows.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
+
+            const inputColumns = document.querySelector('#numberColumns')
+            inputColumns.addEventListener('keydown', event => {
+                event.stopPropagation()
+            })
         }
 
         removeEventsListener() {
