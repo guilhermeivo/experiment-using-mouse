@@ -99,6 +99,10 @@ export default customElements.define('code-page',
                         }
                     }
                 })
+
+                input.addEventListener('focus', event => {
+                    if (input.value) input.value = ''
+                })
                 
                 input.addEventListener('keydown', event => {
                     event.stopPropagation()
