@@ -11,7 +11,6 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 ## ToDo
 - [ ] Best practices - frontend performance
 - [ ] Best practices - API security
-- [ ] Create documentation for architecture
 
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
