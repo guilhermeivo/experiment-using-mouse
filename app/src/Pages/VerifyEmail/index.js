@@ -41,7 +41,7 @@ export default customElements.define('verify-page',
             if (response) {
                 const message = document.querySelector('message-info')
                 message.addMessageInfo({ description: `Email and registration confirmed successfully.`, type: 'info' })
-                window.location.href = navigateTo('/login')
+                navigateTo('/login')
             } else {
                 navigateTo(`/`)
             }
