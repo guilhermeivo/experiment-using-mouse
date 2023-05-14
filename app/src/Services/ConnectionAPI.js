@@ -74,6 +74,14 @@ export default (() => {
         })
     }
 
+    const ToggleLikeMaze = (idMaze) => {
+        const path = `${ urlServer }/maze/like`
+
+        return httpConnection(path, typeMethods.POST, {
+            id: idMaze
+        })
+    }
+
     const httpConnection = (url, method, body) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -99,7 +107,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze
     }
     
 })()

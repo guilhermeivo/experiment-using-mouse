@@ -1,4 +1,5 @@
 import { createElementFromHTML } from '../../Common/common'
+import ConnectionAPI from '../../Services/ConnectionAPI'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 
 import classes from './style.module.scss'
@@ -29,6 +30,15 @@ export default customElements.define('card-info',
         disconnectedCallback() {
         }
 
+        addEventsListener() {
+            const buttonLike = document.querySelector('#buttonLike')
+            buttonLike.addEventListener('click', () => {
+                const response = ConnectionAPI.ToggleLikeMaze(this.state.id)
+
+                if (response) buttonLike.firstElementChild.classList.toggle(classes['marker__like--liked'])
+            })
+        }
+
         #createdCard() {
             return(`
             <div class="${ classes['card-info'] }">
@@ -55,5 +65,7 @@ export default customElements.define('card-info',
 
         render() {
             this.append(createElementFromHTML(this.#createdCard()))
+
+            this.addEventsListener()
         }
     })
