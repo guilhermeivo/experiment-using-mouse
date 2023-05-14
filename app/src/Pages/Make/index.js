@@ -191,14 +191,14 @@ export default customElements.define('make-page',
 
                             if (response) {
                                 localStorage.removeItem('OverworldMaze') 
+                                navigateTo('play')
                                 resolve()
                             } else reject()
                         }
                     } catch (exception) {
                         reject()
                     }
-                },
-                () => navigateTo('play')
+                }
             )
         }
 
