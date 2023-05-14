@@ -2,10 +2,7 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken, createElementFromHTML, navigateTo, priorityInput } from "../../Common/common"
-
-const TIME_SHOWING_MESSAGE = 1000
-const MINIMUM_TIME_WAIT = 1000
+import { checkToken, createElementFromHTML, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
 
 export default customElements.define('register-page', 
     class extends HTMLElement {
@@ -33,9 +30,6 @@ export default customElements.define('register-page',
         }
 
         onRegisterHandler(event) {
-            const targetClass = event.target.classList
-            if (targetClass.contains(classesForms['button__submit--active']) || targetClass.contains(classesForms['button__submit--done']) || targetClass.contains(classesForms['button__submit--error'])) return
-
             const validatorInputEmail = validators(
                 '#inputEmail', { formElement: '#formTextEmail', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
             const validatorInputName = validators(
@@ -49,38 +43,23 @@ export default customElements.define('register-page',
             const inputEmail = document.querySelector('#inputEmail')
             const inputUsername = document.querySelector('#inputUsername')
 
-            targetClass.add(classesForms['button__submit--active'])
-            Promise.all([new Promise(async (resolve, reject) => {
-                try {
-                    const response = await ConnectionAPI.RegisterUser(inputUsername.value, inputEmail.value)
-                    if (response) {
-                        const message = document.querySelector('message-info')
-                        message.addMessageInfo({ description: `The registration was carried out successfully. A confirmation email has been sent to: ${ inputEmail.value }`, type: 'info' })
-                        resolve()
+            submitButtonHandler(
+                event.target,
+                async (resolve, reject) => {
+                    try {
+                        const response = await ConnectionAPI.RegisterUser(inputUsername.value, inputEmail.value)
+                        if (response) {
+                            const message = document.querySelector('message-info')
+                            message.addMessageInfo({ description: `The registration was carried out successfully. A confirmation email has been sent to: ${ inputEmail.value }`, type: 'info' })
+                            resolve()
+                        }
+                        else reject()
+                    } catch (exception) {
+                        reject()
                     }
-                    else reject()
-                } catch (exception) {
-                    reject()
-                }
-            }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
-            .then(() => {
-                targetClass.remove(classesForms['button__submit--active'])
-                targetClass.add(classesForms['button__submit--done'])
-
-                setTimeout(() => {
-                    targetClass.remove(classesForms['button__submit--done'])
-
-                    navigateTo('/login')
-                }, TIME_SHOWING_MESSAGE)
-            })
-            .catch(() => {
-                targetClass.remove(classesForms['button__submit--active'])
-                targetClass.add(classesForms['button__submit--error'])
-
-                setTimeout(() => {
-                    targetClass.remove(classesForms['button__submit--error'])
-                }, TIME_SHOWING_MESSAGE)
-            })
+                },
+                () => navigateTo('/login')
+            )
         }
 
         addEventsListener() {
@@ -129,7 +108,7 @@ export default customElements.define('register-page',
                     </div>
                 </div>
 
-                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In<a/></p>
+                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In</a></p>
             </div>
             `)
         }

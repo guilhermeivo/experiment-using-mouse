@@ -1,10 +1,7 @@
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken, navigateTo, priorityInput } from "../../Common/common"
-
-const TIME_SHOWING_MESSAGE = 1000
-const MINIMUM_TIME_WAIT = 1000
+import { checkToken, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
 
 export default customElements.define('code-page', 
     class extends HTMLElement {
@@ -39,45 +36,28 @@ export default customElements.define('code-page',
         }
 
         onCodeHandler(event) {
-            const targetClass = event.target.classList
-            if (targetClass.contains(classesForms['button__submit--active']) || targetClass.contains(classesForms['button__submit--done']) || targetClass.contains(classesForms['button__submit--error'])) return
-
             if (this.state.code.length < 6) return
 
-            targetClass.add(classesForms['button__submit--active'])
-            Promise.all([new Promise(async (resolve, reject) => {
-                try {
-                    const response = await ConnectionAPI.CodeUser(this.state.email, this.state.code)
-
-                    if (response && response.auth) {
-                        sessionStorage.setItem('auth', JSON.stringify({
-                            ...response,
-                            createAt: new Date()
-                        }))
-                        navigateTo('/')
-                        resolve()
+            submitButtonHandler(
+                event.target,
+                async (resolve, reject) => {
+                    try {
+                        const response = await ConnectionAPI.CodeUser(this.state.email, this.state.code)
+    
+                        if (response && response.auth) {
+                            sessionStorage.setItem('auth', JSON.stringify({
+                                ...response,
+                                createAt: new Date()
+                            }))
+                            resolve()
+                        }
+                        else reject()
+                    } catch (exception) {
+                        reject()
                     }
-                    else reject()
-                } catch (exception) {
-                    reject()
-                }
-            }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
-            .then(() => {
-                targetClass.remove(classesForms['button__submit--active'])
-                targetClass.add(classesForms['button__submit--done'])
-
-                setTimeout(() => {
-                    targetClass.remove(classesForms['button__submit--done'])
-                }, TIME_SHOWING_MESSAGE)
-            })
-            .catch(() => {
-                targetClass.remove(classesForms['button__submit--active'])
-                targetClass.add(classesForms['button__submit--error'])
-
-                setTimeout(() => {
-                    targetClass.remove(classesForms['button__submit--error'])
-                }, TIME_SHOWING_MESSAGE)
-            })
+                },
+                () => navigateTo('/')
+            )
         }
 
         addEventsListeners() {

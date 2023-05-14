@@ -40,3 +40,39 @@ export function navigateTo(routeName) {
 export function priorityInput(event) {
     event.stopPropagation()
 }
+
+import classesForms from '../assets/styles/forms_controls.module.scss'
+
+const TIME_SHOWING_MESSAGE = 1000
+const MINIMUM_TIME_WAIT = 1000
+
+export function submitButtonHandler(target, callbackPromise, callbackSuccess, callbackError) {
+    const targetClass = target.classList
+    if (targetClass.contains(classesForms['button__submit--active']) || targetClass.contains(classesForms['button__submit--done']) || targetClass.contains(classesForms['button__submit--error'])) return
+
+    targetClass.add(classesForms['button__submit--active'])
+    Promise.all([
+        new Promise(async (resolve, reject) => {
+            await callbackPromise(resolve, reject)
+        }), 
+    new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))
+    ]).then(() => {
+        targetClass.remove(classesForms['button__submit--active'])
+        targetClass.add(classesForms['button__submit--done'])
+
+        setTimeout(() => {
+            targetClass.remove(classesForms['button__submit--done'])
+
+            if (callbackSuccess) callbackSuccess()
+        }, TIME_SHOWING_MESSAGE)
+    }).catch(() => {
+        targetClass.remove(classesForms['button__submit--active'])
+        targetClass.add(classesForms['button__submit--error'])
+
+        setTimeout(() => {
+            targetClass.remove(classesForms['button__submit--error'])
+
+            if (callbackError) callbackError()
+        }, TIME_SHOWING_MESSAGE)
+    })
+}

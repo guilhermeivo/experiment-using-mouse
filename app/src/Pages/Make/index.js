@@ -1,4 +1,4 @@
-import { checkToken, createElementFromHTML, downloadData, priorityInput } from '../../Common/common'
+import { checkToken, createElementFromHTML, downloadData, priorityInput, submitButtonHandler } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
@@ -157,19 +157,17 @@ export default customElements.define('make-page',
         }
 
         async onSaveMazeHandler(event) {
-            const targetClass = event.target.classList
-            if (targetClass.contains(classesForms['button__submit--active']) || targetClass.contains(classesForms['button__submit--done']) || targetClass.contains(classesForms['button__submit--error'])) return
-
             const validatorInputName = validators(
                 '#inputName', { formElement: '#formTextName', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
             
             const isValid = validatorInputName.isValidNotEmpty() && validatorInputName.isValidNotSpecialCharacters()
+            if (!isValid) return 
 
-            if (isValid) {
-                const inputName = document.querySelector('#inputName')
-                
-                targetClass.add(classesForms['button__submit--active'])
-                Promise.all([new Promise(async (resolve, reject) => {
+            const inputName = document.querySelector('#inputName')
+
+            submitButtonHandler(
+                event.target,
+                async (resolve, reject) => {
                     try {
                         const json = JSON.stringify({ 
                             name: inputName.value, 
@@ -193,32 +191,16 @@ export default customElements.define('make-page',
                             const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, this.state.maze.exportImageTiles())
 
                             if (response) {
-                                localStorage.removeItem('OverworldMaze')  
-                                navigateTo('play')
+                                localStorage.removeItem('OverworldMaze') 
                                 resolve()
-                            } else throw new Error(response)
+                            } else reject()
                         }
                     } catch (exception) {
                         reject()
                     }
-                }), new Promise(resolve => setTimeout(resolve, MINIMUM_TIME_WAIT))])
-                .then(() => {
-                    targetClass.remove(classesForms['button__submit--active'])
-                    targetClass.add(classesForms['button__submit--done'])
-    
-                    setTimeout(() => {
-                        targetClass.remove(classesForms['button__submit--done'])
-                    }, TIME_SHOWING_MESSAGE)
-                })
-                .catch(() => {
-                    targetClass.remove(classesForms['button__submit--active'])
-                    targetClass.add(classesForms['button__submit--error'])
-    
-                    setTimeout(() => {
-                        targetClass.remove(classesForms['button__submit--error'])
-                    }, TIME_SHOWING_MESSAGE)
-                })
-            }
+                },
+                () => navigateTo('play')
+            )
         }
 
         onInputRowsHandler(event) {
