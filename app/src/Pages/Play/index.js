@@ -38,7 +38,7 @@ export default customElements.define('play-page',
                         if (responseGetMazeByUser.length > 0) {
                             return (`
                                 <h1>My mazes</h1>
-                                <div class="${ classes['list'] }">
+                                <div class="${ classes['list--horizontal'] }">
                                 ${ (() => {
                                     if (responseGetMazeByUser.length > 0) {
                                         return responseGetMazeByUser.map(element => {
@@ -62,7 +62,7 @@ export default customElements.define('play-page',
     
                     <h1>Public mazes</h1>
     
-                    <div class="${ classes['list'] }">
+                    <div class="${ classes['list--vertical'] }">
                     ${ (() => {
                         if (responseGetMazes.length > 0) {
                             return responseGetMazes.map(element => {

@@ -1,7 +1,14 @@
 .wrapper {
-    .list {
+    .list--vertical {
         display: flex;
         flex-wrap: wrap;
+        gap: 24px;
+    }
+
+    .list--horizontal {
+        width: 100%;
+        overflow: auto;
+        display: flex;
         gap: 24px;
     }
 }
