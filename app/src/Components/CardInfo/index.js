@@ -1,4 +1,4 @@
-import { createElementFromHTML } from '../../Common/common'
+import { createElementFromHTML, navigateTo } from '../../Common/common'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 
@@ -36,6 +36,11 @@ export default customElements.define('card-info',
                 const response = ConnectionAPI.ToggleLikeMaze(this.state.id)
 
                 if (response) buttonLike.firstElementChild.classList.toggle(classes['marker__like--liked'])
+            })
+
+            const buttonPlay = this.querySelector(`#buttonPlay--${ this.state.id }`)
+            buttonPlay.addEventListener('click', () => {
+                navigateTo(`/maze?id=${ this.state.id }`)
             })
         }
 

@@ -64,13 +64,13 @@ export default (() => {
         return httpConnection(path, typeMethods.GET)
     }
 
-    const CreateMaze = (name, description, image) => {
+    const CreateMaze = (name, description, object) => {
         const path = `${ urlServer }/maze`
 
         return httpConnection(path, typeMethods.POST, {
             name: name,
             description: description,
-            image: image
+            object: JSON.stringify(object)
         })
     }
 
@@ -80,6 +80,12 @@ export default (() => {
         return httpConnection(path, typeMethods.POST, {
             id: idMaze
         })
+    }
+
+    const GetMazeById = (idMaze) => {
+        const path = `${ urlServer }/maze/id?id=${ idMaze }`
+
+        return httpConnection(path, typeMethods.GET)
     }
 
     const httpConnection = (url, method, body) => {
@@ -107,7 +113,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById
     }
     
 })()

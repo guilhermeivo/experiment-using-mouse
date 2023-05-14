@@ -1,6 +1,5 @@
-import MazeObject from "./MazeObject"
 import Sprite from "./Sprite"
-import { uid } from "./Common/common"
+import { uid, withGrid } from "./Common/common"
 
 import PathIcon from "./assets/images/PathIcon.png"
 import WallIcon from "./assets/images/WallIcon.png"
@@ -9,6 +8,9 @@ import CheeseIcon from "./assets/images/CheeseIcon.png"
 import EraserIcon from "./assets/images/EraserIcon.png"
 
 import FileMapImage from './assets/images/FileMap.png'
+
+import CheeseCharacters from './assets/images/characters/cheese.png'
+import MouseCharacters from './assets/images/characters/mario.png'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
@@ -29,16 +31,19 @@ export default class OverworldMazeEdit {
         this.columns = config.columns || this.smallestSize
 
         this.mazeObjects = config.mazeObjects || {
-            cheese: new MazeObject({
+            cheese: {
+                type: 'Cheese',
                 id: window.editors.cheese.id,
-                x: -1,
-                y: -1
-            }),
-            mouse: new MazeObject({
+                x: 0,
+                y: 0
+            },
+            mouse: {
+                type: 'Person',
                 id: window.editors.mouse.id,
-                x: -1,
-                y: -1
-            })
+                isPlayerControlled: true,
+                x: 0,
+                y: 0
+            }
         }
         this.tilesMaze = config.tilesMaze || { }
         if (Object.keys(this.tilesMaze).length === 0) {
@@ -89,6 +94,32 @@ export default class OverworldMazeEdit {
 
     remove({ x, y }) {
         delete this.tilesMaze[`${x},${y}`]
+    }
+
+    getOverworldMap(lowerSrc) {
+        const objects = { }
+        Object.keys(this.mazeObjects).map(key => {
+            const currentObject = this.mazeObjects[key]
+            objects[key] = {
+                type: currentObject.type,
+                isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
+                x: withGrid(currentObject.y - 1),
+                y: withGrid(currentObject.x - 1),
+                src: window.editors[currentObject.id].src
+            }
+        })
+        const walls = { }
+        Object.keys(this.tilesMaze).map(key => {
+
+            const [ x, y ] = key.split(',').map(string => Number(string))
+            if (this.tilesMaze[key] === 'wall') walls[`${withGrid(y-1)},${withGrid(x-1)}`] = true
+        })
+        return {
+            id: 'maze',
+            lowerSrc: lowerSrc,
+            configObjects: objects,
+            walls: walls
+        }
     }
 }
 
@@ -183,14 +214,16 @@ window.editors = {
         icon: CheeseIcon,
         label: 'Cheese', 
         description: 'Mouses final goal (exit).', 
-        type: enumTypeEditors.Object
+        type: enumTypeEditors.Object,
+        src: CheeseCharacters
     },
     mouse: {
         id: 'mouse',
         icon: MouseIcon,
         label: 'Mouse', 
         description: 'Character who seeks the uncertain exit from the labyrinth (entrance).',
-        type: enumTypeEditors.Object
+        type: enumTypeEditors.Object,
+        src: MouseCharacters
     },
     air: {
         id: 'air',

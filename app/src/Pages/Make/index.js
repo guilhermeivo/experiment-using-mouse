@@ -187,7 +187,8 @@ export default customElements.define('make-page',
                             floatingVertical.toggle()
                             resolve()
                         } else {
-                            const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, this.state.maze.exportImageTiles())
+                            const overworldMaze = this.state.overworldMazeEdit.getOverworldMap(this.state.maze.exportImageTiles())
+                            const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, overworldMaze)
 
                             if (response) {
                                 localStorage.removeItem('OverworldMaze') 
@@ -196,6 +197,7 @@ export default customElements.define('make-page',
                             } else reject()
                         }
                     } catch (exception) {
+                        console.error(exception)
                         reject()
                     }
                 }

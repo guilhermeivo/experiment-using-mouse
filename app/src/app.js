@@ -6,6 +6,7 @@ import "./Pages/Error"
 import "./Pages/Login"
 import "./Pages/Code"
 import "./Pages/VerifyEmail"
+import "./Pages/Maze"
 
 import "./Components/BlocksToolbar"
 import "./Components/FloatingVertical"
@@ -32,10 +33,12 @@ import ThemeSelector from "./Services/ThemeSelector"
         '/': { name: 'Home', nameTag: 'home-page', defaultRoute: true, transition: transition.wipeLeft },
         '/make': { name: 'Make', nameTag: 'make-page', transition: transition.wipeRight },
         '/play': { name: 'Play', nameTag: 'play-page', transition: transition.wipeRight },
+        '/maze': { name: 'Maze', nameTag: 'maze-page' },
         '/register': { name: 'Register', nameTag: 'register-page' },
         '/register/verify-email': { name: 'Verify Email', nameTag: 'verify-page' },
         '/login': { name: 'Login', nameTag: 'login-page' },
         '/login/code': { name: 'Code', nameTag: 'code-page' },
+        '/code': { name: 'Code', nameTag: 'code-page' },
         '/404': { name: '404', nameTag: 'error-page' }
     }).initialize()  
     

@@ -78,3 +78,28 @@ export function submitButtonHandler(target, callbackPromise, callbackSuccess, ca
         }, TIME_SHOWING_MESSAGE)
     })
 }
+
+export function withGrid(n) {
+    return n * 32
+}
+  
+export function asGridCoord(x,y) {
+    return `${x*32},${y*32}`
+}
+  
+export function nextPosition(initialX, initialY, direction) {
+    let x = initialX
+    let y = initialY
+    const size = 32
+    if (direction === "left") { 
+        x -= size
+    } else if (direction === "right") {
+        x += size
+    } else if (direction === "up") {
+        y -= size
+    } else if (direction === "down") {
+        y += size
+    }
+    return {x,y}
+}
+

@@ -85,8 +85,8 @@ export default customElements.define('maze-edit',
 
         exportImageTiles() {
             const canvas = document.createElement('canvas')
-            canvas.width = this.state.overworldMazeEdit.columns * 64
-            canvas.height = this.state.overworldMazeEdit.rows * 64
+            canvas.width = this.state.overworldMazeEdit.columns * 32
+            canvas.height = this.state.overworldMazeEdit.rows * 32
             const ctx = canvas.getContext('2d')
 
             const allBlocks = document.querySelectorAll('maze-block')
@@ -96,8 +96,8 @@ export default customElements.define('maze-edit',
 
                 ctx.drawImage(
                     image, // image
-                    (y - 1) * 64, (x - 1) * 64, // sx, sy
-                    64, 64, // sWidth, sHeight
+                    (y - 1) * 32, (x - 1) * 32, // sx, sy
+                    32, 32, // sWidth, sHeight
                     )
             })
             return canvas.toDataURL()
