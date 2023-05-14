@@ -64,11 +64,6 @@ export default customElements.define('login-page',
         }
 
         removeEventsListener() {
-            const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.removeEventListener('keydown', priorityInput)
-
-            const buttonLogin = document.querySelector('#buttonLogin')
-            buttonLogin.removeEventListener('click', this.onLoginHandler)
         }
 
         render() {

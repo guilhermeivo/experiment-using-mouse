@@ -74,14 +74,6 @@ export default customElements.define('register-page',
         }
 
         removeEventsListener() {
-            const buttonRegister = document.querySelector('#buttonRegister')
-            buttonRegister.removeEventListener('click', this.onRegisterHandler)
-
-            const inputUsername = document.querySelector('#inputUsername')
-            inputUsername.removeEventListener('keydown', priorityInput)
-
-            const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.removeEventListener('keydown', priorityInput)
         }
 
         #createPage() {

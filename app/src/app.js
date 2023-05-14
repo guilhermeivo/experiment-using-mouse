@@ -82,7 +82,7 @@ import ThemeSelector from "./Services/ThemeSelector"
     const buttonLogout = document.querySelector('#buttonLogout')
     if (hasToken) {
         buttonLogout.addEventListener('click', () => {
-            sessionStorage.removeItem('auth')
+            localStorage.removeItem('auth')
             document.location.reload(false)
         })
     }
