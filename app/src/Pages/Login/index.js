@@ -2,7 +2,7 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken } from "../../Common/common"
+import { checkToken, createElementFromHTML, navigateTo, priorityInput } from "../../Common/common"
 
 const TIME_SHOWING_MESSAGE = 1000
 const MINIMUM_TIME_WAIT = 1000
@@ -51,7 +51,7 @@ export default customElements.define('login-page',
                     const response = await ConnectionAPI.LoginUser(inputEmail.value)
 
                     if (response) {
-                        window.location.href = `/login/code?email=${ inputEmail.value }`
+                        navigateTo(`/login/code?email=${ inputEmail.value }`)
                         resolve()
                     } else reject()
                 } catch (exception) {
@@ -78,41 +78,42 @@ export default customElements.define('login-page',
 
         addEventsListener() {
             const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputEmail.addEventListener('keydown', priorityInput)
 
             const buttonLogin = document.querySelector('#buttonLogin')
             buttonLogin.addEventListener('click', this.onLoginHandler)
         }
 
         removeEventsListener() {
+            const inputEmail = document.querySelector('#inputEmail')
+            inputEmail.removeEventListener('keydown', priorityInput)
+
             const buttonLogin = document.querySelector('#buttonLogin')
             buttonLogin.removeEventListener('click', this.onLoginHandler)
         }
 
         render() {
-            this.innerHTML = `
-            <div class="${ classes['wrapper'] }">
-                <h1>Welcome Back!</h1>
-                <p>You must Sign in to join</p>
+            this.append(createElementFromHTML(`
+                <div class="${ classes['wrapper'] }">
+                    <h1>Welcome Back!</h1>
+                    <p>You must Sign in to join</p>
 
-                <div class="${ classesForms['form-controls'] }">
-                    <div id="formTextEmail" class="${ classesForms['form__text-control'] }">
-                        <input type="text" name="inputEmail" id="inputEmail" placeholder=" " autocomplete="off" required />
-                        <label for="inputEmail">Email</label>
-                        <span class="${ classesForms['form__error-message'] }"></span>
+                    <div class="${ classesForms['form-controls'] }">
+                        <div id="formTextEmail" class="${ classesForms['form__text-control'] }">
+                            <input type="text" name="inputEmail" id="inputEmail" placeholder=" " autocomplete="off" required />
+                            <label for="inputEmail">Email</label>
+                            <span class="${ classesForms['form__error-message'] }"></span>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <button 
+                                id="buttonLogin" 
+                                class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign In</button>
+                        </div>
                     </div>
-                    <div class="${ classesForms['form__text-control'] }">
-                        <button 
-                            id="buttonLogin" 
-                            class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign In</button>
-                    </div>
+
+                    <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign Up<a/></p>
                 </div>
-
-                <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign Up<a/></p>
-            </div>
-            `
+            `))
 
             const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
             if (backMenu.classList.contains('back-menu--disabled')) 

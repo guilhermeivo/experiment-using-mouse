@@ -2,7 +2,7 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken } from "../../Common/common"
+import { checkToken, createElementFromHTML, navigateTo, priorityInput } from "../../Common/common"
 
 const TIME_SHOWING_MESSAGE = 1000
 const MINIMUM_TIME_WAIT = 1000
@@ -69,6 +69,8 @@ export default customElements.define('register-page',
 
                 setTimeout(() => {
                     targetClass.remove(classesForms['button__submit--done'])
+
+                    navigateTo('/login')
                 }, TIME_SHOWING_MESSAGE)
             })
             .catch(() => {
@@ -86,23 +88,25 @@ export default customElements.define('register-page',
             buttonRegister.addEventListener('click', this.onRegisterHandler)
 
             const inputUsername = document.querySelector('#inputUsername')
-            inputUsername.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputUsername.addEventListener('keydown', priorityInput)
 
             const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputEmail.addEventListener('keydown', priorityInput)
         }
 
         removeEventsListener() {
             const buttonRegister = document.querySelector('#buttonRegister')
             buttonRegister.removeEventListener('click', this.onRegisterHandler)
+
+            const inputUsername = document.querySelector('#inputUsername')
+            inputUsername.removeEventListener('keydown', priorityInput)
+
+            const inputEmail = document.querySelector('#inputEmail')
+            inputEmail.removeEventListener('keydown', priorityInput)
         }
 
-        render() {
-            this.innerHTML = `
+        #createPage() {
+            return (`
             <div class="${ classes['wrapper'] }">
                 <h1>Get Started</h1>
                 <p>Create your account now</p>
@@ -127,7 +131,11 @@ export default customElements.define('register-page',
 
                 <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In<a/></p>
             </div>
-            `
+            `)
+        }
+
+        render() {
+            this.append(createElementFromHTML(this.#createPage()))
 
             const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
             if (backMenu.classList.contains('back-menu--disabled')) 

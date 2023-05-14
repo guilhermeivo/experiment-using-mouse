@@ -1,5 +1,7 @@
 export default class ThemeSelector {
     constructor(themes, transition) {
+        if (themes.length < 1) throw new Error('Must have at least one theme.')
+
         this.themes = themes
         this.transition = transition
 
@@ -8,22 +10,17 @@ export default class ThemeSelector {
     }
 
     setTheme(name) {
-        this.themes.map(theme => {
-            if (theme.value === name) {
-                document.body.setAttribute('data-theme', name)
-                    localStorage.setItem('theme', name)
-            }
-        })
+        const found = this.themes.find(theme => theme.value === name)
+
+        if (!found) throw new Error('No theme with that name could be found.')
+
+        document.body.setAttribute('data-theme', found.value)
+        localStorage.setItem('theme', found.value)
     }
 
-    changeTheme(name) {
-        this.themes.map(theme => {
-            if (theme.value === name) {
-                this.transition.opacity().then(() => {
-                    document.body.setAttribute('data-theme', name)
-                    localStorage.setItem('theme', name)
-                })
-            }
+    changeTheme(name) {        
+        this.transition.opacity().then(() => {
+            this.setTheme(name)
         })
     }
 }

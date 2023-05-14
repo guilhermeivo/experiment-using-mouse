@@ -183,7 +183,7 @@ export default customElements.define('make-page',
                             document.body.appendChild(createElementFromHTML(`
                                 <pop-up 
                                     data-title="Account is required!" 
-                                    data-description="To save this labyrinth it is necessary to login or register to proceed:" 
+                                    data-description="To save this maze it is necessary to login or register to proceed:" 
                                     data-anchorlink="/login"
                                     data-anchortext="Sign In"></pop-up>
                             `))

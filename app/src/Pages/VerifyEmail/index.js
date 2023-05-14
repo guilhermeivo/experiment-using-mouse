@@ -1,5 +1,5 @@
 import classes from './style.module.scss'
-import { checkToken } from "../../Common/common"
+import { checkToken, navigateTo } from "../../Common/common"
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
 export default customElements.define('verify-page', 
@@ -38,6 +38,12 @@ export default customElements.define('verify-page',
             `
 
             const response = await ConnectionAPI.VerifyEmail(this.state.userId, this.state.emailToken)
-            if (response) window.location.href = `/`
+            if (response) {
+                const message = document.querySelector('message-info')
+                message.addMessageInfo({ description: `Email and registration confirmed successfully.`, type: 'info' })
+                window.location.href = navigateTo('/login')
+            } else {
+                navigateTo(`/`)
+            }
         }
     })

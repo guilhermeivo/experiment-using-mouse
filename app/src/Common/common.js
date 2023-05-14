@@ -2,7 +2,7 @@ export function createElementFromHTML(htmlString) {
     const div = document.createElement('div')
     div.innerHTML = htmlString.trim()
     
-    return div.firstChild
+    return div.firstElementChild
 }
 
 export function uid() {
@@ -11,11 +11,12 @@ export function uid() {
 
 export function downloadData(dataUrl, nameFile = '') {
     const link = document.createElement('a')
-    link.style.display = 'none'
+    link.setAttribute('hidden', '')
     document.body.appendChild(link)
     link.setAttribute('href', dataUrl)
     link.setAttribute('download', nameFile)
     link.click()
+    link.remove()
 }
 
 export function checkToken(auth) {
@@ -27,4 +28,15 @@ export function checkToken(auth) {
     
     if (currentDate < createAt) return true
     else return false
+}
+
+export function navigateTo(routeName) {
+    const anchorRoute = document.querySelector('#anchorRoute')
+    anchorRoute.setAttribute('href', routeName)
+    anchorRoute.click()
+    anchorRoute.setAttribute('href', '')
+}
+
+export function priorityInput(event) {
+    event.stopPropagation()
 }

@@ -1,5 +1,5 @@
 import classes from './style.module.scss'
-import { checkToken } from "../../Common/common"
+import { checkToken, createElementFromHTML, navigateTo } from "../../Common/common"
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
 export default customElements.define('play-page', 
@@ -7,8 +7,7 @@ export default customElements.define('play-page',
         constructor(...props) {
             super(props)
 
-            if (!checkToken(JSON.parse(sessionStorage.getItem('auth'))))
-                window.location.href = `/login`
+            
         }
 
         connectedCallback() {
@@ -25,30 +24,48 @@ export default customElements.define('play-page',
         }
 
         async render() {
-            const response = await ConnectionAPI.GetMazes()
+            if (!checkToken(JSON.parse(sessionStorage.getItem('auth')))) {
+                navigateTo('/login')
+                const message = document.querySelector('message-info')
+                message.addMessageInfo({ description: `To proceed you need to login or register.`, type: 'warn' })
+            } else {
+                const response = await ConnectionAPI.GetMazes()
 
-            this.innerHTML = `
-            <div class="${ classes['wrapper'] }">
-                <h1>Play</h1>
-
-                <div class="${ classes['list'] }">
-                ${ (() => {
-                    return response.map(element => {
-                        return (`
-                            <card-info
-                                data-id="${ element.id }"
-                                data-title="${ element.name }"
-                                data-likes="${ element.like || 0 }"
-                                data-views="${ element.views || 0 }"
-                                ${ element.isLiked ? 'data-liked' : '' }
-                                data-image="${ element.image }"
-                            ></card-info>
-                        `)
-                    }).join('')
-                })()}
+                this.append(createElementFromHTML(`
+                <div class="${ classes['wrapper'] }">
+                    <h1>My mazes</h1>
+                    <div class="${ classes['list'] }">
+                    
+                    </div>
+    
+                    <h1>Public mazes</h1>
+    
+                    <div class="${ classes['list'] }">
+                    ${ (() => {
+                        if (response.length > 0) {
+                            return response.map(element => {
+                                return (`
+                                    <card-info
+                                        data-id="${ element.id }"
+                                        data-title="${ element.name }"
+                                        data-likes="${ element.like || 0 }"
+                                        data-views="${ element.views || 0 }"
+                                        ${ element.isLiked ? 'data-liked' : '' }
+                                        data-image="${ element.image }"
+                                    ></card-info>
+                                `)
+                            }).join('')
+                        } else {
+                            return (`
+                                <p>There is no maze at the moment.</p>
+                            `)
+                        }
+                        
+                    })()}
+                    </div>
                 </div>
-            </div>
-            `
+                `))
+            }
 
             const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
             if (backMenu.classList.contains('back-menu--disabled')) 

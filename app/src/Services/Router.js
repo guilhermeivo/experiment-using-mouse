@@ -1,7 +1,7 @@
 export default class Router {
-    constructor(routes) {
+    constructor(routes, rootElement) {
         this.routes = routes
-        this.rootElement = document.querySelector('#app')
+        this.rootElement = rootElement || document.querySelector('#app')
         this.lastRoute = ''
     }
 
@@ -34,7 +34,8 @@ export default class Router {
             this.lastRoute.transition(new Promise(resolve => {
                 setTimeout(() => {
                     const nextPage = document.createElement(route.nameTag)
-                    this.rootElement.firstElementChild.remove()
+                    if (this.rootElement.firstElementChild) 
+                        this.rootElement.firstElementChild.remove()
                     this.rootElement.append(nextPage)
                     document.title = route.name
                     this.lastRoute = route
@@ -43,8 +44,11 @@ export default class Router {
                 }, 200)
             }))
         } else {
+            const nextPage = document.createElement(route.nameTag)
+            if (this.rootElement.firstElementChild) 
+                this.rootElement.firstElementChild.remove()
+            this.rootElement.append(nextPage)
             document.title = route.name
-            this.rootElement.innerHTML = `<${ route.nameTag }/>`
             this.lastRoute = route
         }
     }

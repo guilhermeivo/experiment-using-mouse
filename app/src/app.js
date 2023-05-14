@@ -39,6 +39,7 @@ import ThemeSelector from "./Services/ThemeSelector"
         '/404': { name: '404', nameTag: 'error-page' }
     }).initialize()  
     
+    // set system themes in application
     const themeSelector = new ThemeSelector([
         { value: 'light', label: 'Light' },
         { value: 'dark', label: 'Dark' },
@@ -46,7 +47,7 @@ import ThemeSelector from "./Services/ThemeSelector"
         { value: 'contrast', label: 'Contrast' },
     ], transition)
 
-    const isToken = checkToken(JSON.parse(sessionStorage.getItem('auth')))
+    const hasToken = checkToken(JSON.parse(sessionStorage.getItem('auth')))
 
     const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
     const floatingVertical = document.querySelector('floating-vertical')
@@ -57,47 +58,60 @@ import ThemeSelector from "./Services/ThemeSelector"
                 <div class="${ classesForms['form__text-control'] }">
                     <input 
                         id="inputAuth" 
-                        type="text" 
-                        name="input-name" 
-                        placeholder=" " 
-                        value="${ isToken }" 
+                        type="text" name="input-name" placeholder=" " value="${ hasToken }" 
                         disabled />
                     <label for="inputAuth">Auth</label>
                     <span class="${ classesForms['form__error-message'] }"></span>
                 </div>
                 ${
-                    isToken 
-                        ? `<div class="${ classesForms['form__text-control'] }">
-                            <button 
-                                id="buttonLogout" 
-                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">Logout</button>
-                            </div>`
-                        : ''
+                    hasToken 
+                    ? `
+                    <div class="${ classesForms['form__text-control'] }">
+                        <button 
+                            id="buttonLogout" 
+                            class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                            Logout
+                        </button>
+                    </div>`
+                    : ''
                 }
             </div>
         </div>
     `)})
+
+    const buttonLogout = document.querySelector('#buttonLogout')
+    if (hasToken) {
+        buttonLogout.addEventListener('click', () => {
+            sessionStorage.removeItem('auth')
+            document.location.reload(false)
+        })
+    }
+
     floatingVertical.addContentElement({ title: 'Themes', element: createElementFromHTML(`
         <div id="wrapperThemes">
             <div class="${ classesForms['form-controls'] }">
                 <div class="${ classesForms['form__text-control'] }">
                     <select name="themes" id="selectThemes">
-                        ${ themeSelector.themes.map(theme => { return(`
-                            <option value="${ theme.value }" ${ localStorage.getItem('theme') === theme.value ? 'selected' : '' }>${ theme.label }</option>
-                        `) }).join('') }
+                        ${ 
+                            themeSelector.themes.map(theme => { 
+                                const isSelected = localStorage.getItem('theme') === theme.value
+                                return(`
+                                    <option 
+                                        value="${ theme.value }" ${ isSelected ? 'selected' : '' }>
+                                        ${ theme.label }
+                                    </option>
+                                `) 
+                            }).join('') 
+                        }
                     </select>
                 </div>
             </div>
         </div>
     `)})
+    
     const selectThemes = document.querySelector('#selectThemes')
-    selectThemes.addEventListener('change', event => {
+    selectThemes.addEventListener('change', () => {
         themeSelector.changeTheme(selectThemes.value)
-    })
-
-    if (isToken) document.querySelector('#buttonLogout').addEventListener('click', () => {
-        sessionStorage.removeItem('auth')
-        document.location.reload(false)
     })
     
 })()

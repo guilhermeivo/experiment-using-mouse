@@ -1,7 +1,7 @@
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken } from "../../Common/common"
+import { checkToken, navigateTo, priorityInput } from "../../Common/common"
 
 const TIME_SHOWING_MESSAGE = 1000
 const MINIMUM_TIME_WAIT = 1000
@@ -54,7 +54,7 @@ export default customElements.define('code-page',
                             ...response,
                             createAt: new Date()
                         }))
-                        window.location.href = `/`
+                        navigateTo('/')
                         resolve()
                     }
                     else reject()
@@ -83,30 +83,22 @@ export default customElements.define('code-page',
         addEventsListeners() {
             const inputs = document.querySelectorAll(`.${ classes['pin'] }`)
             inputs.forEach((input, key) => {
-                if (key !== 0) {
-                    input.addEventListener('click', () => {
-                        inputs[0].focus()
-                    })
-                }
-
-                input.addEventListener('keyup', () => {
+                input.addEventListener('change', () => {
                     if (input.value) {
                         if (key === 5) {
                             const userCode = [...inputs].map((input) => input.value).join('')
-                            this.state.code = userCode
+                            this.state.code = userCode.toLowerCase()
                         } else {
                             inputs[key + 1].focus()
                         }
                     }
                 })
 
-                input.addEventListener('focus', event => {
+                input.addEventListener('focus', () => {
                     if (input.value) input.select()
                 })
                 
-                input.addEventListener('keydown', event => {
-                    event.stopPropagation()
-                })
+                input.addEventListener('keydown', priorityInput)
             })
 
             const buttonCode = document.querySelector('#buttonCode')

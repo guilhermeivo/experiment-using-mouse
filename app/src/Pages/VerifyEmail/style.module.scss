@@ -1,4 +1,4 @@
-register-page {
+verify-page {
     width: 100%;
     display: flex;
     align-items: center;
@@ -8,12 +8,4 @@ register-page {
 .wrapper {
     width: 300px;
     text-align: center;
-
-    h1 {
-        margin-bottom: .4rem;
-    }
-
-    p {
-        margin-bottom: 1.8rem;
-    }
 }

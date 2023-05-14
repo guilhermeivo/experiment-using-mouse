@@ -95,4 +95,5 @@ export default (() => {
     return {
         RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, CreateMaze
     }
+    
 })()
