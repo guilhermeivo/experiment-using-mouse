@@ -227,8 +227,12 @@ export default () => {
                 fileName: `maze--${ file.id }`
             }, (entity: file) => entity.id === file.id)
             try {
+                if (!fs.existsSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))) {
+                    fs.mkdirSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))
+                }
                 fs.writeFileSync(path.join(__dirname, `/../${ fileUpdate.filePath }/${ fileUpdate.fileName }.json`), request.object)
             } catch (err) {
+                console.log(err)
                 return new Result('An error occurred while executing the function.')
             }
 
