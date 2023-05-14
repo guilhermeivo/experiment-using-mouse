@@ -207,8 +207,10 @@ export default () => {
 
             const removeToken = await tokenRepository.Remove((entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
 
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
             const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
-            if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure`)
+            if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure; Expires=${ date.toUTCString() }`)
 
             return new Result<object>(`User has been validated.`, { auth: true, token_type: 'jwt', expires_in: 86400 })
         }
