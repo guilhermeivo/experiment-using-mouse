@@ -39,22 +39,24 @@ export default customElements.define('play-page',
                             return (`
                                 <h1>My mazes</h1>
                                 <div class="${ classes['list--horizontal'] }">
-                                ${ (() => {
-                                    if (responseGetMazeByUser.length > 0) {
-                                        return responseGetMazeByUser.map(element => {
-                                            return (`
-                                                <card-info
-                                                    data-id="${ element.id }"
-                                                    data-title="${ element.name }"
-                                                    data-likes="${ element.like || 0 }"
-                                                    data-views="${ element.views || 0 }"
-                                                    ${ element.isLiked ? 'data-liked' : '' }
-                                                    data-image="${ element.image }"
-                                                ></card-info>
-                                            `)
-                                        }).join('')
-                                    }                                     
-                                })()}
+                                    <div>
+                                    ${ (() => {
+                                        if (responseGetMazeByUser.length > 0) {
+                                            return responseGetMazeByUser.map(element => {
+                                                return (`
+                                                    <card-info
+                                                        data-id="${ element.id }"
+                                                        data-title="${ element.name }"
+                                                        data-likes="${ element.like || 0 }"
+                                                        data-views="${ element.views || 0 }"
+                                                        ${ element.isLiked ? 'data-liked' : '' }
+                                                        data-image="${ element.image }"
+                                                    ></card-info>
+                                                `)
+                                            }).join('')
+                                        }                                     
+                                    })()}
+                                    </div>
                                 </div>
                             `)
                         }

@@ -8,7 +8,10 @@
     .list--horizontal {
         width: 100%;
         overflow: auto;
-        display: flex;
-        gap: 24px;
+
+        > div {
+            display: flex;
+            gap: 24px;
+        }
     }
 }
