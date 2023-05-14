@@ -254,11 +254,14 @@ input[type="button"],
             color: transparent;
         }
 
+        &.button__submit--active {
+            cursor: wait;
+        }
+
         &.button__submit--active::before {
             animation: loading 1s infinite ease-in-out;
             transition-delay: .25s;
             opacity: 1;
-            cursor: wait;
         }
 
         &.button__submit--done::after {
