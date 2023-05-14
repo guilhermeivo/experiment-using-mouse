@@ -1,10 +1,11 @@
-import { checkToken, createElementFromHTML, downloadData } from '../../Common/common'
+import { checkToken, createElementFromHTML, downloadData, priorityInput } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
+import { navigateTo } from '../../Common/common'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
@@ -189,11 +190,11 @@ export default customElements.define('make-page',
                             `))
                             resolve()
                         } else {
-                            const response = await ConnectionAPI.CreateMaze(inputName.value, ' ', this.state.maze.exportImageTiles())
+                            const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, this.state.maze.exportImageTiles())
 
                             if (response) {
                                 localStorage.removeItem('OverworldMaze')  
-                                window.location.href = `/play`
+                                navigateTo('play')
                                 resolve()
                             } else throw new Error(response)
                         }
@@ -266,19 +267,13 @@ export default customElements.define('make-page',
             })
 
             const inputEmail = document.querySelector('#inputName')
-            inputEmail.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputEmail.addEventListener('keydown', priorityInput)
 
             const inputRows = document.querySelector('#numberRows')
-            inputRows.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputRows.addEventListener('keydown', priorityInput)
 
             const inputColumns = document.querySelector('#numberColumns')
-            inputColumns.addEventListener('keydown', event => {
-                event.stopPropagation()
-            })
+            inputColumns.addEventListener('keydown',priorityInput)
         }
 
         removeEventsListener() {

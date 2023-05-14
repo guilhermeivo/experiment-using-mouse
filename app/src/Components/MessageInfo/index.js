@@ -57,7 +57,7 @@ export default customElements.define('message-info',
                                </span>`
                     }
                 </div>
-                <div class="${ classes['description-info'] }">
+                <div class="${ classes['description-info'] }" title="${ description }">
                     ${ description }
                 </div>
                 <div class="${ classes['close-button'] }">
