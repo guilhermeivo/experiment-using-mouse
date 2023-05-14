@@ -31,7 +31,7 @@ export default customElements.define('card-info',
         }
 
         addEventsListener() {
-            const buttonLike = document.querySelector('#buttonLike')
+            const buttonLike = this.querySelector(`#buttonLike--${ $this.state.id }`)
             buttonLike.addEventListener('click', () => {
                 const response = ConnectionAPI.ToggleLikeMaze(this.state.id)
 
@@ -47,7 +47,7 @@ export default customElements.define('card-info',
                     ? `<div class="${ classes['card__image'] }" style="background-image:url(${ this.state.image })"></div>`
                     : ''
                 }
-                <div id="buttonLike" class="${ classes['card__marker'] }">
+                <div id="buttonLike--${ this.state.id }" class="${ classes['card__marker'] }">
                     <div class="${ classes['marker__like'] }  ${ this.state.liked ? classes['marker__like--liked'] : '' }">
                         <span class="material-symbols">favorite</span>
                     </div>
