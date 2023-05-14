@@ -31,7 +31,7 @@ export default customElements.define('card-info',
         }
 
         addEventsListener() {
-            const buttonLike = this.querySelector(`#buttonLike--${ $this.state.id }`)
+            const buttonLike = this.querySelector(`#buttonLike--${ this.state.id }`)
             buttonLike.addEventListener('click', () => {
                 const response = ConnectionAPI.ToggleLikeMaze(this.state.id)
 
