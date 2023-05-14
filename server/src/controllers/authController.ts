@@ -11,7 +11,7 @@ import { generateJwtToken } from "../common/helpers/jwtHelper"
 import { templateMail } from "../common/templates/templateMail"
 dotenv.config()
 
-const baseUrl = process.env.BASE_URL
+const nodeEnv = process.env.NODE_ENV
 const emailUser = process.env.EMAIL_USER
 
 export default () => {
@@ -152,7 +152,6 @@ export default () => {
 
             if (!addToken) return new Result(`An error occurred while executing the function.`)
 
-
             const mailOptions = {
                 from: `Experiment Using Mouse <${ emailUser }>`,
                 html: templateMail(
@@ -211,6 +210,8 @@ export default () => {
             date.setDate(date.getDate() + 1)
             const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
             if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure; Expires=${ date.toUTCString() }`)
+
+            if (nodeEnv === 'DEVELOPMENT') console.log(`access_token=${ accessToken }`)
 
             return new Result<object>(`User has been validated.`, { auth: true, token_type: 'jwt', expires_in: 86400 })
         }

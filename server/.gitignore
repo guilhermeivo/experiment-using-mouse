@@ -121,3 +121,7 @@ out
 
 # dist
 dist/
+
+# uploaded files
+uploads/*
+!uploads/.gitkeep
