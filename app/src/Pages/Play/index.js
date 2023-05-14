@@ -59,6 +59,8 @@ export default customElements.define('play-page',
                                     </div>
                                 </div>
                             `)
+                        } else {
+                            return ''
                         }
                     })() }
     
