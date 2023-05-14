@@ -63,7 +63,7 @@ export default customElements.define('code-page',
         addEventsListeners() {
             const inputs = document.querySelectorAll(`.${ classes['pin'] }`)
             inputs.forEach((input, key) => {
-                input.addEventListener('beforeinput', () => {
+                input.addEventListener('input', () => {
                     if (input.value) {
                         if (key === 5) {
                             const userCode = [...inputs].map((input) => input.value).join('')
