@@ -186,6 +186,8 @@ export default customElements.define('make-page',
                                     data-anchorlink="/login"
                                     data-anchortext="Sign In"></pop-up>
                             `))
+                            const floatingVertical = document.querySelector('floating-vertical')
+                            floatingVertical.toggle()
                             resolve()
                         } else {
                             const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, this.state.maze.exportImageTiles())
