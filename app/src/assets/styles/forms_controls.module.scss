@@ -256,6 +256,7 @@ input[type="button"],
 
         &.button__submit--active {
             cursor: wait;
+            pointer-events: none;
         }
 
         &.button__submit--active::before {
