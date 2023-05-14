@@ -54,7 +54,7 @@ export default () => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
 
             const findMaze = await mazeRepository.Where((entity: maze) => entity.userId == request.userId)
-            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
+            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`, [])
 
             const result: Array<object> = []
             await Promise.all(
