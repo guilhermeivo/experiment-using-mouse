@@ -42,7 +42,11 @@ export default customElements.define('card-info',
         #createdCard() {
             return(`
             <div class="${ classes['card-info'] }">
-                <div class="${ classes['card__image'] }" style="background-image:url(${ this.state.image })"></div>
+                ${
+                    this.state.image 
+                    ? `<div class="${ classes['card__image'] }" style="background-image:url(${ this.state.image })"></div>`
+                    : ''
+                }
                 <div id="buttonLike" class="${ classes['card__marker'] }">
                     <div class="${ classes['marker__like'] }  ${ this.state.liked ? classes['marker__like--liked'] : '' }">
                         <span class="material-symbols">favorite</span>

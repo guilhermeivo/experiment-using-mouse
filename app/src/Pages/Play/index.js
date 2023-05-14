@@ -50,7 +50,6 @@ export default customElements.define('play-page',
                                                         data-likes="${ element.like || 0 }"
                                                         data-views="${ element.views || 0 }"
                                                         ${ element.isLiked ? 'data-liked' : '' }
-                                                        data-image="${ element.image }"
                                                     ></card-info>
                                                 `)
                                             }).join('')
