@@ -9,7 +9,7 @@ export default customElements.define('register-page',
         constructor(...props) {
             super(props)
 
-            if (checkToken(JSON.parse(sessionStorage.getItem('auth')))) window.location.href = `/`
+            if (checkToken()) window.location.href = `/`
 
             this.onRegisterHandler = this.onRegisterHandler.bind(this)
         }
@@ -28,7 +28,7 @@ export default customElements.define('register-page',
 
             this.removeEventsListener()
         }
-
+        
         onRegisterHandler(event) {
             const validatorInputEmail = validators(
                 '#inputEmail', { formElement: '#formTextEmail', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})

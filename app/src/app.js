@@ -47,7 +47,7 @@ import ThemeSelector from "./Services/ThemeSelector"
         { value: 'contrast', label: 'Contrast' },
     ], transition)
 
-    const hasToken = checkToken(JSON.parse(sessionStorage.getItem('auth')))
+    const hasToken = checkToken()
 
     const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
     const floatingVertical = document.querySelector('floating-vertical')

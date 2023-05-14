@@ -21,9 +21,6 @@ else if (_defaultMazeColumns > LARGEST_POSSIBLE_SIZE) _defaultMazeColumns = LARG
 const DEFAULT_MAZE_ROWS = _defaultMazeRows
 const DEFAULT_MAZE_COLUMNS = _defaultMazeColumns
 
-const TIME_SHOWING_MESSAGE = 1000
-const MINIMUM_TIME_WAIT = 1000
-
 export default customElements.define('make-page', 
     class extends HTMLElement {
         constructor(...props) {
@@ -178,7 +175,7 @@ export default customElements.define('make-page',
                         })
                         localStorage.setItem('OverworldMaze', json)
 
-                        if (!checkToken(JSON.parse(sessionStorage.getItem('auth')))) {
+                        if (!checkToken()) {
                             document.body.appendChild(createElementFromHTML(`
                                 <pop-up 
                                     data-title="Account is required!" 

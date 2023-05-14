@@ -19,12 +19,14 @@ export function downloadData(dataUrl, nameFile = '') {
     link.remove()
 }
 
-export function checkToken(auth) {
-    if (!auth) return false
+export function checkToken() {
+    const authToken = JSON.parse(localStorage.getItem('auth'))
+    
+    if (!authToken) return false
 
     const currentDate = new Date()
-    const createAt = new Date(auth.createAt)
-    createAt.setSeconds(createAt.getSeconds() + parseInt(auth.expires_in))
+    const createAt = new Date(authToken.createAt)
+    createAt.setSeconds(createAt.getSeconds() + parseInt(authToken.expires_in))
     
     if (currentDate < createAt) return true
     else return false

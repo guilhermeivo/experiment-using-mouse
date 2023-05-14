@@ -14,7 +14,7 @@ export default customElements.define('code-page',
             const emailParam = urlParams.get('email')
 
             if (!emailParam) window.location.href = `/`
-            if (checkToken(JSON.parse(sessionStorage.getItem('auth')))) window.location.href = `/`
+            if (checkToken()) window.location.href = `/`
 
             this.state = {
                 email: emailParam || 'email',
@@ -45,7 +45,7 @@ export default customElements.define('code-page',
                         const response = await ConnectionAPI.CodeUser(this.state.email, this.state.code)
     
                         if (response && response.auth) {
-                            sessionStorage.setItem('auth', JSON.stringify({
+                            localStorage.setItem('auth', JSON.stringify({
                                 ...response,
                                 createAt: new Date()
                             }))

@@ -9,7 +9,7 @@ export default customElements.define('login-page',
         constructor(...props) {
             super(props)
 
-            if (checkToken(JSON.parse(sessionStorage.getItem('auth')))) window.location.href = `/`
+            if (checkToken()) window.location.href = `/`
 
             this.onLoginHandler = this.onLoginHandler.bind(this)
         }

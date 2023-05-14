@@ -12,7 +12,7 @@ export default customElements.define('verify-page',
             const emailTokenParam = urlParams.get('emailToken')
 
             if (!userIdParam || !emailTokenParam) window.location.href = `/`
-            if (checkToken(JSON.parse(sessionStorage.getItem('auth')))) window.location.href = `/`
+            if (checkToken()) window.location.href = `/`
 
             this.state = {
                 userId: userIdParam,

@@ -7,11 +7,13 @@ play-page {
         display: flex;
         flex-wrap: wrap;
         gap: 24px;
+        margin-bottom: 24px;
     }
 
     .list--horizontal {
         width: 100%;
         overflow: auto;
+        margin-bottom: 24px;
 
         > div {
             display: flex;

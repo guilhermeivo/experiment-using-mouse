@@ -24,7 +24,7 @@ export default customElements.define('play-page',
         }
 
         async render() {
-            if (!checkToken(JSON.parse(sessionStorage.getItem('auth')))) {
+            if (!checkToken()) {
                 navigateTo('/login')
                 const message = document.querySelector('message-info')
                 message.addMessageInfo({ description: `To proceed you need to login or register.`, type: 'warn' })
