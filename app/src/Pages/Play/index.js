@@ -29,21 +29,43 @@ export default customElements.define('play-page',
                 const message = document.querySelector('message-info')
                 message.addMessageInfo({ description: `To proceed you need to login or register.`, type: 'warn' })
             } else {
-                const response = await ConnectionAPI.GetMazes()
+                const responseGetMazes = await ConnectionAPI.GetMazes()
+                const responseGetMazeByUser = await ConnectionAPI.GetMazeByUser()
 
                 this.append(createElementFromHTML(`
                 <div class="${ classes['wrapper'] }">
-                    <h1>My mazes</h1>
-                    <div class="${ classes['list'] }">
-                    
-                    </div>
+                    ${ (() => {
+                        if (responseGetMazeByUser.length > 0) {
+                            return (`
+                                <h1>My mazes</h1>
+                                <div class="${ classes['list'] }">
+                                ${ (() => {
+                                    if (responseGetMazeByUser.length > 0) {
+                                        return responseGetMazeByUser.map(element => {
+                                            return (`
+                                                <card-info
+                                                    data-id="${ element.id }"
+                                                    data-title="${ element.name }"
+                                                    data-likes="${ element.like || 0 }"
+                                                    data-views="${ element.views || 0 }"
+                                                    ${ element.isLiked ? 'data-liked' : '' }
+                                                    data-image="${ element.image }"
+                                                ></card-info>
+                                            `)
+                                        }).join('')
+                                    }                                     
+                                })()}
+                                </div>
+                            `)
+                        }
+                    })() }
     
                     <h1>Public mazes</h1>
     
                     <div class="${ classes['list'] }">
                     ${ (() => {
-                        if (response.length > 0) {
-                            return response.map(element => {
+                        if (responseGetMazes.length > 0) {
+                            return responseGetMazes.map(element => {
                                 return (`
                                     <card-info
                                         data-id="${ element.id }"

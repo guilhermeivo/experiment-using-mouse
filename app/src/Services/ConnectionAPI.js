@@ -58,6 +58,12 @@ export default (() => {
         return httpConnection(path, typeMethods.GET)
     }
 
+    const GetMazeByUser = () => {
+        const path = `${ urlServer }/maze/user`
+
+        return httpConnection(path, typeMethods.GET)
+    }
+
     const CreateMaze = (name, description, image) => {
         const path = `${ urlServer }/maze`
 
@@ -93,7 +99,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, CreateMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze
     }
     
 })()
