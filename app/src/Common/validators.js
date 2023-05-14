@@ -15,7 +15,7 @@ export default (target, config) => {
     const isValidEmail = () => {
         const emailRegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/
 
-        const isValid = elementTarget.value.length > 0 || 
+        const isValid = elementTarget.value.length > 0 && 
             !emailRegExp.test(elementTarget.value)
 
         if (!isValid) setError('This field only accepts emails')
