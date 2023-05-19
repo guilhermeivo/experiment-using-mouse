@@ -1,6 +1,9 @@
-import './style.module.scss'
+import { disableBackMenu, enableBackMenu } from '../../Common/common'
+import classes from './style.module.scss'
 
-export default customElements.define('error-page', 
+export const PAGE_TAG = 'error-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
@@ -14,20 +17,20 @@ export default customElements.define('error-page',
         }
 
         disconnectedCallback() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
+            disableBackMenu()
+        }
+
+        #createPage() {
+            return (/*html*/`
+                <div class="${ classes['wrapper'] }">
+                    <h1>Error</h1>
+                </div>
+            `)
         }
 
         render() {
-            this.innerHTML = `
-            <div class="wrapper">
-                <h1>Error</h1>
-            </div>
-            `
+            this.appendDOM(this.#createPage())
 
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.remove('back-menu--disabled')
+            enableBackMenu()
         }
     })

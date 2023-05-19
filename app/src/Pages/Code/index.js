@@ -1,23 +1,23 @@
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
+import { disableBackMenu, enableBackMenu, navigateTo, submitButtonHandler } from "../../Common/common"
 
-export default customElements.define('code-page', 
+export const PAGE_TAG = 'code-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
 
+            this.onInputHandler = this.onInputHandler.bind(this)
             this.onCodeHandler = this.onCodeHandler.bind(this)
 
-            const urlParams = new URLSearchParams(window.location.search)
-            const emailParam = urlParams.get('email')
-
-            if (!emailParam) window.location.href = `/`
-            if (checkToken()) window.location.href = `/`
+            if (!window.getParameterUrl('email')) history.back()
 
             this.state = {
-                email: emailParam || 'email',
+                email: window.getParameterUrl('email'),
+                codeSize: this.getAttribute('code-size') || 6,
                 code: ''
             }
         }
@@ -30,13 +30,11 @@ export default customElements.define('code-page',
         }
 
         disconnectedCallback() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
+            disableBackMenu()
         }
 
         onCodeHandler(event) {
-            if (this.state.code.length < 6) return
+            if (this.state.code.length < this.state.codeSize) return
 
             submitButtonHandler(
                 event.target,
@@ -60,55 +58,52 @@ export default customElements.define('code-page',
             )
         }
 
-        addEventsListeners() {
-            const inputs = document.querySelectorAll(`.${ classes['pin'] }`)
-            inputs.forEach((input, key) => {
-                input.addEventListener('input', () => {
-                    if (input.value) {
-                        if (key === 5) {
-                            const userCode = [...inputs].map((input) => input.value).join('')
-                            this.state.code = userCode.toLowerCase()
-                        } else {
-                            inputs[key + 1].focus()
-                        }
-                    }
-                })
+        onInputHandler(event) {
+            const input = event.target
+            const inputs = input.parentElement.children
+            const key = parseInt(input.getAttribute('key'))
 
-                input.addEventListener('focus', () => {
-                    if (input.value) input.select()
-                })
-                
-                input.addEventListener('keydown', priorityInput)
+            if (input.value) {
+                if (key === inputs.length - 1) {
+                    const userCode = [...inputs].map((input) => input.value).join('')
+                    this.state.code = userCode.toLowerCase().trim()
+                    
+                } else {
+                    inputs[key + 1].focus()
+                }
+            }
+        }
+
+        addAllListeners() {
+            const inputs = document.querySelectorAll(`.${ classes['pin'] }`)
+            inputs.forEach((input) => {
+                input.addEventListener('input', this.onInputHandler)
             })
 
-            const buttonCode = document.querySelector('#buttonCode')
-            buttonCode.addEventListener('click', this.onCodeHandler)
+            const buttonSubmit = document.querySelector('#buttonSubmit')
+            buttonSubmit.addEventListener('click', this.onCodeHandler)
         }
 
-        removeEventsListeners() {
-            const buttonCode = document.querySelector('#buttonCode')
-            buttonCode.removeEventListener('click', this.onCodeHandler)
-        }
-
-        render() {
-            this.innerHTML = `
+        #createPage() {
+            return (/*html*/`
             <div class="${ classes['wrapper'] }">
                 <h1>Verify your access</h1>
                 <p>Please enter the code sent to ${ this.state.email }.</p>
 
                 <div class="${ classesForms['form-controls'] }">
                     <div class="${ classesForms['form__text-control'] } ${ classesForms['form__pin-control'] }">
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
-                        <input class="${ classes['pin'] }" type="text" maxlength="1" />
+                        ${(() => {
+                            let returns = ''
+                            for (let i = 0; i < this.state.codeSize; i++) {
+                                returns += `<input class="${ classes['pin'] }" type="text" maxlength="1" key="${ i }" />`
+                            }
+                            return returns
+                        })()}
                     </div>
                     
                     <div class="${ classesForms['form__text-control'] }">
                         <button 
-                            id="buttonCode" 
+                            id="buttonSubmit" 
                             class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Confirm</button>
                     </div>
                     <div class="${ classesForms['form__text-control'] }">
@@ -119,12 +114,13 @@ export default customElements.define('code-page',
                     </div>
                 </div>
             </div>
-            `
+            `)
+        }
 
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.remove('back-menu--disabled')
+        render() {
+            this.appendDOM(this.#createPage())
 
-            this.addEventsListeners()
+            enableBackMenu()
+            this.addAllListeners()
         }
     })

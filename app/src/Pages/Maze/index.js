@@ -1,21 +1,24 @@
 import Overworld from '../../Overworld'
 import classes from './style.module.scss'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { createElementFromHTML, navigateTo } from '../../Common/common'
+import { createElementFromHTML, disableBackMenu, enableBackMenu, navigateTo } from '../../Common/common'
 import classesForms from "../../assets/styles/forms_controls.module.scss"
+import Counter from '../../Common/Counter'
 
-export default customElements.define('maze-page', 
+export const PAGE_TAG = 'maze-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
 
-            const urlParams = new URLSearchParams(window.location.search)
-            const id = urlParams.get('id')
+            if (!window.getParameterUrl('id')) history.back()
 
-            if (!id) window.location.href = `/`
+            this.onStartOverHandler = this.onStartOverHandler.bind(this)
+            this.onExitHandler = this.onExitHandler.bind(this)
 
             this.state = {
-                id: id
+                id: window.getParameterUrl('id')
             }
         }
 
@@ -27,43 +30,46 @@ export default customElements.define('maze-page',
         }
 
         disconnectedCallback() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
+            disableBackMenu()
 
             const floatingVertical = document.querySelector('#floatingVertical')
             floatingVertical.removeChild(document.querySelector('#wrapperInformations'))
 
             const headerNavigation = document.querySelector('#headerNavigation')
             headerNavigation.querySelector('#toolbarMenu').removeChild(document.querySelector('#wrapperTitle'))
+
+            window.state.flags['eating-cheese'] = false
+            this.counter.finish()
+            delete this.counter
+            window.OverworldMaps['MazeMap'] = { }
         }
 
-        addEventsListener() {
+        onStartOverHandler(event) {
+            navigateTo(`/maze?id=${ this.state.id }`)
+        }
+
+        onExitHandler(event) {
+            navigateTo(`/play`)
+        }
+
+        addAllListeners() {
             const buttonStartOver = document.querySelector('#buttonStartOver')
-            buttonStartOver.addEventListener('click', () => { navigateTo(`/maze?id=${ this.state.id }`) })
+            buttonStartOver.addEventListener('click', this.onStartOverHandler)
 
             const buttonExit = document.querySelector('#buttonExit')
-            buttonExit.addEventListener('click', () => { navigateTo(`/play`) })
+            buttonExit.addEventListener('click', this.onExitHandler)
         }
 
-        async render() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.remove('back-menu--disabled')
-
-            this.append(createElementFromHTML(`
-                <div class="${ classes['game-container'] }">
-                    <pop-up hidden
-                        data-title="Congratulations!" 
-                        data-description="<span id='descriptionCongratulations'></span>" 
-                        data-anchorlink="/maze?id=${ this.state.id },/play"
-                        data-anchortext="Start Over,Exit"></pop-up>
-                    <canvas id="game-canvas" height="198"></canvas>
+        #createHeader() {
+            return (/*html*/`
+                <div id="wrapperTitle">
+                    <h1>${ this.state.name }</h1>
                 </div>
-            `))
+            `)
+        }
 
-            const floatingVertical = document.querySelector('floating-vertical')
-            floatingVertical.addContentElement({ title: 'Informations', element: createElementFromHTML(`
+        #sectionScrollerMenu() {
+            return (/*html*/`
                 <div id="wrapperInformations">
                     <div class="${ classesForms['form-controls'] }">
                         <div class="${ classesForms['form__text-control'] }">
@@ -90,11 +96,25 @@ export default customElements.define('maze-page',
                         </div>
                     </div>
                 </div>
-            `)})
+            `)
+        }
 
-            ConnectionAPI.addViewMaze(this.state.id)
+        #createPage() {
+            return (/*html*/`
+                <div class="${ classes['game-container'] }">
+                    <pop-up hidden
+                        data-title="Congratulations!" 
+                        data-description="<span id='descriptionCongratulations'></span>" 
+                        data-anchorlink="/maze?id=${ this.state.id },/play"
+                        data-anchortext="Start Over,Exit"></pop-up>
+                    <canvas id="game-canvas" height="198"></canvas>
+                </div>
+            `)
+        }
 
+        async renderCanvasMaze() {
             const response = await ConnectionAPI.GetMazeById(this.state.id)
+            this.state.name = response[0].name
             window.OverworldMaps['MazeMap'] = response[0].overworldMap
 
             const overworld = new Overworld({
@@ -102,34 +122,35 @@ export default customElements.define('maze-page',
             })
             overworld.initialize()
 
-            // toolbar menu create
+            this.querySelector('#descriptionCongratulations').innerHTML = `You just completed the map <span class="bold">${ this.state.name }</span> in <span id="timer"></span>.`
+
+            this.counter = new Counter({ interval: 1000, callback: time => {
+                const inputTimer = document.querySelector('#inputTimer')
+                const timerId = document.querySelector('#timer')
+
+                inputTimer.value = `${ time.minutes }:${ time.seconds < 10 ? `0${ time.seconds }` : time.seconds }`
+                timerId.textContent = `${ time.minutes }´${ time.seconds < 10 ? `0${ time.seconds }` : time.seconds }´´`
+
+                if (window.state.flags['eating-cheese']) this.counter.finish()
+            } })
+            this.counter.start()
+
             const headerNavigation = document.querySelector('#headerNavigation')
-            headerNavigation.querySelector('#toolbarMenu').append(createElementFromHTML(`
-                <div id="wrapperTitle">
-                    <h1>${ response[0].name }</h1>
-                </div>
-            `))
+            headerNavigation.querySelector('#toolbarMenu').append(createElementFromHTML(this.#createHeader()))
+        }
 
-            this.querySelector('#descriptionCongratulations').innerHTML = `You just completed the map <span class="bold">${ response[0].name }</span> in <span id="timer"></span>.`
+        render() {
+            enableBackMenu()
 
-            const inputTimer = document.querySelector('#inputTimer')
-            const timerId = document.querySelector('#timer')
-            let timer = 0
-            const myTimer = setInterval(() => {
-                if (!this.querySelector('pop-up').hasAttribute('hidden')) clearInterval(myTimer)
+            this.appendDOM(this.#createPage())
 
-                const minutes = parseInt(timer / 60, 10)
-                const seconds = parseInt(timer % 60, 10)
-                timer++
+            const floatingVertical = document.querySelector('floating-vertical')
+            floatingVertical.addContentElement({ title: 'Informations', element: createElementFromHTML(this.#sectionScrollerMenu())})
 
-                const toStringTimer = (minutes, seconds) => {
-                    return `${ minutes }:${ seconds < 10 ? `0${ seconds }` : seconds }`
-                }
-                inputTimer.value = toStringTimer(minutes, seconds)
-                timerId.textContent = `${ inputTimer.value.split(':')[0] }´${ inputTimer.value.split(':')[1] }´´`
-            }, 1000)
+            ConnectionAPI.addViewMaze(this.state.id)
+            this.renderCanvasMaze()
 
-            this.addEventsListener()
+            this.addAllListeners()
         }
     })
 

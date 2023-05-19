@@ -2,21 +2,18 @@ import classes from './style.module.scss'
 import { checkToken, navigateTo } from "../../Common/common"
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
-export default customElements.define('verify-page', 
+export const PAGE_TAG = 'verify-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
 
-            const urlParams = new URLSearchParams(window.location.search)
-            const userIdParam = urlParams.get('userId')
-            const emailTokenParam = urlParams.get('emailToken')
-
-            if (!userIdParam || !emailTokenParam) window.location.href = `/`
-            if (checkToken()) window.location.href = `/`
+            if (!window.getParameterUrl('userId') || !window.getParameterUrl('emailToken')) history.back()
 
             this.state = {
-                userId: userIdParam,
-                emailToken: emailTokenParam
+                userId: window.getParameterUrl('userId'),
+                emailToken: window.getParameterUrl('emailToken')
             }
         }
 
@@ -27,16 +24,7 @@ export default customElements.define('verify-page',
             }
         }
 
-        disconnectedCallback() {
-        }
-
-        async render() {
-            this.innerHTML = `
-            <div class="${ classes['wrapper'] }">
-                <h1>Verify email...</h1>
-            </div>
-            `
-
+        async verifyEmailHandler() {
             const response = await ConnectionAPI.VerifyEmail(this.state.userId, this.state.emailToken)
             if (response) {
                 const message = document.querySelector('message-info')
@@ -45,5 +33,19 @@ export default customElements.define('verify-page',
             } else {
                 navigateTo(`/`)
             }
+        }
+        
+        #createPage() {
+            return (/*html*/`
+                <div class="${ classes['wrapper'] }">
+                    <h1>Verify email...</h1>
+                </div>
+            `)
+        }
+
+        render() {
+            this.appendDOM(this.#createPage())
+
+            this.verifyEmailHandler()
         }
     })

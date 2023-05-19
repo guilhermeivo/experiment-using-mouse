@@ -1,4 +1,4 @@
-import { checkToken, createElementFromHTML, downloadData, priorityInput, submitButtonHandler } from '../../Common/common'
+import { checkToken, createElementFromHTML, disableBackMenu, downloadData, enableBackMenu, priorityInput, submitButtonHandler } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
@@ -21,7 +21,9 @@ else if (_defaultMazeColumns > LARGEST_POSSIBLE_SIZE) _defaultMazeColumns = LARG
 const DEFAULT_MAZE_ROWS = _defaultMazeRows
 const DEFAULT_MAZE_COLUMNS = _defaultMazeColumns
 
-export default customElements.define('make-page', 
+export const PAGE_TAG = 'make-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
@@ -30,8 +32,9 @@ export default customElements.define('make-page',
             this.onResizersMovimentHandler = this.onResizersMovimentHandler.bind(this)
             this.onSaveMazeHandler = this.onSaveMazeHandler.bind(this)
             this.onExportMazeHandler = this.onExportMazeHandler.bind(this)
-            this.onInputRowsHandler = this.onInputRowsHandler.bind(this)
-            this.onInputColumnsHandler = this.onInputColumnsHandler.bind(this)
+            this.onChangeRowsHandler = this.onChangeRowsHandler.bind(this)
+            this.onChangeColumnsHandler = this.onChangeColumnsHandler.bind(this)
+            this.onClearMazeHandler = this.onClearMazeHandler.bind(this)
 
             const OverworldMaze = JSON.parse(localStorage.getItem('OverworldMaze')) || { }
             
@@ -59,11 +62,8 @@ export default customElements.define('make-page',
         }
 
         disconnectedCallback() { 
-            this.removeEventsListener()
-            
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
+            disableBackMenu()
+            this.removeAllListeners()
 
             const headerNavigation = document.querySelector('#headerNavigation')
             headerNavigation.querySelector('#toolbarMenu').removeChild(document.querySelector('blocks-toolbar'))
@@ -90,21 +90,6 @@ export default customElements.define('make-page',
                             initialPosition: event.pageX
                         }
                         this.state.maze.removeColumnHandler()
-                    }
-                    break
-                case 'left':
-                    if (this.state.initialPosition + 32 < event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.state.maze.removeColumnHandler()
-                    } else if (this.state.initialPosition - 32 > event.pageX) {
-                        this.state = {
-                            ...this.state,
-                            initialPosition: event.pageX
-                        }
-                        this.state.maze.createColumnHandler()
                     }
                     break
                 case 'bottom':
@@ -196,31 +181,49 @@ export default customElements.define('make-page',
                                 resolve()
                             } else reject()
                         }
-                    } catch (exception) {
-                        console.error(exception)
+                    } catch {
                         reject()
                     }
                 }
             )
         }
 
-        onInputRowsHandler(event) {
-            if (event.target.value > this.state.overworldMazeEdit.rows) this.state.maze.createRowHandler()
-            else this.state.maze.removeRowHandler()
+        onChangeRowsHandler(event) {
+            if (event.target.value > LARGEST_POSSIBLE_SIZE) event.target.value = LARGEST_POSSIBLE_SIZE
+            else if (event.target.value < SMALLEST_POSSIBLE_SIZE) event.target.value = SMALLEST_POSSIBLE_SIZE
 
-            event.target.value = this.state.overworldMazeEdit.rows
+            if (event.target.value > this.state.overworldMazeEdit.rows) {
+                const value = event.target.value - this.state.overworldMazeEdit.rows
+                for (let i = 0; i < value; i++) this.state.maze.createRowHandler()
+            } else {
+                const value = this.state.overworldMazeEdit.rows - event.target.value
+                for (let i = 0; i < value; i++) this.state.maze.removeRowHandler()
+            }
+
             this.update()
         }
 
-        onInputColumnsHandler(event) {
-            if (event.target.value > this.state.overworldMazeEdit.columns) this.state.maze.createColumnHandler()
-            else this.state.maze.removeColumnHandler()
+        onChangeColumnsHandler(event) {
+            if (event.target.value > LARGEST_POSSIBLE_SIZE) event.target.value = LARGEST_POSSIBLE_SIZE
+            else if (event.target.value < SMALLEST_POSSIBLE_SIZE) event.target.value = SMALLEST_POSSIBLE_SIZE
 
-            event.target.value = this.state.overworldMazeEdit.columns
+            if (event.target.value > this.state.overworldMazeEdit.columns) {
+                const value = event.target.value - this.state.overworldMazeEdit.columns
+                for (let i = 0; i < value; i++) this.state.maze.createColumnHandler()
+            } else {
+                const value = this.state.overworldMazeEdit.columns - event.target.value
+                for (let i = 0; i < value; i++) this.state.maze.removeColumnHandler()
+            }
+
             this.update()
         }
 
-        addEventsListener() {
+        onClearMazeHandler(event) {
+            localStorage.removeItem('OverworldMaze')  
+            document.location.reload(false)
+        }
+
+        addAllListeners() {
             const resizers = document.querySelectorAll(`.${ classes['resizer'] }`)
             resizers.forEach(resizer => {
                 resizer.addEventListener('mousedown', this.onResizersMovimentHandler)
@@ -233,38 +236,19 @@ export default customElements.define('make-page',
             buttonExportImage.addEventListener('click', this.onExportMazeHandler)
 
             const checkbox = document.querySelector('#checkboxEdges')
-            if (this.state.maze) {
-                checkbox.addEventListener('change', this.state.maze.onChangeVisibilityEdges)
-            }
+            if (this.state.maze) checkbox.addEventListener('change', this.state.maze.onChangeVisibilityEdges)
 
             const numberRows = document.querySelector('#numberRows')
-            numberRows.addEventListener('input', this.onInputRowsHandler)
+            numberRows.addEventListener('change', this.onChangeRowsHandler)
 
             const numberColumns = document.querySelector('#numberColumns')
-            numberColumns.addEventListener('input', this.onInputColumnsHandler)
+            numberColumns.addEventListener('change', this.onChangeColumnsHandler)
 
             const buttonClearMaze = document.querySelector('#buttonClearMaze')
-            buttonClearMaze.addEventListener('click', () => {
-                localStorage.removeItem('OverworldMaze')  
-                document.location.reload(false)
-            })
-
-            const inputEmail = document.querySelector('#inputName')
-            inputEmail.addEventListener('keydown', priorityInput)
-
-            const inputRows = document.querySelector('#numberRows')
-            inputRows.addEventListener('keydown', priorityInput)
-
-            const inputColumns = document.querySelector('#numberColumns')
-            inputColumns.addEventListener('keydown',priorityInput)
+            buttonClearMaze.addEventListener('click', this.onClearMazeHandler)
         }
 
-        removeEventsListener() {
-            const resizers = document.querySelectorAll(`.${ classes['resizer'] }`)
-            resizers.forEach(resizer => {
-                resizer.removeEventListener('mousedown', this.onResizersMovimentHandler)
-            })
-
+        removeAllListeners() {
             const buttonSave = document.querySelector('#buttonSave')
             buttonSave.removeEventListener('click', this.onSaveMazeHandler)
 
@@ -272,19 +256,20 @@ export default customElements.define('make-page',
             buttonExportImage.removeEventListener('click', this.onExportMazeHandler)
 
             const checkbox = document.querySelector('#checkboxEdges')
-            if (this.state.maze) {
-                checkbox.removeEventListener('change', this.state.maze.onChangeVisibilityEdges)
-            }
+            if (this.state.maze) checkbox.removeEventListener('change', this.state.maze.onChangeVisibilityEdges)
 
             const numberRows = document.querySelector('#numberRows')
-            numberRows.removeEventListener('input', this.onInputRowsHandler)
+            numberRows.removeEventListener('change', this.onChangeRowsHandler)
 
             const numberColumns = document.querySelector('#numberColumns')
-            numberColumns.removeEventListener('input', this.onInputColumnsHandler)
+            numberColumns.removeEventListener('change', this.onChangeColumnsHandler)
+
+            const buttonClearMaze = document.querySelector('#buttonClearMaze')
+            buttonClearMaze.removeEventListener('click', this.onClearMazeHandler)
         }
 
         #sectionScrollerMenu() {
-            return (`
+            return (/*html*/`
                 <div id="wrapperMaze">
                     <div class="${ classesForms['form-controls'] }">
                         <div id="formTextName" class="${ classesForms['form__text-control'] }">
@@ -325,7 +310,7 @@ export default customElements.define('make-page',
         }
 
         #createPage() {
-            return (`
+            return (/*html*/`
                 <div class="${ classes['wrapper_content'] }">
                     <div class="${ classes['resizable'] }">
                         <div class="${ classes['resizable__resizers'] }">
@@ -342,12 +327,8 @@ export default customElements.define('make-page',
             const floatingVertical = document.querySelector('floating-vertical')
             floatingVertical.addContentElement({ title: 'Maze Configurations', element: createElementFromHTML(this.#sectionScrollerMenu())})
 
-            // back button appair
-            const headerNavigation = document.querySelector('#headerNavigation')
-            if (headerNavigation.querySelector('#backMenu').classList.contains('back-menu--disabled')) 
-                headerNavigation.querySelector('#backMenu').classList.remove('back-menu--disabled')
-
             // toolbar menu create
+            const headerNavigation = document.querySelector('#headerNavigation')
             headerNavigation.querySelector('#toolbarMenu').append(document.createElement('blocks-toolbar'))
 
             this.append(createElementFromHTML(this.#createPage()))
@@ -361,7 +342,8 @@ export default customElements.define('make-page',
                 maze: mazeEdit
             }
 
-            this.addEventsListener()
+            this.addAllListeners()
+            enableBackMenu()
         }
 
         update() {
@@ -374,8 +356,8 @@ export default customElements.define('make-page',
 
             const resizable = document.querySelector(`.${ classes['resizable__resizers'] }`)
             if (resizable) {
-                resizable.style.width = (this.state.overworldMazeEdit.columns * 66) + 'px'
-                resizable.style.height = (this.state.overworldMazeEdit.rows * 66) + 'px'
+                resizable.style.width = (this.state.overworldMazeEdit.columns * 64) + 'px'
+                resizable.style.height = (this.state.overworldMazeEdit.rows * 64) + 'px'
             }
         }
     })

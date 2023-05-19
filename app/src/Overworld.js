@@ -1,6 +1,6 @@
 import OverworldMap from "./OverworldMap"
 import DirectionInput from './DirectionInput'
-import KeyPressListener from './KeyPressListener'
+import KeyPressListener from './Common/KeyPressListener'
 import './State'
 
 export default class Overworld {

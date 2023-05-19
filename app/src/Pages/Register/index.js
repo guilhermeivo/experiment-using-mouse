@@ -2,14 +2,14 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken, createElementFromHTML, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
+import { disableBackMenu, enableBackMenu, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
 
-export default customElements.define('register-page', 
+export const PAGE_TAG = 'register-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
-
-            if (checkToken()) window.location.href = `/`
 
             this.onRegisterHandler = this.onRegisterHandler.bind(this)
         }
@@ -22,11 +22,7 @@ export default customElements.define('register-page',
         }
 
         disconnectedCallback() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
-
-            this.removeEventsListener()
+            disableBackMenu()
         }
         
         onRegisterHandler(event) {
@@ -62,7 +58,7 @@ export default customElements.define('register-page',
             )
         }
 
-        addEventsListener() {
+        addAllListeners() {
             const buttonRegister = document.querySelector('#buttonRegister')
             buttonRegister.addEventListener('click', this.onRegisterHandler)
 
@@ -73,45 +69,39 @@ export default customElements.define('register-page',
             inputEmail.addEventListener('keydown', priorityInput)
         }
 
-        removeEventsListener() {
-        }
-
         #createPage() {
-            return (`
-            <div class="${ classes['wrapper'] }">
-                <h1>Get Started</h1>
-                <p>Create your account now</p>
+            return (/*html*/`
+                <div class="${ classes['wrapper'] }">
+                    <h1>Get Started</h1>
+                    <p>Create your account now</p>
 
-                <div class="${ classesForms['form-controls'] }">
-                    <div id="formTextName" class="${ classesForms['form__text-control'] }">
-                        <input type="text" name="inputUsername" id="inputUsername" placeholder=" " autocomplete="off" required />
-                        <label for="inputUsername">Username</label>
-                        <span class="${ classesForms['form__error-message'] }"></span>
+                    <div class="${ classesForms['form-controls'] }">
+                        <div id="formTextName" class="${ classesForms['form__text-control'] }">
+                            <input type="text" name="inputUsername" id="inputUsername" placeholder=" " autocomplete="off" required />
+                            <label for="inputUsername">Username</label>
+                            <span class="${ classesForms['form__error-message'] }"></span>
+                        </div>
+                        <div id="formTextEmail" class="${ classesForms['form__text-control'] }">
+                            <input type="text" name="inputEmail" id="inputEmail" placeholder=" " autocomplete="off" required />
+                            <label for="inputEmail">Email</label>
+                            <span class="${ classesForms['form__error-message'] }"></span>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <button 
+                                id="buttonRegister" 
+                                class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign Up</button>
+                        </div>
                     </div>
-                    <div id="formTextEmail" class="${ classesForms['form__text-control'] }">
-                        <input type="text" name="inputEmail" id="inputEmail" placeholder=" " autocomplete="off" required />
-                        <label for="inputEmail">Email</label>
-                        <span class="${ classesForms['form__error-message'] }"></span>
-                    </div>
-                    <div class="${ classesForms['form__text-control'] }">
-                        <button 
-                            id="buttonRegister" 
-                            class="${ classesForms['button'] } ${ classesForms['button__secondary'] } ${ classesForms['button__submit'] }">Sign Up</button>
-                    </div>
+
+                    <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In</a></p>
                 </div>
-
-                <p class="caption">Have an account? <a class="land__link caption" href="/login" data-link>Sign In</a></p>
-            </div>
             `)
         }
 
         render() {
-            this.append(createElementFromHTML(this.#createPage()))
+            this.appendDOM(this.#createPage())
 
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.remove('back-menu--disabled')
-            
-            this.addEventsListener()
+            enableBackMenu()            
+            this.addAllListeners()
         }
     })

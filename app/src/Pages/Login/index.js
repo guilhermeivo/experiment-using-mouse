@@ -2,14 +2,14 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { checkToken, createElementFromHTML, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
+import { disableBackMenu, enableBackMenu, navigateTo, submitButtonHandler } from "../../Common/common"
 
-export default customElements.define('login-page', 
+export const PAGE_TAG = 'login-page'
+
+export default customElements.define(PAGE_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
-
-            if (checkToken()) window.location.href = `/`
 
             this.onLoginHandler = this.onLoginHandler.bind(this)
         }
@@ -22,11 +22,7 @@ export default customElements.define('login-page',
         }
 
         disconnectedCallback() {
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (!backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.add('back-menu--disabled')
-
-            this.removeEventsListener()
+            disableBackMenu()
         }
 
         onLoginHandler(event) {
@@ -34,7 +30,6 @@ export default customElements.define('login-page',
                 '#inputEmail', { formElement: '#formTextEmail', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
             
             const isValid = validatorInputEmail.isValidNotEmpty() && validatorInputEmail.isValidEmail()
-
             if (!isValid) return
 
             const inputEmail = document.querySelector('#inputEmail')
@@ -55,19 +50,13 @@ export default customElements.define('login-page',
             )
         }
 
-        addEventsListener() {
-            const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.addEventListener('keydown', priorityInput)
-
+        addAllListeners() {
             const buttonLogin = document.querySelector('#buttonLogin')
             buttonLogin.addEventListener('click', this.onLoginHandler)
         }
 
-        removeEventsListener() {
-        }
-
-        render() {
-            this.append(createElementFromHTML(`
+        #createPage() {
+            return (/*html*/`
                 <div class="${ classes['wrapper'] }">
                     <h1>Welcome Back!</h1>
                     <p>You must Sign in to join</p>
@@ -87,12 +76,13 @@ export default customElements.define('login-page',
 
                     <p class="caption">Don't have account? <a class="land__link caption" href="/register" data-link>Sign Up<a/></p>
                 </div>
-            `))
+            `)
+        }
 
-            const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
-            if (backMenu.classList.contains('back-menu--disabled')) 
-                backMenu.classList.remove('back-menu--disabled')
+        render() {
+            this.appendDOM(this.#createPage())
 
-            this.addEventsListener()
+            enableBackMenu()
+            this.addAllListeners()
         }
     })

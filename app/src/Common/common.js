@@ -103,3 +103,25 @@ export function nextPosition(initialX, initialY, direction) {
     return {x,y}
 }
 
+export function enableBackMenu() {
+    const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
+    if (backMenu.classList.contains('back-menu--disabled')) 
+        backMenu.classList.remove('back-menu--disabled')
+}
+
+export function disableBackMenu() {
+    const backMenu = document.querySelector('#headerNavigation').querySelector('#backMenu')
+    if (!backMenu.classList.contains('back-menu--disabled')) 
+        backMenu.classList.add('back-menu--disabled')
+}
+
+HTMLElement.prototype.appendDOM = function(stringHtml, position = 'beforeend') {
+    this.insertAdjacentHTML(position, stringHtml.trim())
+    return this
+}
+
+Window.prototype.getParameterUrl = function(key) {
+    const urlParams = new URLSearchParams(window.location.search)
+    const param = urlParams.get(key)
+    return param
+}
