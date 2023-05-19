@@ -37,7 +37,7 @@ export default () => {
                     const amountViews = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Visualized.toString())
                     const isLiked = await interactionRepository.Where((x: interaction) => x.mazeId == maze.id && x.userId == request.userId && x.type == enumTypeInteractions.Liked.toString())
                     const file: file = [...await fileRepository.Where((x: file) => x.id === maze.fileId)][0]
-                    const findUser: user = [...await userRepository.Where((entity: user) => entity.id === Number(request.userId))][0]
+                    const findUser: user = [...await userRepository.Where((entity: user) => entity.id === Number(maze.userId))][0]
 
                     try {
                         const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
