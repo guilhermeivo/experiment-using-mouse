@@ -54,8 +54,8 @@ export default class Overworld {
     }
 
     async initialize() {
-        const width =  window.innerWidth
-        const height =  window.innerHeight
+        const width = this.element.clientWidth / 2
+        const height = this.element.clientHeight / 2
 
         this.canvas.width = width
         this.canvas.height = height

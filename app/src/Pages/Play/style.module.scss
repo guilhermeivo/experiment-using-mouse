@@ -20,4 +20,48 @@ play-page {
             gap: 24px;
         }
     }
+
+    .search {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        gap: 8px;
+
+        .search__buttons {
+            display: flex;
+            gap: 8px;
+            & > div {
+                padding: 0;
+            }
+        }
+
+        & > div {
+            padding: 0;
+        }
+
+        & > div:first-child {
+            width: 100%;
+
+            input {
+                max-width: 300px;
+            }
+
+            input:focus {
+                max-width: 100%;
+            }
+
+            label {
+                left: 8px;
+            }
+        }
+
+        button {
+            border: 1px solid var(--border-color);
+            height: 100%;
+
+            &:hover {
+                border: 1px solid var(--primary-color);
+            }
+        }
+    }
 }

@@ -88,6 +88,14 @@ export default (() => {
         return httpConnection(path, typeMethods.GET)
     }
 
+    const addViewMaze = (idMaze) => {
+        const path = `${ urlServer }/maze/view`
+
+        return httpConnection(path, typeMethods.POST, {
+            id: idMaze
+        })
+    }
+
     const httpConnection = (url, method, body) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -113,7 +121,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById, addViewMaze
     }
     
 })()

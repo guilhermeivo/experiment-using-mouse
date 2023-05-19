@@ -14,6 +14,11 @@ export default class OverworldEvent {
         resolve()
     }
 
+    completed(resolve) {
+        if (this.map.overworld.element.querySelector('pop-up')) this.map.overworld.element.querySelector('pop-up').removeAttribute('hidden')
+        resolve()
+    }
+
     initialize() {
         return new Promise(resolve => {
             this[this.event.type](resolve)      

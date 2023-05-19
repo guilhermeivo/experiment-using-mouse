@@ -1,6 +1,7 @@
 import classes from './style.module.scss'
 import { checkToken, createElementFromHTML, navigateTo } from "../../Common/common"
 import ConnectionAPI from '../../Services/ConnectionAPI'
+import classesForms from '../../assets/styles/forms_controls.module.scss'
 
 export default customElements.define('play-page', 
     class extends HTMLElement {
@@ -48,7 +49,7 @@ export default customElements.define('play-page',
                                                         data-id="${ element.id }"
                                                         data-title="${ element.name }"
                                                         data-likes="${ element.like || 0 }"
-                                                        data-views="${ element.views || 0 }"
+                                                        data-views="${ element.view || 0 }"
                                                         ${ element.isLiked ? 'data-liked' : '' }
                                                     ></card-info>
                                                 `)
@@ -64,6 +65,30 @@ export default customElements.define('play-page',
                     })() }
     
                     <h1>Public mazes</h1>
+
+                    <div class="${ classesForms['form-controls'] } ${ classes['search'] }">
+                        <div class="${ classesForms['form__text-control'] }">
+                            <input id="inputSearch" type="text" name="input-search" placeholder=" " />
+                            <label for="inputSearch">Search</label>
+                            <span class="${ classesForms['form__error-message'] }"></span>
+                        </div>
+                        <div class="${ classes['search__buttons'] }">
+                            <div class="${ classesForms['form__text-control'] }">
+                                <button 
+                                    id="button" 
+                                    class="material-symbols notranslate ${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                    filter_list
+                                </button>
+                            </div>
+                            <div class="${ classesForms['form__text-control'] }">
+                                <button 
+                                    id="button" 
+                                    class="material-symbols notranslate ${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                    search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
     
                     <div class="${ classes['list--vertical'] }">
                     ${ (() => {
@@ -74,7 +99,8 @@ export default customElements.define('play-page',
                                         data-id="${ element.id }"
                                         data-title="${ element.name }"
                                         data-likes="${ element.like || 0 }"
-                                        data-views="${ element.views || 0 }"
+                                        data-views="${ element.view || 0 }"
+                                        data-createdBy="${ element.createdBy.username || '' }"
                                         ${ element.isLiked ? 'data-liked' : '' }
                                         data-image="${ element.overworldMap.lowerSrc }"
                                     ></card-info>

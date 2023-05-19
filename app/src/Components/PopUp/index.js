@@ -10,11 +10,14 @@ export default customElements.define('pop-up',
 
             this.onClosePopupHandler = this.onClosePopupHandler.bind(this)
 
+            const anchorLink = this.getAttribute('data-anchorlink')
+            const anchorText = this.getAttribute('data-anchortext')
+
             this.state = {
                 title: this.getAttribute('data-title') || 'Title',
                 description: this.getAttribute('data-description') || 'Description',
-                anchorLink: this.getAttribute('data-anchorlink') || '/',
-                anchorText: this.getAttribute('data-anchortext') || 'Link',
+                anchorLink: (anchorLink.includes(',') ? anchorLink.split(',') : anchorLink) || '/',
+                anchorText: (anchorText.includes(',') ? anchorText.split(',') : anchorText) || 'Link',
             }
         }
 
@@ -36,15 +39,13 @@ export default customElements.define('pop-up',
 
         removeEventsListener() {
             this.querySelector('#popupClose').removeEventListener('click', this.onClosePopupHandler)
-            this.querySelector('#buttonClose').removeEventListener('click', this.onClosePopupHandler)
+            if (this.querySelector('#buttonClose')) this.querySelector('#buttonClose').removeEventListener('click', this.onClosePopupHandler)
         }
 
         addEventsListener() {
             this.querySelector('#popupClose').addEventListener('click', this.onClosePopupHandler)
-            this.querySelector('#buttonClose').addEventListener('click', this.onClosePopupHandler)
-            this.querySelector('#anchorLink').addEventListener('click', () => {
-                this.remove()
-            })
+            if (this.querySelector('#buttonClose')) this.querySelector('#buttonClose').addEventListener('click', this.onClosePopupHandler)
+            this.querySelectorAll('a').forEach(a => a.addEventListener('click', () => this.remove()))
         }
 
         #createdPopup({ title, description, anchorLink, anchorText }) {
@@ -57,8 +58,15 @@ export default customElements.define('pop-up',
                     <h2>${ title }</h2>
                     <p>${ description }</p>
                     <div class="${ classes['popup__buttons'] }">
-                        <a id="anchorLink" href="${ anchorLink }" class="${ classesForms['button'] } ${ classesForms['button__secondary'] }" data-link>${ anchorText }</a>
-                        <button id="buttonClose" class="${ classesForms['button'] } ${ classesForms['button__primary'] }">Cancel</button>
+                    ${
+                        typeof anchorLink === 'object'
+                        ? `
+                        <a href="${ anchorLink[0] }" class="${ classesForms['button'] } ${ classesForms['button__secondary'] }" data-link>${ anchorText[0] }</a>
+                        <a href="${ anchorLink[1] }" class="${ classesForms['button'] } ${ classesForms['button__primary'] }" data-link>${ anchorText[1] }</a>`
+                        : `
+                        <a href="${ anchorLink }" class="${ classesForms['button'] } ${ classesForms['button__secondary'] }" data-link>${ anchorText }</a>
+                        <button id="buttonClose" class="${ classesForms['button'] } ${ classesForms['button__primary'] }">Cancel</button>`
+                    }
                     </div>            
                 </div>
                 <div class="${ classes['wrapper__background'] }"></div>

@@ -17,7 +17,8 @@ export class Cheese extends MazeObject {
   
         this.events = [
             { type: 'textMessage', text: 'Cheese was successfully found!' },
-            { type: 'addFlag', flag: this.flag }
+            { type: 'addFlag', flag: this.flag },
+            { type: 'completed' }
         ]
     }
   

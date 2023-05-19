@@ -63,7 +63,7 @@
         flex-direction: column;
 
         h3 {
-            margin: 0;
+            margin-bottom: 6px;
             color: var(--high-emphasis-color);
         }
 
@@ -71,10 +71,64 @@
             margin: 0;
             color: var(--medium-emphasis-color);
         }
+
+        .descrption__interaction {
+            display: flex;
+            gap: 8px;
+
+            & > div {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                
+                & > * {
+                    font-size: $body-font-size;
+                }
+
+                span {
+                    color: var(--medium-emphasis-color);
+                }
+            }
+
+            h4 {
+                margin-bottom: 0;
+            }
+        }
+
+        .description__details {
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding-top: 15px;
+
+            .circle {
+                display: block;
+                width: 32px;
+                height: 32px;
+                border-radius: 100%;
+                background-image: url(../../assets/images/MouseIcon.png);
+                background-color: var(--surface-color--variant);
+                margin-right: 12px;
+            }
+        }
     }
 
     .card__button {
         margin-top: 15px;
-        width: 70%;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 8px;
+
+        & > div:last-child {
+            width: 20%;
+        }
+
+        & > div:first-child {
+            width: 100%;
+        }
+
+        button {
+            height: 100%;
+        }
     }
 }

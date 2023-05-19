@@ -10,7 +10,7 @@ import EraserIcon from "./assets/images/EraserIcon.png"
 import FileMapImage from './assets/images/FileMap.png'
 
 import CheeseCharacters from './assets/images/characters/cheese.png'
-import MouseCharacters from './assets/images/characters/mario.png'
+import MouseCharacters from './assets/images/characters/bozovo.png'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20

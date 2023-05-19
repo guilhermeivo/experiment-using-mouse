@@ -35,8 +35,8 @@ export default class OverworldMap {
         
         this.isLoaded && ctx.drawImage(
             this.lowerImage, 
-            withGrid(10.5) - cameraPerson.x, 
-            withGrid(6) - cameraPerson.y)
+            withGrid(9) - cameraPerson.x, 
+            withGrid(4) - cameraPerson.y)
     }
 
     isSpaceTaken(currentX, currentY, direction) {

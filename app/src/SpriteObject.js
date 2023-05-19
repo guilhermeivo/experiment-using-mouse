@@ -56,8 +56,8 @@ export default class SpriteObject {
     }
 
     draw(ctx, cameraPerson) {
-        const x = this.gameObject.x + withGrid(10.5) - cameraPerson.x
-        const y = this.gameObject.y + withGrid(6) - cameraPerson.y;
+        const x = this.gameObject.x + withGrid(9) - cameraPerson.x
+        const y = this.gameObject.y + withGrid(4) - cameraPerson.y
             
         const [frameX, frameY] = this.frame
 
