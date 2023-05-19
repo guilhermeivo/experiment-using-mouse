@@ -123,5 +123,4 @@ out
 dist/
 
 # uploaded files
-uploads/*
-!uploads/.gitkeep
+uploads/

@@ -37,6 +37,7 @@ export default () => {
                     const amountViews = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Visualized.toString())
                     const isLiked = await interactionRepository.Where((x: interaction) => x.mazeId == maze.id && x.userId == request.userId && x.type == enumTypeInteractions.Liked.toString())
                     const file: file = [...await fileRepository.Where((x: file) => x.id === maze.fileId)][0]
+                    const findUser: user = [...await userRepository.Where((entity: user) => entity.id === Number(request.userId))][0]
 
                     try {
                         const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
@@ -49,7 +50,10 @@ export default () => {
                             view: amountViews,
                             isLiked: isLiked.length ? true : false,
                             createdAt: maze.createdAt,
-                            overworldMap: JSON.parse(data)
+                            overworldMap: JSON.parse(data),
+                            createdBy: {
+                                username: findUser.username
+                            }
                         })
                     } catch { }
                 }))
@@ -188,7 +192,7 @@ export default () => {
             if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
 
             const findInteraction = await interactionRepository.Where((entity: interaction) => entity.userId == request.userId && entity.mazeId == request.id && entity.type === enumTypeInteractions.Visualized.toString())
-            if (findInteraction.length > 0) return new Result('This user has already performed this interaction.')
+            if (findInteraction.length > 0) return new Result('This user has already performed this interaction.', request.id)
 
             const addView = await interactionRepository.AddView(request.userId, request.id)
             if (!addView) return new Result('An error occurred while executing the function.')
