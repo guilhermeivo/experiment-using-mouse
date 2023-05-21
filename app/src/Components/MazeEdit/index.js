@@ -2,7 +2,9 @@ import { createElementFromHTML } from '../../Common/common'
 
 import classes from './style.module.scss'
 
-export default customElements.define('maze-edit',
+export const COMPONENT_TAG = 'maze-edit'
+
+export default customElements.define(COMPONENT_TAG,
     class extends HTMLElement {
 
         constructor(...props) {
@@ -30,7 +32,7 @@ export default customElements.define('maze-edit',
         }
 
         disconnectedCallback() {
-            this.removeEventsListener()
+            this.removeAllListeners()
         }
 
         createColumnHandler() {
@@ -130,21 +132,22 @@ export default customElements.define('maze-edit',
             this.removeEventListener('touchmove', this.onSelectedHandler)
         }
 
-
-        addEventsListener() {
+        addAllListeners() {
             this.addEventListener('click', this.onSelectedHandler)
             this.addEventListener('mousedown', this.onMouseDownHandler)
             this.addEventListener('mouseup', this.onMouseUpHandler)
 
-            this.addEventListener('click', this.onSelectedHandler)
             this.addEventListener('touchstart', this.onTouchStartHandler, { passive: true })
             this.addEventListener('touchend', this.onTouchEndHandler, { passive: true })
         }
 
-        removeEventsListener() {
+        removeAllListeners() {
             this.removeEventListener('click', this.onSelectedHandler)
             this.removeEventListener('mousedown', this.onMouseDownHandler)
             this.removeEventListener('mouseup', this.onMouseUpHandler)
+
+            this.removeEventListener('touchstart', this.onTouchStartHandler, { passive: true })
+            this.removeEventListener('touchend', this.onTouchEndHandler, { passive: true })
         }
 
         #createBlock({ x, y }) {
@@ -161,25 +164,27 @@ export default customElements.define('maze-edit',
         }
 
         #createMaze() {
-            return (`<div class="${ classes['maze'] }">${
-                (() => {
-                    const lines = []
-                    for (let i = 0; i < this.state.overworldMazeEdit.rows; i++) {
-                        lines.push(`<div class="${ classes['line'] }">${
-                            (() => {
-                                const blocks = []
+            return (/*html*/`
+                <div class="${ classes['maze'] }">${
+                    (() => {
+                        const lines = []
+                        for (let i = 0; i < this.state.overworldMazeEdit.rows; i++) {
+                            lines.push(`<div class="${ classes['line'] }">${
+                                (() => {
+                                    const blocks = []
 
-                                for (let j = 0; j < this.state.overworldMazeEdit.columns; j++) {
-                                    blocks.push(this.#createBlock({ x: i+1, y: j+1}).outerText)
-                                }
+                                    for (let j = 0; j < this.state.overworldMazeEdit.columns; j++) {
+                                        blocks.push(this.#createBlock({ x: i+1, y: j+1}).outerText)
+                                    }
 
-                                return blocks.join('')
-                            })()
-                        }</div>`)
-                    }
-                    return lines.join('')
-                })()
-            }</div>`)
+                                    return blocks.join('')
+                                })()
+                            }</div>`)
+                        }
+                        return lines.join('')
+                    })()
+                }</div>
+            `)
         }
 
         #createMazeObjects(object) {            
@@ -188,7 +193,7 @@ export default customElements.define('maze-edit',
 
             const { x, y } = object
             
-            return (`
+            return (/*html*/`
                 <div 
                     id="${ objectId }" 
                     class="${ classes['maze__object'] }" 
@@ -206,13 +211,13 @@ export default customElements.define('maze-edit',
         }
 
         render() {
-            this.append(createElementFromHTML(this.#createMaze()))
+            this.appendDOM(this.#createMaze())
             
             this.update()
-                Object.keys(this.state.overworldMazeEdit.mazeObjects)
-                    .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
+            Object.keys(this.state.overworldMazeEdit.mazeObjects)
+                .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
 
-            this.addEventsListener()
+            this.addAllListeners()
         }
 
         update() {

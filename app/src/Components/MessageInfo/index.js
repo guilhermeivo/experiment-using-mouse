@@ -4,7 +4,9 @@ import classes from './style.module.scss'
 
 const MINIMUM_TIME_WAIT = 5000
 
-export default customElements.define('message-info',
+export const COMPONENT_TAG = 'message-info'
+
+export default customElements.define(COMPONENT_TAG,
     class extends HTMLElement {
         
         constructor(...props) {
@@ -44,28 +46,28 @@ export default customElements.define('message-info',
         }
 
         #createdMessage({ description, type }) {
-            return(`
-            <div class="${ classes['message-info'] } ${ type == 'info' ? classes['message-info--info'] : classes['message-info--warn'] }">
-                <div class="${ classes['type-info'] }">
-                    ${
-                        (type == 'info')
-                            ? `<span class="material-symbols notranslate">
-                                info
-                               </span>`
-                            : `<span class="material-symbols notranslate">
-                                error
-                               </span>`
-                    }
+            return(/*html*/`
+                <div class="${ classes['message-info'] } ${ type == 'info' ? classes['message-info--info'] : classes['message-info--warn'] }">
+                    <div class="${ classes['type-info'] }">
+                        ${
+                            (type == 'info')
+                                ? `<span class="material-symbols notranslate">
+                                    info
+                                </span>`
+                                : `<span class="material-symbols notranslate">
+                                    error
+                                </span>`
+                        }
+                    </div>
+                    <div class="${ classes['description-info'] }" title="${ description }">
+                        ${ description }
+                    </div>
+                    <div class="${ classes['close-button'] }">
+                        <span class="material-symbols notranslate">
+                        close
+                        </span>
+                    </div>
                 </div>
-                <div class="${ classes['description-info'] }" title="${ description }">
-                    ${ description }
-                </div>
-                <div class="${ classes['close-button'] }">
-                    <span class="material-symbols notranslate">
-                    close
-                    </span>
-                </div>
-            </div>
             `)
         }
 

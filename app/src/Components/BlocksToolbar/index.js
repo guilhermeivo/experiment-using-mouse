@@ -1,20 +1,30 @@
 import CustomCursor from '../../Common/CustomCursor'
 import { createElementFromHTML } from '../../Common/common'
+import KeyPressListener from '../../Common/KeyPressListener'
 
 import classes from './style.module.scss';
 
-export default customElements.define('blocks-toolbar', 
+export const COMPONENT_TAG = 'blocks-toolbar'
+
+export default customElements.define(COMPONENT_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
 
+            this.onClickedItemHadler = this.onClickedItemHadler.bind(this)
+            this.onEscapeKeyPress = this.onEscapeKeyPress.bind(this)
+            this.onNumberKeyPress = this.onNumberKeyPress.bind(this)
+
             this.state = {
                 items: window.editors,
-                selectedItem: null
+                selectedItem: null,
+                customCursor: new CustomCursor(`.${ classes['custom_cursor'] }`, { 
+                    disableClass: classes['custom_cursor--disable'],
+                    initializedClass: classes['custom_cursor--initialized'],
+                    focusElements: [ 'maze-block' ],
+                    focusClass: classes['custom_cursor--focused']
+                })
             }
-
-            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
-            this.onClickedItemHadler = this.onClickedItemHadler.bind(this)
         }
 
         connectedCallback() {
@@ -25,28 +35,9 @@ export default customElements.define('blocks-toolbar',
         }
 
         disconnectedCallback() {
-            this.removeEventsListener()
+            this.removeAllListeners()
             this.state.customCursor.remove()
             delete this.state.customCursor
-        }
-
-        onKeyDownHandler(event) {
-            switch (event.key) {
-                case 'Escape':
-                    event.preventDefault()
-                    if (this.state.selectedItem)
-                        this.selectedItemHadler(this.state.selectedItem)                        
-                    break
-            }
-
-            const eventKeyNumber = Number(event.key - 1)
-            if (typeof eventKeyNumber === 'number' && !Number.isNaN(eventKeyNumber)) {
-                const amountEditors = Object.keys(this.state.items).length
-                if (eventKeyNumber >= 0 && eventKeyNumber < amountEditors) {
-                    const key = Object.keys(this.state.items)[eventKeyNumber]
-                    this.selectedItemHadler(key)
-                }
-            }
         }
 
         selectedItemHadler(key) {
@@ -55,9 +46,8 @@ export default customElements.define('blocks-toolbar',
             const lastItemToolbar = itemToolbar.find(value => value.getAttribute('key') === this.state.selectedItem)
             const currentItemToolbar = itemToolbar.find(value => value.getAttribute('key') === key)
             
-            if (this.state.selectedItem) {
+            if (this.state.selectedItem)
                 lastItemToolbar.classList.remove(classes['toolbar__item--selected'])
-            }
 
             if (this.state.selectedItem != key) {
                 this.state = { 
@@ -70,7 +60,6 @@ export default customElements.define('blocks-toolbar',
                 this.state.customCursor.enable()
 
                 currentItemToolbar.classList.add(classes['toolbar__item--selected'])
-                
             } else {
                 this.unselectedItemHandler()
             }
@@ -96,22 +85,38 @@ export default customElements.define('blocks-toolbar',
             this.selectedItemHadler(key)
         }
 
-        addEventsListener() {
+        onEscapeKeyPress(event) {
+            if (this.state.selectedItem)
+                this.selectedItemHadler(this.state.selectedItem)
+        }
+
+        onNumberKeyPress(event) {
+            const key = Object.keys(this.state.items)[event.key - 1]
+            this.selectedItemHadler(key)
+        }
+
+        addAllListeners() {
             const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
             Object.keys(this.state.items).map((key, index) => {
                 itemToolbar[index].addEventListener('click', this.onClickedItemHadler)
             })
 
-            document.addEventListener('keydown', this.onKeyDownHandler)
+            this.escapeKeyPress = new KeyPressListener('Escape', this.onEscapeKeyPress)
+
+            const keys = Object.keys(itemToolbar).map((key, index) => `${ index + 1 }`)
+            this.numberKeyPress = new KeyPressListener(keys, this.onNumberKeyPress)
         }
 
-        removeEventsListener() {
+        removeAllListeners() {
             const itemToolbar = this.querySelectorAll(`.${ classes['toolbar__item'] }`)
             Object.keys(this.state.items).map((key, index) => {
                 itemToolbar[index].removeEventListener('click', this.onClickedItemHadler)
             })
 
-            document.removeEventListener('keydown', this.onKeyDownHandler)
+            this.escapeKeyPress.unbind()
+            delete this.escapeKeyPress
+            this.numberKeyPress.unbind()
+            delete this.numberKeyPress
         }
 
         #createCursorItem() {
@@ -123,7 +128,7 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createBlocksToolbar() {
-            return (`
+            return (/*html*/`
                 <div class="${ classes['toolbar'] }">
                     ${
                         Object.keys(this.state.items).map((key, index) => {
@@ -138,7 +143,7 @@ export default customElements.define('blocks-toolbar',
         }
 
         #createItemsHandler(key, isSelected, item) {
-            return (`
+            return (/*html*/`
                 <div
                     class="${ classes['toolbar__item'] } ${ isSelected ? classes['toolbar__item--selected'] : '' }"
                     key="${ key }"
@@ -152,20 +157,11 @@ export default customElements.define('blocks-toolbar',
         }
 
         render() {
-            this.append(createElementFromHTML(this.#createBlocksToolbar()))
-            this.appendChild(createElementFromHTML(this.#createCursorItem()))
+            this.appendDOM(this.#createBlocksToolbar())
+            this.appendDOM(this.#createCursorItem())
 
-            this.state = {
-                ...this.state,
-                customCursor: new CustomCursor(`.${ classes['custom_cursor'] }`, { 
-                    disableClass: classes['custom_cursor--disable'],
-                    initializedClass: classes['custom_cursor--initialized'],
-                    focusElements: [ 'maze-block' ],
-                    focusClass: classes['custom_cursor--focused']
-                })
-            }
             this.state.customCursor.initialize()
 
-            this.addEventsListener()
+            this.addAllListeners()
         }
     })

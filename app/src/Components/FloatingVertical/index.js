@@ -1,13 +1,16 @@
 import { createElementFromHTML } from '../../Common/common'
+import KeyPressListener from '../../Common/KeyPressListener'
 
 import classes from './style.module.scss'
 
-export default customElements.define('floating-vertical', 
+export const COMPONENT_TAG = 'floating-vertical'
+
+export default customElements.define(COMPONENT_TAG, 
     class extends HTMLElement {
         constructor(...props) {
             super(props)
 
-            this.onKeyDownHandler = this.onKeyDownHandler.bind(this)
+            this.onEscapeHandler = this.onEscapeHandler.bind(this)
 
             this.state = {
                 isOpen: false
@@ -22,7 +25,7 @@ export default customElements.define('floating-vertical',
         }
 
         disconnectedCallback() { 
-            this.removeEventsListener()
+            this.removeAllListeners()
         }
 
         addContentElement({ title, element }) {
@@ -34,17 +37,9 @@ export default customElements.define('floating-vertical',
             `))
         }
 
-        onKeyDownHandler(event) {
-            switch (event.key) {
-                case 'Escape':
-                    event.preventDefault()
-                    if (this.state.isOpen) this.toggle()
-                    break
-                case 'e':
-                    event.preventDefault()
-                    this.toggle()
-                    break
-            }
+        onEscapeHandler(event) {
+            event.preventDefault()
+            if (this.state.isOpen) this.toggle()
         }
 
         toggle() {
@@ -56,21 +51,22 @@ export default customElements.define('floating-vertical',
             }
         }
 
-        addEventsListener() {
-            document.addEventListener('keydown', this.onKeyDownHandler)
+        addAllListeners() {
+            this.escapeKeyPress = new KeyPressListener('Escape', this.onEscapeHandler)
         }
 
-        removeEventsListener() {
-            document.removeEventListener('keydown', this.onKeyDownHandler)
+        removeAllListeners() {
+            this.escapeKeyPress.unbind()
+            delete this.escapeKeyPress
         }
 
         render() {
-            this.append(createElementFromHTML(`
+            this.appendDOM(`
                 <div 
                     id="floatingVertical" 
                     class="${ classes['floating-vertical'] } ${ classes['floating-vertical__disable'] }"></div>
-            `))
+            `)
 
-            this.addEventsListener()
+            this.addAllListeners()
         }
     })

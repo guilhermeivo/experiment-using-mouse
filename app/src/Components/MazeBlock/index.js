@@ -2,7 +2,9 @@ import { createElementFromHTML } from '../../Common/common'
 
 import classes from './style.module.scss'
 
-export default customElements.define('maze-block', 
+export const COMPONENT_TAG = 'maze-block'
+
+export default customElements.define(COMPONENT_TAG, 
     class extends HTMLElement {
 
         static get observedAttributes() { return ['type'] }
@@ -86,7 +88,7 @@ export default customElements.define('maze-block',
         }
 
         #createdBlocks() {
-            return (`
+            return (/*html*/`
                 <div class="${ classes['block__content'] }">
                     <img alt="">
                 </div>
@@ -94,7 +96,7 @@ export default customElements.define('maze-block',
         }
 
         render() {
-            this.append(createElementFromHTML(this.#createdBlocks()))
+            this.appendDOM(this.#createdBlocks())
         }
 
         update() {
