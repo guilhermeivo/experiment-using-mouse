@@ -13,11 +13,9 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 - [ ] Auditory effects
 - [ ] Multiple players in one room
 - [ ] Room search, filtering and paging
-- [ ] Edit rooms already created by users
 - [ ] Load room list using skeletons
 - [ ] Shortscuts
 - [ ] Visual effects when completing a room
-- [ ] Make homepage visual effects animated
 - [ ] Verifier of possible mazes to be completed
 
 ## Architecture
