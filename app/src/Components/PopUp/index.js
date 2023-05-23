@@ -1,4 +1,3 @@
-import { createElementFromHTML } from '../../Common/common'
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 

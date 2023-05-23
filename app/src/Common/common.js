@@ -39,10 +39,6 @@ export function navigateTo(routeName) {
     anchorRoute.setAttribute('href', '')
 }
 
-export function priorityInput(event) {
-    event.stopPropagation()
-}
-
 import classesForms from '../assets/styles/forms_controls.module.scss'
 
 const TIME_SHOWING_MESSAGE = 1000
@@ -79,28 +75,30 @@ export function submitButtonHandler(target, callbackPromise, callbackSuccess, ca
     })
 }
 
+const SIZE = 32
+
 export function withGrid(n) {
-    return n * 32
+    return n * SIZE
 }
   
 export function asGridCoord(x,y) {
-    return `${x*32},${y*32}`
+    return `${ x * SIZE},${ y * SIZE }`
 }
   
 export function nextPosition(initialX, initialY, direction) {
     let x = initialX
     let y = initialY
-    const size = 32
-    if (direction === "left") { 
-        x -= size
-    } else if (direction === "right") {
-        x += size
-    } else if (direction === "up") {
-        y -= size
-    } else if (direction === "down") {
-        y += size
+
+    if (direction === 'left') { 
+        x -= SIZE
+    } else if (direction === 'right') {
+        x += SIZE
+    } else if (direction === 'up') {
+        y -= SIZE
+    } else if (direction === 'down') {
+        y += SIZE
     }
-    return {x,y}
+    return { x , y }
 }
 
 export function enableBackMenu() {

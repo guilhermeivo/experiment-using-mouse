@@ -24,6 +24,7 @@ export default customElements.define(PAGE_TAG,
 
         addAllListeners() {
             this.querySelector('#createNewMaze').addEventListener('click', () => {
+                localStorage.removeItem('OverworldMaze')
                 navigateTo('/make')
             })
         }

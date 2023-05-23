@@ -1,4 +1,4 @@
-import { checkToken, createElementFromHTML, disableBackMenu, downloadData, enableBackMenu, priorityInput, submitButtonHandler } from '../../Common/common'
+import { checkToken, createElementFromHTML, disableBackMenu, downloadData, enableBackMenu, submitButtonHandler } from '../../Common/common'
 import validators from '../../Common/validators'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
@@ -37,14 +37,15 @@ export default customElements.define(PAGE_TAG,
             this.onClearMazeHandler = this.onClearMazeHandler.bind(this)
 
             const OverworldMaze = JSON.parse(localStorage.getItem('OverworldMaze')) || { }
-            
+
             this.state = {
                 maze: '',
                 resizeSelected: '',
                 initialPosition: '',
+                idMaze: OverworldMaze.idMaze || null,
                 overworldMazeEdit: new OverworldMazeEdit({ 
                     smallestSize: SMALLEST_POSSIBLE_SIZE,
-                    LARGEST_POSSIBLE_SIZE: LARGEST_POSSIBLE_SIZE,
+                    largestSize: LARGEST_POSSIBLE_SIZE,
                     rows: OverworldMaze.rows || DEFAULT_MAZE_ROWS, 
                     columns: OverworldMaze.columns || DEFAULT_MAZE_COLUMNS,
                     mazeObjects: OverworldMaze.mazeObjects || null,
@@ -152,6 +153,7 @@ export default customElements.define(PAGE_TAG,
                 async (resolve, reject) => {
                     try {
                         const json = JSON.stringify({ 
+                            idMaze: this.state.idMaze || null,
                             name: inputName.value, 
                             rows: this.state.overworldMazeEdit.rows, 
                             columns: this.state.overworldMazeEdit.columns, 
@@ -173,15 +175,27 @@ export default customElements.define(PAGE_TAG,
                             resolve()
                         } else {
                             const overworldMaze = this.state.overworldMazeEdit.getOverworldMap(this.state.maze.exportImageTiles())
-                            const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, overworldMaze)
 
-                            if (response) {
-                                localStorage.removeItem('OverworldMaze') 
-                                navigateTo('play')
-                                resolve()
-                            } else reject()
+                            if (!this.state.idMaze) {
+                                const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, overworldMaze)
+                            
+                                if (response) {
+                                    localStorage.removeItem('OverworldMaze') 
+                                    navigateTo('play')
+                                    resolve()
+                                } else reject()
+                            } else {
+                                const response = await ConnectionAPI.UpdateMaze(this.state.idMaze, inputName.value, inputName.value, overworldMaze)
+
+                                if (response) {
+                                    localStorage.removeItem('OverworldMaze') 
+                                    navigateTo('play')
+                                    resolve()
+                                } else reject()
+                            }                            
                         }
-                    } catch {
+                    } catch (exception) {
+                        console.log(exception)
                         reject()
                     }
                 }

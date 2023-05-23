@@ -1,4 +1,4 @@
-import { createElementFromHTML, navigateTo } from '../../Common/common'
+import { navigateTo } from '../../Common/common'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 
@@ -14,6 +14,7 @@ export default customElements.define(COMPONENT_TAG,
 
             this.onLikeHandler = this.onLikeHandler.bind(this)
             this.onButtonPlayHandler = this.onButtonPlayHandler.bind(this)
+            this.onButtonEditHandler = this.onButtonEditHandler.bind(this)
 
             this.state = {
                 id: this.getAttribute('data-id'),
@@ -55,12 +56,56 @@ export default customElements.define(COMPONENT_TAG,
             navigateTo(`/maze?id=${ this.state.id }`)
         }
 
+        async onButtonEditHandler(event) {
+            const response = [...await ConnectionAPI.GetMazeById(this.state.id)][0]
+
+            const objects = { }
+            Object.keys(response.overworldMap.configObjects).map(key => {
+                const currentObject = response.overworldMap.configObjects[key]
+
+                objects[key] = {
+                    id: currentObject.id,
+                    type: currentObject.type,
+                    isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
+                    x: (currentObject.y + 32)/32,
+                    y: (currentObject.x + 32)/32,
+                    src: currentObject.src
+                }
+            })
+            const tilesMaze = { }
+            let rows = 0, columns = 0
+            Object.keys(response.overworldMap.tiles).map(key => {
+
+                const [ x, y ] = key.split(',').map(string => Number(string))
+                const newX = (y+32)/32
+                const newY = (x+32)/32
+                tilesMaze[`${(y+32)/32},${(x+32)/32}`] = response.overworldMap.tiles[key]
+
+                if (newX > rows) rows = newX
+                if (newY > columns) columns = newY
+            })
+
+            const json = JSON.stringify({ 
+                idMaze: response.id,
+                name: response.name, 
+                rows: rows, 
+                columns: columns, 
+                mazeObjects: objects, 
+                tilesMaze: tilesMaze
+            })
+            localStorage.setItem('OverworldMaze', json)
+            navigateTo(`/make?id=${ response.id }`)
+        }
+
         addAllListeners() {
             const buttonLike = this.querySelector(`#buttonLike--${ this.state.id }`)
             buttonLike.addEventListener('click', this.onLikeHandler)
 
             const buttonPlay = this.querySelector(`#buttonPlay--${ this.state.id }`)
             buttonPlay.addEventListener('click', this.onButtonPlayHandler)
+
+            const buttonEdit = this.querySelector(`#buttonEdit--${ this.state.id }`)
+            if (buttonEdit) buttonEdit.addEventListener('click', this.onButtonEditHandler)
         }
 
         #createdCard() {

@@ -27,6 +27,8 @@ export default class OverworldMazeEdit {
         this.smallestSize = config.smallestSize || SMALLEST_POSSIBLE_SIZE
         this.largestSize = config.largestSize || LARGEST_POSSIBLE_SIZE
 
+        this.name = config.name || ''
+
         this.rows = config.rows || this.smallestSize
         this.columns = config.columns || this.smallestSize
 
@@ -101,6 +103,7 @@ export default class OverworldMazeEdit {
         Object.keys(this.mazeObjects).map(key => {
             const currentObject = this.mazeObjects[key]
             objects[key] = {
+                id: currentObject.id,
                 type: currentObject.type,
                 isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
                 x: withGrid(currentObject.y - 1),
@@ -108,17 +111,17 @@ export default class OverworldMazeEdit {
                 src: window.editors[currentObject.id].src
             }
         })
-        const walls = { }
+        const tile = { }
         Object.keys(this.tilesMaze).map(key => {
-
             const [ x, y ] = key.split(',').map(string => Number(string))
-            if (this.tilesMaze[key] === 'wall') walls[`${withGrid(y-1)},${withGrid(x-1)}`] = true
+
+            tile[`${withGrid(y-1)},${withGrid(x-1)}`] = this.tilesMaze[key]
         })
         return {
             id: 'maze',
             lowerSrc: lowerSrc,
             configObjects: objects,
-            walls: walls
+            tiles: tile
         }
     }
 }

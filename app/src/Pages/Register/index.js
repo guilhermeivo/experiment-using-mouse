@@ -2,7 +2,7 @@ import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import validators from '../../Common/validators'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { disableBackMenu, enableBackMenu, navigateTo, priorityInput, submitButtonHandler } from "../../Common/common"
+import { disableBackMenu, enableBackMenu, navigateTo, submitButtonHandler } from "../../Common/common"
 
 export const PAGE_TAG = 'register-page'
 
@@ -61,12 +61,6 @@ export default customElements.define(PAGE_TAG,
         addAllListeners() {
             const buttonRegister = document.querySelector('#buttonRegister')
             buttonRegister.addEventListener('click', this.onRegisterHandler)
-
-            const inputUsername = document.querySelector('#inputUsername')
-            inputUsername.addEventListener('keydown', priorityInput)
-
-            const inputEmail = document.querySelector('#inputEmail')
-            inputEmail.addEventListener('keydown', priorityInput)
         }
 
         #createPage() {

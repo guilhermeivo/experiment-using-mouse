@@ -1,5 +1,4 @@
 import CustomCursor from '../../Common/CustomCursor'
-import { createElementFromHTML } from '../../Common/common'
 import KeyPressListener from '../../Common/KeyPressListener'
 
 import classes from './style.module.scss';

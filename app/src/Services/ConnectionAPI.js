@@ -74,6 +74,17 @@ export default (() => {
         })
     }
 
+    const UpdateMaze = (id, name, description, object) => {
+        const path = `${ urlServer }/maze/update`
+
+        return httpConnection(path, typeMethods.POST, {
+            id: id,
+            name: name,
+            description: description,
+            object: JSON.stringify(object)
+        })
+    }
+
     const ToggleLikeMaze = (idMaze) => {
         const path = `${ urlServer }/maze/like`
 
@@ -121,7 +132,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById, addViewMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById, addViewMaze, UpdateMaze
     }
     
 })()

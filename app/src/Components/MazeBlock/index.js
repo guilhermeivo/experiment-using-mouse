@@ -1,5 +1,3 @@
-import { createElementFromHTML } from '../../Common/common'
-
 import classes from './style.module.scss'
 
 export const COMPONENT_TAG = 'maze-block'

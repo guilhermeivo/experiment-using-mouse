@@ -9,7 +9,7 @@ export default class OverworldMap {
         this.overworld = null
         this.configObjects = config.configObjects
         this.gameObjects = { }
-        this.walls = config.walls || { }
+        this.tiles = config.tiles || { }
 
         this.lowerImageSrc = config.lowerSrc
     }
@@ -42,7 +42,7 @@ export default class OverworldMap {
     isSpaceTaken(currentX, currentY, direction) {
         const { x, y } = nextPosition(currentX, currentY, direction)
 
-        if (this.walls[`${x},${y}`]) {
+        if (this.tiles[`${x},${y}`] === 'wall') {
             return true
         }
         return Object.values(this.gameObjects).find(obj => {
