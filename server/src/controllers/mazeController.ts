@@ -313,7 +313,7 @@ export default () => {
                 return new Result('An error occurred while executing the function.')
             }
 
-            return new Result('The maze has been updated successfully.', '')
+            return new Result('The maze has been updated successfully.', request.id)
         }
     }
 
