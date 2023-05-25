@@ -9,6 +9,8 @@ export default customElements.define(PAGE_TAG,
     class extends HTMLElement {
         constructor(...props) {
             super(props)
+
+            this.onChangeHandler = this.onChangeHandler.bind(this)
         }
 
         connectedCallback() {
@@ -27,6 +29,33 @@ export default customElements.define(PAGE_TAG,
                 localStorage.removeItem('OverworldMaze')
                 navigateTo('/make')
             })
+
+            const buttonFilter = document.querySelector('#buttonFilter')
+            const floatingVerticalFilter = document.querySelector('#floatingVerticalFilter')
+            buttonFilter.addEventListener('click', () => { 
+                floatingVerticalFilter.toggle() 
+            })
+
+            const buttonVisibility = document.querySelector('#buttonVisibility')
+            const floatingVerticalVisibility = document.querySelector('#floatingVerticalVisibility')
+            buttonVisibility.addEventListener('click', () => { 
+                floatingVerticalVisibility.toggle() 
+            })
+
+            const inputSearch = document.querySelector('#inputSearch')
+            inputSearch.addEventListener('change', this.onChangeHandler)
+
+            const radioDisplayOptions = document.querySelectorAll('[name="displayOptions"]')
+            radioDisplayOptions.forEach(item => item.addEventListener('change', this.onChangeHandler))
+
+            const radioSortBy = document.querySelectorAll('[name="sortBy"]')
+            radioSortBy.forEach(item => item.addEventListener('change', this.onChangeHandler))
+
+            const numberRows = document.querySelector('#numberRows')
+            numberRows.addEventListener('change', this.onChangeHandler)
+
+            const numberColumns = document.querySelector('#numberColumns')
+            numberColumns.addEventListener('change', this.onChangeHandler)
         }
 
         async #renderPrivateMazes() {
@@ -67,6 +96,88 @@ export default customElements.define(PAGE_TAG,
             }
         }
 
+        onChangeHandler(event) {
+            const inputSearch = document.querySelector('#inputSearch').value || null
+            const radioSortBy = document.querySelector('[name="sortBy"]:checked').value || null
+            const numberRows = document.querySelector('#numberRows').value || null
+            const numberColumns = document.querySelector('#numberColumns').value || null
+
+            const request = {
+                q: inputSearch,
+                sortBy: radioSortBy,
+                filters: {
+                    dimensions: [ numberRows, numberColumns ]
+                }
+            }
+        }
+
+        #sectionScrollerDisplayOptions() {
+            return (/*html*/`
+                <div id="wrapperDisplayOptions">
+                    <div class="${ classesForms['form-controls'] } ${ classes['visibility__display-options'] }">
+                        <div class="${ classesForms['form__radio-control'] }">
+                            <div>
+                                <input type="radio" id="grid" name="displayOptions" value="grid" checked>
+                                <label for="grid">
+                                    <span class="material-symbols notranslate">
+                                    grid_view
+                                    </span>
+                                    Grid
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="list" name="displayOptions" value="list">
+                                <label for="list">
+                                    <span class="material-symbols notranslate">
+                                    list
+                                    </span>
+                                    List
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `)
+        }
+
+        #sectionScrollerSortBy() {
+            return (/*html*/`
+                <div id="wrapperSortBy">
+                    <div class="${ classesForms['form-controls'] } ${ classes['visibility__sort-by'] }">
+                        <div class="${ classesForms['form__radio-control'] }">
+                            <input type="radio" id="alphabetical" name="sortBy" value="alphabetical" checked>
+                            <label for="alphabetical">Alphabetical</label>
+                        </div>
+                        <div class="${ classesForms['form__radio-control'] }">
+                            <input type="radio" id="releaseDate" name="sortBy" value="releaseDate">
+                            <label for="releaseDate">Release Date</label>
+                        </div>
+                        <div class="${ classesForms['form__radio-control'] }">
+                            <input type="radio" id="likes" name="sortBy" value="likes">
+                            <label for="likes">Likes</label>
+                        </div>
+                    </div>
+                </div>
+            `)
+        }
+
+        #sectionScrollerDimensions() {
+            return (/*html*/`
+                <div id="wrapperDimensions">
+                    <div class="${ classesForms['form-controls'] }">
+                        <div class="${ classesForms['form__text-control'] }">
+                            <input type="number" name="numberRows" id="numberRows" />
+                            <label for="numberRows">Rows</label>
+                        </div>
+                        <div class="${ classesForms['form__text-control'] }">
+                            <input type="number" name="numberColumns" id="numberColumns"  />
+                            <label for="numberColumns">Columns</label>
+                        </div>
+                    </div>
+                </div>
+            `)
+        }
+
         #createPage() {            
             return (/*html*/`
                 <div class="${ classes['wrapper'] }">
@@ -84,26 +195,31 @@ export default customElements.define(PAGE_TAG,
 
                     <h1>Public mazes</h1>
 
-                    <div class="${ classesForms['form-controls'] } ${ classes['search'] }">
-                        <div class="${ classesForms['form__text-control'] }">
-                            <input id="inputSearch" type="text" name="input-search" placeholder=" " />
-                            <label for="inputSearch">Search</label>
-                            <span class="${ classesForms['form__error-message'] }"></span>
-                        </div>
-                        <div class="${ classes['search__buttons'] }">
+                    <div class="${ classes['options'] }">
+                        <div class="${ classesForms['form-controls'] } ">
                             <div class="${ classesForms['form__text-control'] }">
-                                <button 
-                                    id="button" 
-                                    class="material-symbols notranslate ${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
-                                    filter_list
-                                </button>
+                                <input class="${ classes['options__input'] }" id="inputSearch" type="search" name="input-search" placeholder="Search..." />
+                                <label class="${ classes['options__label'] }" for="inputSearch">
+                                    <span class="material-symbols notranslate">search</span>
+                                </label>
+                                <span class="${ classesForms['form__error-message'] }"></span>
                             </div>
-                            <div class="${ classesForms['form__text-control'] }">
+                            <div class="${ classesForms['form__button-control'] }">
                                 <button 
-                                    id="button" 
-                                    class="material-symbols notranslate ${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
-                                    search
+                                    id="buttonFilter" 
+                                    class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                    <span class="material-symbols notranslate">filter_list</span>
+                                    Filters
                                 </button>
+                                <floating-vertical id="floatingVerticalFilter"></floating-vertical>
+                            </div>
+                            <div class="${ classesForms['form__button-control'] }">
+                                <button 
+                                    id="buttonVisibility" 
+                                    class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                    <span class="material-symbols notranslate">visibility</span>
+                                </button>
+                                <floating-vertical id="floatingVerticalVisibility"></floating-vertical>
                             </div>
                         </div>
                     </div>
@@ -123,6 +239,13 @@ export default customElements.define(PAGE_TAG,
 
                 this.#renderPrivateMazes()
                 this.#renderPublicMazes()
+
+                const floatingVerticalFilter = document.querySelector('#floatingVerticalFilter')
+                floatingVerticalFilter.addContentElement({ title: 'Dimensions Range', element: this.#sectionScrollerDimensions() })
+
+                const floatingVerticalVisibility = document.querySelector('#floatingVerticalVisibility')
+                floatingVerticalVisibility.addContentElement({ title: 'Display Options', element: this.#sectionScrollerDisplayOptions() })
+                floatingVerticalVisibility.addContentElement({ title: 'Sort By', element: this.#sectionScrollerSortBy() })
 
                 enableBackMenu()
                 this.addAllListeners()

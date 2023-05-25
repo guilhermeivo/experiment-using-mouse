@@ -1,4 +1,3 @@
-import { createElementFromHTML } from '../../Common/common'
 import KeyPressListener from '../../Common/KeyPressListener'
 
 import classes from './style.module.scss'
@@ -29,12 +28,12 @@ export default customElements.define(COMPONENT_TAG,
         }
 
         addContentElement({ title, element }) {
-            this.querySelector('#floatingVertical').prepend(element)
-            element.prepend(createElementFromHTML(`
+            const elementDOM = this.querySelector(`.${ classes['floating-vertical'] }`).appendDOM(element)
+            elementDOM.appendDOM(`
                 <div class="${ classes['floating-vertical__title'] }">
                     <h4>${ title }</h4>
                 </div>
-            `))
+            `, 'afterbegin')
         }
 
         onEscapeHandler(event) {
@@ -43,11 +42,20 @@ export default customElements.define(COMPONENT_TAG,
         }
 
         toggle() {
-            const floatingVertical = this.querySelector('#floatingVertical')
+            const floatingVertical = this.querySelector(`.${ classes['floating-vertical'] }`)
             floatingVertical.classList.toggle(classes['floating-vertical__disable']) 
             this.state = {
                 ...this.state,
                 isOpen: !floatingVertical.classList.contains(classes['floating-vertical__disable']) 
+            }
+
+            if (this.state.isOpen) {
+                let allFloatingVertical = Array.from(document.querySelectorAll(`.${ classes['floating-vertical'] }`))
+                allFloatingVertical = allFloatingVertical.filter(item => item !== floatingVertical)
+
+                allFloatingVertical.forEach(item => {
+                    if (item.parentElement.state.isOpen) item.parentElement.toggle()
+                })
             }
         }
 
@@ -62,9 +70,7 @@ export default customElements.define(COMPONENT_TAG,
 
         render() {
             this.appendDOM(`
-                <div 
-                    id="floatingVertical" 
-                    class="${ classes['floating-vertical'] } ${ classes['floating-vertical__disable'] }"></div>
+                <div class="${ classes['floating-vertical'] } ${ classes['floating-vertical__disable'] }"></div>
             `)
 
             this.addAllListeners()

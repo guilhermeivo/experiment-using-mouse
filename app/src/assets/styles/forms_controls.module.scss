@@ -10,6 +10,64 @@
         gap: 12px;
     }
 
+    .form__radio-control {
+        padding: 0 12px;
+        margin-bottom: 4px;
+        position: relative;
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            position: relative;
+            padding: 4px 12px;
+            font-size: $body-2-font-size;
+            font-family: $title-font;
+            text-decoration: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+            transition: .2s cubic-bezier(1, 0, 1, 1);
+
+            background: var(--surface-color);
+            border: 1px solid var(--primary-color);
+            outline: 3px solid transparent;
+
+            span {
+                font-size: $body-2-font-size;
+            }
+        
+            &:hover {
+                transition: .2s ease-in;
+                box-shadow: 0px 4px 16px var(--shadow-color);
+                background: var(--surface-color--variant);
+            }
+        }
+
+        input[type="radio"] {
+            display: none;
+
+            &:checked + label {
+                color: var(--background-color);
+                background: var(--primary-color);
+                border: 1px solid transparent;
+                outline: 3px solid transparent;
+
+                &:focus {
+                    transition: .2s ease-in;
+                    outline: 3px solid var(--primary-color--variant);
+                }
+            
+                &:hover {
+                    transition: .2s ease-in;
+                    opacity: .7;
+                    box-shadow: 0px 4px 16px var(--shadow-color);
+                }
+            }
+        }
+    }
+
     .form__text-control {
         padding: 0 12px;
         margin-bottom: 12px;
@@ -25,8 +83,6 @@
             top: 6px;
             transition: .2s cubic-bezier(1, 0, 1, 1);
             transform-style: preserve-3d;
-
-            
         }
 
         label::after {
@@ -56,7 +112,7 @@
                 opacity: 1;
             }
 
-            input[type="text"],
+            input[type="number"],
             input[type="text"] {
                 border: 1px solid var(--error-color);
             }
@@ -66,6 +122,11 @@
             padding: 6px 12px !important;
         }
 
+        input[type="search"] {
+            padding-left: 36px !important;
+        }
+
+        input[type="search"],
         input[type="text"],
         input[type="number"],
         select {
@@ -77,7 +138,11 @@
             padding: 4px 12px;
             transition: .2s cubic-bezier(1, 0, 1, 1);
             font-size: $body-font-size;
+        }
 
+        input[type="text"],
+        input[type="number"],
+        select {
             &:focus {
                 border: 1px solid var(--primary-color);
                 transition: .2s ease-in;
@@ -164,9 +229,19 @@
     }
 
     .form__button-control {
-        input[type="button"], a, .button {
+        position: relative;
+        
+        input[type="button"], a, .button, button {
             font-size: $body-2-font-size;
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            justify-content: center;
+
+            span {
+                font-size: $body-2-font-size;
+            }
         }
     }
 }

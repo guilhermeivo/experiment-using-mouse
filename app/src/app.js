@@ -53,10 +53,10 @@ import ThemeSelector from "./Services/ThemeSelector"
 
     const hasToken = checkToken()
 
-    const floatingMenu = document.querySelector('#headerNavigation').querySelector('#floatingMenu').firstElementChild
-    const floatingVertical = document.querySelector('floating-vertical')
+    const floatingMenu = document.querySelector('#floatingMenu').firstElementChild
+    const floatingVertical = document.querySelector('#floatingVerticalMenu')
     floatingMenu.addEventListener('click', () => { floatingVertical.toggle() })
-    floatingVertical.addContentElement({ title: 'Authentication', element: createElementFromHTML(`
+    floatingVertical.addContentElement({ title: 'Authentication', element: `
         <div id="wrapperSession">
             <div class="${ classesForms['form-controls'] }">
                 <div class="${ classesForms['form__text-control'] }">
@@ -81,7 +81,7 @@ import ThemeSelector from "./Services/ThemeSelector"
                 }
             </div>
         </div>
-    `)})
+    `})
 
     const buttonLogout = document.querySelector('#buttonLogout')
     if (hasToken) {
@@ -91,7 +91,7 @@ import ThemeSelector from "./Services/ThemeSelector"
         })
     }
 
-    floatingVertical.addContentElement({ title: 'Themes', element: createElementFromHTML(`
+    floatingVertical.addContentElement({ title: 'Themes', element: `
         <div id="wrapperThemes">
             <div class="${ classesForms['form-controls'] }">
                 <div class="${ classesForms['form__text-control'] }">
@@ -111,7 +111,7 @@ import ThemeSelector from "./Services/ThemeSelector"
                 </div>
             </div>
         </div>
-    `)})
+    `})
     
     const selectThemes = document.querySelector('#selectThemes')
     selectThemes.addEventListener('change', () => {

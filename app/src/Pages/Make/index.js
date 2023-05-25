@@ -69,8 +69,7 @@ export default customElements.define(PAGE_TAG,
             const headerNavigation = document.querySelector('#headerNavigation')
             headerNavigation.querySelector('#toolbarMenu').removeChild(document.querySelector('blocks-toolbar'))
 
-            const floatingVertical = document.querySelector('#floatingVertical')
-            floatingVertical.removeChild(document.querySelector('#wrapperMaze'))
+            document.querySelector('#wrapperMaze').remove()
         }
 
         onMouseMoveHandler(event) {
@@ -170,7 +169,7 @@ export default customElements.define(PAGE_TAG,
                                     data-anchorlink="/login"
                                     data-anchortext="Sign In"></pop-up>
                             `))
-                            const floatingVertical = document.querySelector('floating-vertical')
+                            const floatingVertical = document.querySelector('#floatingVerticalMenu')
                             floatingVertical.toggle()
                             resolve()
                         } else {
@@ -297,7 +296,7 @@ export default customElements.define(PAGE_TAG,
                         </div>
                         <div class="${ classesForms['form__text-control'] }">
                             <input type="number" name="numberColumns" id="numberColumns" min="${ SMALLEST_POSSIBLE_SIZE }" max="${ LARGEST_POSSIBLE_SIZE }" value="${ this.state.overworldMazeEdit.columns }" />
-                            <label for="numberColumns">Column</label>
+                            <label for="numberColumns">Columns</label>
                         </div>
                         <div class="${ classesForms['form__checkbox-control'] }">
                             <input type="checkbox" name="checkboxEdges" id="checkboxEdges" checked />
@@ -338,8 +337,8 @@ export default customElements.define(PAGE_TAG,
 
         render() {
             // floating vertical menu configurations local
-            const floatingVertical = document.querySelector('floating-vertical')
-            floatingVertical.addContentElement({ title: 'Maze Configurations', element: createElementFromHTML(this.#sectionScrollerMenu())})
+            const floatingVertical = document.querySelector('#floatingVerticalMenu')
+            floatingVertical.addContentElement({ title: 'Maze Configurations', element: this.#sectionScrollerMenu() })
 
             // toolbar menu create
             const headerNavigation = document.querySelector('#headerNavigation')

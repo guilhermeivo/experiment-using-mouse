@@ -32,8 +32,7 @@ export default customElements.define(PAGE_TAG,
         disconnectedCallback() {
             disableBackMenu()
 
-            const floatingVertical = document.querySelector('#floatingVertical')
-            floatingVertical.removeChild(document.querySelector('#wrapperInformations'))
+            document.querySelector('#wrapperInformations').remove()
 
             const headerNavigation = document.querySelector('#headerNavigation')
             headerNavigation.querySelector('#toolbarMenu').removeChild(document.querySelector('#wrapperTitle'))
@@ -144,8 +143,8 @@ export default customElements.define(PAGE_TAG,
 
             this.appendDOM(this.#createPage())
 
-            const floatingVertical = document.querySelector('floating-vertical')
-            floatingVertical.addContentElement({ title: 'Informations', element: createElementFromHTML(this.#sectionScrollerMenu())})
+            const floatingVertical = document.querySelector('#floatingVerticalMenu')
+            floatingVertical.addContentElement({ title: 'Informations', element: this.#sectionScrollerMenu() })
 
             ConnectionAPI.addViewMaze(this.state.id)
             this.renderCanvasMaze()

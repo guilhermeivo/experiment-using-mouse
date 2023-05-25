@@ -115,7 +115,9 @@ export function disableBackMenu() {
 
 HTMLElement.prototype.appendDOM = function(stringHtml, position = 'beforeend') {
     this.insertAdjacentHTML(position, stringHtml.trim())
-    return this
+    if (position === 'beforeend') return this.lastElementChild
+    else if (position === 'afterbegin') return this.firstElementChild
+    else return this
 }
 
 Window.prototype.getParameterUrl = function(key) {
