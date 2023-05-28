@@ -1,6 +1,6 @@
-import entityBase from "../common/interfaces/entityBase"
+import IEntityBase from "../common/interfaces/IEntityBase"
 
-export default interface token extends entityBase {
+export default interface token extends IEntityBase {
     userId?: number,
     token: string,
     expirationTime: Date,

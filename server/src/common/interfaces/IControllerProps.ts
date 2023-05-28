@@ -1,7 +1,7 @@
 import * as http from 'node:http'
 import Result from '../models/Result'
 
-export default interface controllerProps {
+export default interface IControllerProps {
     [key: string]: GenericFunction | string
     method: string
 }

@@ -1,6 +1,6 @@
-import entityBase from "../common/interfaces/entityBase"
+import IEntityBase from "../common/interfaces/IEntityBase"
 
-export default interface file extends entityBase {
+export default interface file extends IEntityBase {
     fileName: string
     contentType: string
     filePath: string

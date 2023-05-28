@@ -1,6 +1,6 @@
-import entityBase from "../common/interfaces/entityBase"
+import IEntityBase from "../common/interfaces/IEntityBase"
 
-export default interface maze extends entityBase {
+export default interface maze extends IEntityBase {
     userId?: number
     fileId?: number
     name: string

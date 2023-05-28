@@ -1,5 +1,6 @@
 import { dataTypes, isLiteral, isLogicalOperator, literal, operators } from "./dataTypes"
 
+// https://sqlite.org/
 // https://sqlite.org/lang_createtable.html
 export const constraint = {
     primaryKey: 'PRIMARY KEY',

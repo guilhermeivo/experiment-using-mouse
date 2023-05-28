@@ -1,6 +1,6 @@
-import entityBase from "../common/interfaces/entityBase";
+import IEntityBase from "../common/interfaces/IEntityBase";
 
-export default interface user extends entityBase {
+export default interface user extends IEntityBase {
     email: string,
     username: string,
     emailConfirmed: boolean,
