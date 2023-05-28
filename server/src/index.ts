@@ -1,7 +1,7 @@
 import * as http from 'node:http'
 import * as dotenv from 'dotenv'
-import migrate from './db/migrate'
 import app from './common/Server'
+import db from './persistence'
 dotenv.config()
 
 const HOST = process.env.BASE_HOSTNAME || 'localhost'
@@ -26,6 +26,16 @@ app.useRouting(__dirname)
 
 const server = http.createServer((requestHttp, response) => app.requestListener(requestHttp, response))
 server.listen(PORT, () => {
-    migrate()
+    db.initialize()
     console.log(`Server is running on http://${ HOST }:${ PORT }`)
 })
+
+const gracefulShutdown = () => {
+    db.teardown()
+        .catch(() => {})
+        .then(() => process.exit())
+}
+
+process.on('SIGINT', gracefulShutdown)
+process.on('SIGTERM', gracefulShutdown)
+process.on('SIGUSR2', gracefulShutdown)

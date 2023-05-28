@@ -1,10 +1,8 @@
 import Result from "../common/models/Result"
 import controllerProps from "../common/interfaces/controllerProps"
 import { isEmailValid, sendMail } from "../common/helpers/mailHelper"
-import user from "../entities/user"
 import userRepository from "../repository/userRepository"
 import crypto from 'node:crypto'
-import token from "../entities/token"
 import tokenRepository from "../repository/tokenRepository"
 import * as dotenv from 'dotenv'
 import { generateJwtToken } from "../common/helpers/jwtHelper"
@@ -28,24 +26,23 @@ export default () => {
             if (!request.email || !request.username || !request.redirectUri) return new Result(`Not all data was provided.`)
             if (!isEmailValid(request.email)) return new Result(`You didn't enter a valid email address.`)
 
-            const emailExist: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
-            if (emailExist.length > 0) return new Result(`There is already a registered user with this email adress.`)
+            const emailExist = await userRepository.findByEmail(request.email)
+            if (emailExist) return new Result(`There is already a registered user with this email adress.`)
 
             const currentTime = new Date()
-            const addUser = await userRepository.Add({
+            const addUser = await userRepository.add({
                 email: request.email,
                 username: request.username,
                 createdAt: currentTime,
                 emailConfirmed: false,
                 createdByIp: request.ip
-            })
-            
+            })            
             if (!addUser) return new Result(`An error occurred while executing the function.`)
 
             const expirationTime = new Date()
             expirationTime.setTime(currentTime.getTime() + (10 * 60 * 1000)) // 10 minutes
 
-            const addToken = await tokenRepository.Add({
+            const addToken = await tokenRepository.add({
                 userId: addUser.id,
                 token: crypto.randomBytes(32).toString('hex'),
                 expirationTime: expirationTime,
@@ -53,7 +50,6 @@ export default () => {
                 type: 'email',
                 createdByIp: request.ip
             })
-
             if (!addToken) return new Result(`An error occurred while executing the function.`)
             
             const mailOptions = {
@@ -95,26 +91,39 @@ export default () => {
         async handle(request: requestVerifyEmail) {
             if (!request.userId || !request.emailToken) return new Result(`Not all data was provided.`)
 
-            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.id === Number(request.userId))
-            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+            const findUser = await userRepository.findById(Number(request.userId))
+            if (!findUser) return new Result(`Invalid auth credentials.`)
             
-            const findToken: Array<token> = await tokenRepository.Where((entity: token) => entity.userId === Number(request.userId) && entity.token === request.emailToken)
-            if (findToken.length <= 0) return new Result(`Invalid auth credentials.`)
+            const findToken = await tokenRepository.findOne({
+                where: {
+                    userId: Number(request.userId),
+                    token: request.emailToken
+                }
+            })
+            if (!findToken) return new Result(`Invalid auth credentials.`)
 
             const currentdate = new Date()
-            if (findToken[0].expirationTime < currentdate) return new Result('Expired token.')
-            if (findToken[0].revokedAt && findToken[0].revokedAt < currentdate) return new Result('Expired token.')
+            if (findToken.expirationTime < currentdate) return new Result('Expired token.')
+            if (findToken.revokedAt && findToken.revokedAt < currentdate) return new Result('Expired token.')
 
-            const updateUser = await userRepository.Update({
+            const updateUser = await userRepository.update({
                 emailConfirmed: true
-            }, (entity: user) => entity.id === Number(request.userId))
+            }, {
+                where: {
+                    id: Number(request.userId)
+                }
+            })
             
             if (!updateUser) return new Result('An error occurred while executing the function.')
 
-            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId === Number(request.userId) && entity.token === request.emailToken)
-            if (!removeToken) return new Result('An error occurred while executing the function.')
+            const removeToken = await tokenRepository.destroy({
+                where: {
+                    userId: Number(request.userId),
+                    token: request.emailToken
+                }
+            })
 
-            return new Result('Email confirmed successfully.', findUser[0].id)
+            return new Result('Email confirmed successfully.', findUser.id)
         }
     }
 
@@ -133,17 +142,17 @@ export default () => {
             if (request.connection === 'email' && !request.email)
                 return new Result(`The form of communication was not provided.`)
             
-            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
-            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
-            if (!findUser[0].emailConfirmed) return new Result(`Waiting for email confirmation.`)
+            const findUser = await userRepository.findByEmail(request.email)
+            if (!findUser) return new Result(`Invalid auth credentials.`)
+            if (!findUser.emailConfirmed) return new Result(`Waiting for email confirmation.`)
 
             const currentTime = new Date()
             const expirationTime = new Date()
             expirationTime.setTime(currentTime.getTime() + (10 * 60 * 1000)) // 10 minutes
 
-            const addToken = await tokenRepository.Add({ 
+            const addToken = await tokenRepository.add({ 
                 token: crypto.randomBytes(3).toString('hex'),
-                userId: findUser[0].id,
+                userId: findUser.id,
                 expirationTime: expirationTime,
                 createdAt: currentTime,
                 type: 'otc',
@@ -161,12 +170,12 @@ export default () => {
                     'The link is valid for 10 minutes.', 
                     '', ''),
                 subject: `Email verification code: ${ addToken.token }`,
-                to: `${ findUser[0].username } <${ findUser[0].email }>`,
+                to: `${ findUser.username } <${ findUser.email }>`,
             }
 
             try {
                 sendMail(mailOptions)
-                return new Result('Verification code send to e-mail.', findUser[0].id)
+                return new Result('Verification code send to e-mail.', findUser.id)
             } catch {
                 return new Result(`Can't send code email.`)
             }
@@ -185,30 +194,45 @@ export default () => {
         async handle(request: requestAuthenticate, response) {
             if (!request.email || !request.otc || !request.realm) return new Result(`Not all data was provided.`)
 
-            const findUser: Array<user> = await userRepository.Where((entity: user) => entity.email === request.email)
-            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+            const findUser = await userRepository.findByEmail(request.email)
+            if (!findUser) return new Result(`Invalid auth credentials.`)
 
-            const findCode: Array<token> = await tokenRepository.Where((entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
-            if (findCode.length <= 0) return new Result(`Invalid auth credentials.`)
+            const findCode = await tokenRepository.findOne({
+                where: {
+                    userId: findUser.id,
+                    token: request.otc
+                }
+            })
+            if (!findCode) return new Result(`Invalid auth credentials.`)
 
             const currentdate = new Date()
-            if (findCode[0].expirationTime < currentdate) return new Result('Expired code.')
-            if (findCode[0].revokedAt && findCode[0].revokedAt < currentdate) return new Result('Expired code.')
+            if (findCode.expirationTime < currentdate) return new Result('Expired code.')
+            if (findCode.revokedAt && findCode.revokedAt < currentdate) return new Result('Expired code.')
 
-            if (findCode[0].token !== request.otc) return new Result(`Invalid auth credentials.`) 
+            if (findCode.token !== request.otc) return new Result(`Invalid auth credentials.`) 
 
-            const updateToken = await tokenRepository.Update({
+            const updateToken = await tokenRepository.update({
                 revokedAt: currentdate,
                 revokedByIp: request.ip
-            }, (entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
+            }, {
+                where: {
+                    userId: findUser.id,
+                    token: request.otc
+                }
+            })
 
             if (!updateToken) return new Result('An error occurred while executing the function.')
 
-            const removeToken = await tokenRepository.Remove((entity: token) => entity.userId == findUser[0].id && entity.token === request.otc)
+            const removeToken = await tokenRepository.destroy({
+                where: {
+                    userId: findUser.id,
+                    token: request.otc
+                }
+            })
 
             const date = new Date()
             date.setDate(date.getDate() + 1)
-            const accessToken = generateJwtToken({ sub: findUser[0].id }, '24h')
+            const accessToken = generateJwtToken({ sub: findUser.id }, '24h')
             if (response) response.setHeader('Set-Cookie', `access_token=${ accessToken }; Path=/; HttpOnly; SameSite=None; Secure; Expires=${ date.toUTCString() }`)
 
             if (nodeEnv === 'DEVELOPMENT') console.log(`access_token=${ accessToken }`)

@@ -2,22 +2,134 @@ import path from "path"
 import enumTypeInteractions from "../common/enumerations/enumTypeInteractions"
 import controllerProps from "../common/interfaces/controllerProps"
 import Result from "../common/models/Result"
-import interaction from "../entities/interaction"
-import maze from "../entities/maze"
 import authGuard from "../middleware/authGuard"
 import interactionRepository from "../repository/interactionRepository"
 import mazeRepository from "../repository/mazeRepository"
 import * as fs from 'fs'
 import fileRepository from "../repository/fileRepository"
-import file from "../entities/file"
 import { sendMail } from "../common/helpers/mailHelper"
 import { templateMail } from "../common/templates/templateMail"
 import userRepository from "../repository/userRepository"
-import user from "../entities/user"
+import PaginatedList from "../common/models/PaginatedList"
+import maze from "../entities/maze"
+import db from "../persistence"
 
 const emailUser = process.env.EMAIL_USER
 
 export default () => {
+    interface requestGetWithPagination {
+        userId: number
+        pageNumber: number
+        pageSize: number
+    }
+
+    const getWithPagination: controllerProps = {
+        method: `GET('pagination')`,
+        auth: authGuard,
+        handle: async (request: requestGetWithPagination) => {
+            if (!request.userId) return new Result(`Invalid auth credentials.`)
+            if (!request.pageNumber || !request.pageSize) return new Result(`Not all data was provided.`)
+
+            const mazeEntity = await mazeRepository.pagination(request.pageSize, request.pageNumber)
+            const { count } = await mazeRepository.findAndCount()
+
+            const result: Array<object> = []
+            await Promise.all(
+                mazeEntity.map(async maze => {
+                    result.push(createResponseMaze(maze, request.userId))
+                }))
+
+            return new Result('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
+        }
+    }
+
+    interface requestGetBySearchWithPagination {
+        userId: number
+        pageNumber: number
+        pageSize: number
+        q: string
+        sortBy: string
+        filters: string
+    }
+
+    const getBySearchWithPagination: controllerProps = {
+        method: `GET('pagination/search')`,
+        auth: authGuard,
+        handle: async (request: requestGetBySearchWithPagination) => {
+            if (!request.userId) return new Result(`Invalid auth credentials.`)
+            if (!request.pageNumber || !request.pageSize) return new Result(`Not all data was provided.`)
+            if (request.sortBy && !['alphabetical', 'releaseDate', 'likes'].includes(request.sortBy)) return new Result(`Not all data was provided.`)
+
+            const mazeEntity = await mazeRepository.pagination(request.pageSize, request.pageNumber, {
+                where: {
+                    name: {
+                        [db.operators.like]: `%${ request.q }%` 
+                    }
+                    
+                }
+            })
+            const { count } = await mazeRepository.findAndCount({
+                where: {
+                    name: {
+                        [db.operators.like]: `%${ request.q }%` 
+                    }
+                }
+            })
+
+            const result: Array<object> = []
+            await Promise.all(
+                mazeEntity.map(async maze => {
+                    result.push(await createResponseMaze(maze, request.userId))
+                }))
+
+            return new Result('maze', new PaginatedList<any>(result, count, request.pageNumber, request.pageSize))
+        }
+    }
+
+    const createResponseMaze = async (maze: maze, userId: number) => {
+        const { count: amountLikes } = await interactionRepository.findAndCount({
+            where: {
+                mazeId: maze.id,
+                type: enumTypeInteractions.Liked.toString()
+            }
+        })
+        const { count: amountViews } = await interactionRepository.findAndCount({
+            where: {
+                mazeId: maze.id,
+                type: enumTypeInteractions.Visualized.toString()
+            }
+        })
+        const isLiked = await interactionRepository.find({
+            where: {
+                mazeId: maze.id,
+                userId: userId,
+                type: enumTypeInteractions.Liked.toString()
+            }
+        })
+        const file = await fileRepository.findById(Number(maze.fileId))
+        const findUser = await userRepository.findById(Number(maze.userId))
+
+        try {
+            const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
+
+            return {
+                id: maze.id,
+                name: maze.name,
+                description: maze.description,
+                like: amountLikes,
+                view: amountViews,
+                isLiked: isLiked.length ? true : false,
+                createdAt: maze.createdAt,
+                overworldMap: JSON.parse(data),
+                createdBy: {
+                    username: findUser.username
+                }
+            }
+        } catch { 
+            return { }
+        } 
+    }
+
     interface requestGetAll {
         userId: number
     }
@@ -28,34 +140,12 @@ export default () => {
         handle: async (request: requestGetAll) => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
 
-            const findMaze = await mazeRepository.Find()
+            const findMaze = await mazeRepository.find()
 
             const result: Array<object> = []
             await Promise.all(
-                findMaze.map(async (maze: maze) => {
-                    const amountLikes = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Liked.toString())
-                    const amountViews = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Visualized.toString())
-                    const isLiked = await interactionRepository.Where((x: interaction) => x.mazeId == maze.id && x.userId == request.userId && x.type == enumTypeInteractions.Liked.toString())
-                    const file: file = [...await fileRepository.Where((x: file) => x.id === maze.fileId)][0]
-                    const findUser: user = [...await userRepository.Where((entity: user) => entity.id === Number(maze.userId))][0]
-
-                    try {
-                        const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
-
-                        result.push({
-                            id: maze.id,
-                            name: maze.name,
-                            description: maze.description,
-                            like: amountLikes,
-                            view: amountViews,
-                            isLiked: isLiked.length ? true : false,
-                            createdAt: maze.createdAt,
-                            overworldMap: JSON.parse(data),
-                            createdBy: {
-                                username: findUser.username
-                            }
-                        })
-                    } catch { }
+                findMaze.map(async maze => {
+                    result.push(await createResponseMaze(maze, request.userId))
                 }))
 
             return new Result('Get All Mazes!', result)
@@ -72,31 +162,17 @@ export default () => {
         handle: async (request: requestByUser) => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
 
-            const findMaze = await mazeRepository.Where((entity: maze) => entity.userId == request.userId)
+            const findMaze = await mazeRepository.find({
+                where: {
+                    userId: request.userId
+                }
+            })
             if (findMaze.length <= 0) return new Result(`Could not find any matching values.`, [])
 
             const result: Array<object> = []
             await Promise.all(
-                findMaze.map(async (maze: maze) => {
-                    const amountLikes = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Liked.toString())
-                    const amountViews = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Visualized.toString())
-                    const isLiked = await interactionRepository.Where((x: interaction) => x.mazeId == maze.id && x.userId == request.userId && x.type == enumTypeInteractions.Liked.toString())
-                    const file: file = [...await fileRepository.Where((x: file) => x.id === maze.fileId)][0]
-
-                    try {
-                        const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
-
-                        result.push({
-                            id: maze.id,
-                            name: maze.name,
-                            description: maze.description,
-                            like: amountLikes,
-                            view: amountViews,
-                            isLiked: isLiked.length ? true : false,
-                            createdAt: maze.createdAt,
-                            overworldMap: JSON.parse(data)
-                        })
-                    } catch { }
+                findMaze.map(async maze => {
+                    result.push(await createResponseMaze(maze, request.userId))
                 }))
 
             return new Result('Get Maze By User!', result)
@@ -115,34 +191,10 @@ export default () => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
             if (!request.id) return new Result(`Not all data was provided.`)
 
-            const findMaze = await mazeRepository.Where((entity: maze) => entity.id == request.id)
-            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
+            const findMaze = await mazeRepository.findById(request.id)
+            if (!findMaze) return new Result(`Could not find any matching values.`)
 
-            const result: Array<object> = []
-            await Promise.all(
-                findMaze.map(async (maze: maze) => {
-                    const amountLikes = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Liked.toString())
-                    const amountViews = await interactionRepository.Count((x: interaction) => x.mazeId == maze.id && x.type == enumTypeInteractions.Visualized.toString())
-                    const isLiked = await interactionRepository.Where((x: interaction) => x.mazeId == maze.id && x.userId == request.userId && x.type == enumTypeInteractions.Liked.toString())
-                    const file: file = [...await fileRepository.Where((x: file) => x.id === maze.fileId)][0]
-
-                    try {
-                        const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
-
-                        result.push({
-                            id: maze.id,
-                            name: maze.name,
-                            description: maze.description,
-                            like: amountLikes,
-                            view: amountViews,
-                            isLiked: isLiked.length ? true : false,
-                            createdAt: maze.createdAt,
-                            overworldMap: JSON.parse(data)
-                        })
-                    } catch { }
-                }))
-
-            return new Result('Get Maze By Id!', result)
+            return new Result('Get Maze By Id!', await createResponseMaze(findMaze, request.userId))
         }
     }
 
@@ -158,17 +210,29 @@ export default () => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
             if (!request.id) return new Result(`Not all data was provided.`)
 
-            const findMaze = await mazeRepository.Where((entity: maze) => entity.id == request.id)
-            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
+            const findMaze = await mazeRepository.findById(request.id)
+            if (!findMaze) return new Result(`Could not find any matching values.`)
 
-            const findInteraction = await interactionRepository.Where((entity: interaction) => entity.userId == request.userId && entity.mazeId == request.id && entity.type === enumTypeInteractions.Liked.toString())
+            const findInteraction = await interactionRepository.find({
+                where: {
+                    userId: request.userId,
+                    mazeId: request.id,
+                    type: enumTypeInteractions.Liked.toString()
+                }
+            })
             if (findInteraction.length > 0) {
-                const removeInteraction = interactionRepository.Remove((entity: interaction) => entity.userId == request.userId && entity.mazeId == request.id && entity.type === enumTypeInteractions.Liked.toString())
+                const removeInteraction = interactionRepository.destroy({
+                    where: {
+                        userId: request.userId,
+                        mazeId: request.id,
+                        type: enumTypeInteractions.Liked.toString()
+                    }
+                })
                 if (!removeInteraction) return new Result('An error occurred while executing the function.')
 
                 return new Result('Removed like!', request.id)
             } else {
-                const addLike = await interactionRepository.AddLike(request.userId, request.id)
+                const addLike = await interactionRepository.addLike(request.userId, request.id)
                 if (!addLike) return new Result('An error occurred while executing the function.')
 
                 return new Result('Add like!', request.id)
@@ -188,13 +252,19 @@ export default () => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
             if (!request.id) return new Result(`Not all data was provided.`)
 
-            const findMaze = await mazeRepository.Where((entity: maze) => entity.id == request.id)
-            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
+            const findMaze = await mazeRepository.findById(request.id)
+            if (!findMaze) return new Result(`Could not find any matching values.`)
 
-            const findInteraction = await interactionRepository.Where((entity: interaction) => entity.userId == request.userId && entity.mazeId == request.id && entity.type === enumTypeInteractions.Visualized.toString())
+            const findInteraction = await interactionRepository.find({
+                where: {
+                    userId: request.userId,
+                    mazeId: request.id,
+                    type: enumTypeInteractions.Visualized.toString()
+                }
+            })
             if (findInteraction.length > 0) return new Result('This user has already performed this interaction.', request.id)
 
-            const addView = await interactionRepository.AddView(request.userId, request.id)
+            const addView = await interactionRepository.addView(request.userId, request.id)
             if (!addView) return new Result('An error occurred while executing the function.')
 
             return new Result('Add view!', request.id)
@@ -218,7 +288,7 @@ export default () => {
 
             const currentTime = new Date()
 
-            const file = await fileRepository.Add({
+            const file = await fileRepository.add({
                 fileName: 'maze',
                 contentType: 'application/json',
                 filePath: 'uploads',
@@ -227,9 +297,13 @@ export default () => {
                 createdByIp: request.ip
             })
             if (!file) return new Result('An error occurred while executing the function.')
-            const fileUpdate = await fileRepository.Update({
+            const fileUpdate = await fileRepository.update({
                 fileName: `maze--${ file.id }`
-            }, (entity: file) => entity.id === file.id)
+            }, {
+                where: {
+                    id: file.id
+                }
+            })
             try {
                 if (!fs.existsSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))) {
                     fs.mkdirSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))
@@ -240,7 +314,7 @@ export default () => {
                 return new Result('An error occurred while executing the function.')
             }
 
-            const maze = await mazeRepository.Add({
+            const maze = await mazeRepository.add({
                 userId : request.userId,
                 fileId: fileUpdate.id,
                 name: request.name,
@@ -251,19 +325,18 @@ export default () => {
 
             if (!maze) return new Result('An error occurred while executing the function.')
 
-            const findUser = await userRepository.Where((entity: user) => entity.id === Number(request.userId))
-            if (findUser.length <= 0) return new Result(`Invalid auth credentials.`)
+            const findUser = await userRepository.findById(Number(request.userId))
 
             const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
             const mailOptions = {
                 from: `Experiment Using Mouse <${ emailUser }>`,
                 html: templateMail(
                     'Maze has been successfully created',
-                    `${ findUser[0].username }`,
+                    `${ findUser.username }`,
                     `Maze created successfully in the day: <b>${ months[currentTime.getMonth()] } ${ currentTime.getDate() }</b>.`,
                     '', '', ''),
-                subject: `subject`,
-                to: `${ findUser[0].username } <${ findUser[0].email }>`,
+                subject: `Maze has been successfully created`,
+                to: `${ findUser.username } <${ findUser.email }>`,
             }
 
             try {
@@ -292,20 +365,34 @@ export default () => {
             if (!request.userId) return new Result(`Invalid auth credentials.`)
             if (!request.id) return new Result(`Not all data was provided.`)
 
-            const findMaze: Array<maze> = await mazeRepository.Where((entity: maze) => entity.id == request.id && entity.userId == request.userId)
-            if (findMaze.length <= 0) return new Result(`Could not find any matching values.`)
+            const findMaze = await mazeRepository.findOne({
+                where: {
+                    id: request.id,
+                    userId: request.userId
+                }
+            })
+            if (!findMaze) return new Result(`Could not find any matching values.`)
 
-            const updateMaze = await mazeRepository.Update({
+            const updateMaze = await mazeRepository.update({
                 name: request.name,
                 description: request.name,
-            }, (entity: maze) => entity.id == request.id && entity.userId == request.userId)
+            }, {
+                where: {
+                    id: request.id,
+                    userId: request.userId
+                }
+            })
 
             const currentTime = new Date()
-            const fileUpdate = await fileRepository.Update({
+            const fileUpdate = await fileRepository.update({
                 size: new Blob([request.object]).size,
                 updatedAt: currentTime,
                 updatedByIp: request.ip
-            }, (entity: file) => entity.id === findMaze[0].fileId)
+            }, {
+                where: {
+                    id: findMaze.fileId
+                }
+            })
 
             try {
                 fs.writeFileSync(path.join(__dirname, `/../${ fileUpdate.filePath }/${ fileUpdate.fileName }.json`), request.object)
@@ -317,5 +404,5 @@ export default () => {
         }
     }
 
-    return [ getAll, getByUser, getById, toggleLike, addView, create, update ]
+    return [ getAll, getByUser, getById, toggleLike, addView, create, update, getWithPagination, getBySearchWithPagination ]
 }
