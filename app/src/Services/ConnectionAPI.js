@@ -107,6 +107,12 @@ export default (() => {
         })
     }
 
+    const GetBySearchWithPaginations = (pageNumber, pageSize, q, sortBy, filters) => {
+        const path = `${ urlServer }/maze/pagination/search?pageNumber=${ pageNumber }&pageSize=${ pageSize }&q=${ q }&sortBy=${ sortBy }&filters=${ filters }`
+
+        return httpConnection(path, typeMethods.GET)
+    }
+
     const httpConnection = (url, method, body) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -132,7 +138,7 @@ export default (() => {
     }
     
     return {
-        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById, addViewMaze, UpdateMaze
+        RegisterUser, VerifyEmail, LoginUser, CodeUser, GetMazes, GetMazeByUser, CreateMaze, ToggleLikeMaze, GetMazeById, addViewMaze, UpdateMaze, GetBySearchWithPaginations
     }
     
 })()

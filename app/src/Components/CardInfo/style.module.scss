@@ -132,3 +132,36 @@
         }
     }
 }
+
+.display-list {
+    &.card-info {
+        width: 100%;
+        .card__image {
+            display: none;
+        }
+        .card__description {
+            flex-direction: row;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: nowrap;
+            h3 {
+                max-width: 96px;
+                width: 96px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 0;
+   
+            }
+            .description__details {
+                border: none;
+                padding: 0;
+            }
+        }
+    }    
+    .card__button {
+        padding: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        min-width: 72px;
+    }
+}

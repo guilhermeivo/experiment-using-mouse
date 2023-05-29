@@ -11,6 +11,13 @@ export default customElements.define(PAGE_TAG,
             super(props)
 
             this.onChangeHandler = this.onChangeHandler.bind(this)
+
+            this.state = {
+                page: window.getParameterUrl('page') || '1',
+                q: window.getParameterUrl('q') || '',
+                sortBy: window.getParameterUrl('sortBy') || 'alphabetical',
+                display: window.getParameterUrl('display') || 'grid'
+            }
         }
 
         connectedCallback() {
@@ -56,6 +63,36 @@ export default customElements.define(PAGE_TAG,
 
             const numberColumns = document.querySelector('#numberColumns')
             numberColumns.addEventListener('change', this.onChangeHandler)
+
+            const buttonPreviousPage = this.querySelector('#buttonPreviousPage')
+            if (buttonPreviousPage) buttonPreviousPage.addEventListener('click', event => {
+                const previousPage = Number(this.state.page) - 1
+
+                const url = new URL(window.location.href)
+                url.searchParams.set('page', previousPage)
+
+                navigateTo(`/play${ url.search }`)
+            })
+
+            const buttonNextPage = this.querySelector('#buttonNextPage')
+            if (buttonNextPage) buttonNextPage.addEventListener('click', event => {
+                const nextPage = Number(this.state.page) + 1
+
+                const url = new URL(window.location.href)
+                url.searchParams.set('page', nextPage)
+
+                navigateTo(`/play${ url.search }`)
+            })
+
+            const buttonLastPage = this.querySelector('#buttonLastPage')
+            buttonLastPage.addEventListener('click', event => {
+                const lastPage = event.target.textContent.trim() || event.target.value
+
+                const url = new URL(window.location.href)
+                url.searchParams.set('page', lastPage)
+
+                navigateTo(`/play${ url.search }`)
+            })
         }
 
         async #renderPrivateMazes() {
@@ -75,12 +112,13 @@ export default customElements.define(PAGE_TAG,
         }
 
         async #renderPublicMazes() {
-            const responseGetMazes = await ConnectionAPI.GetMazes()
+            const responseGetMazes = await ConnectionAPI.GetBySearchWithPaginations(this.state.page, 10, this.state.q, '', '')
 
-            if (responseGetMazes.length > 0) {
-                this.querySelector('#publicMazes').appendDOM(responseGetMazes.map(element => {
+            if (responseGetMazes.TotalCount > 0) {
+                this.querySelector('#publicMazes').appendDOM(responseGetMazes.Items.map(element => {
                     return (`
-                        <card-info
+                        <card-info 
+                            data-display="${ this.state.display || 'grid' }"
                             data-id="${ element.id }"
                             data-title="${ element.name }"
                             data-likes="${ element.like || 0 }"
@@ -91,24 +129,73 @@ export default customElements.define(PAGE_TAG,
                         ></card-info>
                     `)
                 }).join(''))
+
+                this.querySelector('#publicMazes').appendDOM(`<div class="${ classes['pagination'] }">
+                <div class="${ classesForms['form-controls'] } ">
+                    ${
+                        responseGetMazes.HasPreviousPage 
+                        ? 
+                        `
+                        <div class="${ classesForms['form__button-control'] }">
+                            <button 
+                                id="buttonPreviousPage" 
+                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                <span class="material-symbols notranslate">chevron_left</span>
+                            </button>
+                        </div>
+                        `
+                        : ''
+                    }
+                    <div class="${ classesForms['form__button-control'] }">
+                        <button 
+                            id="buttonCurrentPage" 
+                            class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] } ${ classesForms['disable'] }">
+                            ${ responseGetMazes.PageIndex }
+                        </button>
+                    </div>
+                    <div class="${ classes['pagination__line'] }"></div>
+                    <div class="${ classesForms['form__button-control'] }">
+                        <button 
+                            id="buttonLastPage" 
+                            class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                            ${ responseGetMazes.TotalPages }
+                        </button>
+                    </div>
+                    ${
+                        responseGetMazes.HasNextPage 
+                        ? 
+                        `
+                        <div class="${ classesForms['form__button-control'] }">
+                            <button 
+                                id="buttonNextPage" 
+                                class="${ classesForms['button'] } ${ classesForms['button--small'] } ${ classesForms['button__primary'] }">
+                                <span class="material-symbols notranslate">chevron_right</span>
+                            </button>
+                        </div>
+                        `
+                        : ''
+                    }
+                    
+                </div>
+            </div>`, 'afterend')
             } else {
                 this.querySelector('#publicMazes').appendDOM(`<p>There is no maze at the moment.</p>`)
             }
         }
 
         onChangeHandler(event) {
-            const inputSearch = document.querySelector('#inputSearch').value || null
+            const inputSearch = document.querySelector('#inputSearch').value || ''
+            const radioDisplayOptions = document.querySelector('[name="displayOptions"]:checked').value || null
             const radioSortBy = document.querySelector('[name="sortBy"]:checked').value || null
             const numberRows = document.querySelector('#numberRows').value || null
             const numberColumns = document.querySelector('#numberColumns').value || null
 
-            const request = {
-                q: inputSearch,
-                sortBy: radioSortBy,
-                filters: {
-                    dimensions: [ numberRows, numberColumns ]
-                }
-            }
+            const url = new URL(window.location.href)
+            url.searchParams.set('q', inputSearch)
+            url.searchParams.set('sortBy', radioSortBy)
+            url.searchParams.set('display', radioDisplayOptions)
+
+            navigateTo(`/play${ url.search }`)
         }
 
         #sectionScrollerDisplayOptions() {
@@ -117,7 +204,7 @@ export default customElements.define(PAGE_TAG,
                     <div class="${ classesForms['form-controls'] } ${ classes['visibility__display-options'] }">
                         <div class="${ classesForms['form__radio-control'] }">
                             <div>
-                                <input type="radio" id="grid" name="displayOptions" value="grid" checked>
+                                <input type="radio" id="grid" name="displayOptions" value="grid" ${ this.state.display === 'grid' ? 'checked' : '' }>
                                 <label for="grid">
                                     <span class="material-symbols notranslate">
                                     grid_view
@@ -126,7 +213,7 @@ export default customElements.define(PAGE_TAG,
                                 </label>
                             </div>
                             <div>
-                                <input type="radio" id="list" name="displayOptions" value="list">
+                                <input type="radio" id="list" name="displayOptions" value="list" ${ this.state.display === 'list' ? 'checked' : '' }>
                                 <label for="list">
                                     <span class="material-symbols notranslate">
                                     list
@@ -145,15 +232,15 @@ export default customElements.define(PAGE_TAG,
                 <div id="wrapperSortBy">
                     <div class="${ classesForms['form-controls'] } ${ classes['visibility__sort-by'] }">
                         <div class="${ classesForms['form__radio-control'] }">
-                            <input type="radio" id="alphabetical" name="sortBy" value="alphabetical" checked>
+                            <input type="radio" id="alphabetical" name="sortBy" value="alphabetical" ${ this.state.sortBy === 'alphabetical' ? 'checked' : '' }>
                             <label for="alphabetical">Alphabetical</label>
                         </div>
                         <div class="${ classesForms['form__radio-control'] }">
-                            <input type="radio" id="releaseDate" name="sortBy" value="releaseDate">
+                            <input type="radio" id="releaseDate" name="sortBy" value="releaseDate" ${ this.state.sortBy === 'releaseDate' ? 'checked' : '' }>
                             <label for="releaseDate">Release Date</label>
                         </div>
                         <div class="${ classesForms['form__radio-control'] }">
-                            <input type="radio" id="likes" name="sortBy" value="likes">
+                            <input type="radio" id="likes" name="sortBy" value="likes" ${ this.state.sortBy === 'likes' ? 'checked' : '' }>
                             <label for="likes">Likes</label>
                         </div>
                     </div>
@@ -198,7 +285,7 @@ export default customElements.define(PAGE_TAG,
                     <div class="${ classes['options'] }">
                         <div class="${ classesForms['form-controls'] } ">
                             <div class="${ classesForms['form__text-control'] }">
-                                <input class="${ classes['options__input'] }" id="inputSearch" type="search" name="input-search" placeholder="Search..." />
+                                <input class="${ classes['options__input'] }" id="inputSearch" type="search" autocomplete="off" name="input-search" placeholder="Search..." value="${ this.state.q }" />
                                 <label class="${ classes['options__label'] }" for="inputSearch">
                                     <span class="material-symbols notranslate">search</span>
                                 </label>
@@ -224,12 +311,12 @@ export default customElements.define(PAGE_TAG,
                         </div>
                     </div>
 
-                    <div id="publicMazes" class="${ classes['list--vertical'] }"></div>
+                    <div id="publicMazes" class="${ classes['list--vertical'] } ${ this.state.display === 'list' ? classes['display--list'] : '' }"></div>
                 </div>
             `)
         }
 
-        render() {
+        async render() {
             if (!checkToken()) {
                 navigateTo('/login')
                 const message = document.querySelector('message-info')
@@ -237,8 +324,8 @@ export default customElements.define(PAGE_TAG,
             } else {
                 this.appendDOM(this.#createPage())
 
-                this.#renderPrivateMazes()
-                this.#renderPublicMazes()
+                await this.#renderPrivateMazes()
+                await this.#renderPublicMazes()
 
                 const floatingVerticalFilter = document.querySelector('#floatingVerticalFilter')
                 floatingVerticalFilter.addContentElement({ title: 'Dimensions Range', element: this.#sectionScrollerDimensions() })

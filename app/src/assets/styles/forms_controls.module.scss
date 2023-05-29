@@ -300,6 +300,17 @@ input[type="button"],
         }
     }
 
+    &.disable {
+        border: none;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:focus {
+            outline:  none
+        }
+    }
 
     &.button__submit {
         &::before {

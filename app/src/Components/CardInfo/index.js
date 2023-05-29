@@ -17,6 +17,7 @@ export default customElements.define(COMPONENT_TAG,
             this.onButtonEditHandler = this.onButtonEditHandler.bind(this)
 
             this.state = {
+                display: this.getAttribute('data-display'),
                 id: this.getAttribute('data-id'),
                 title: this.getAttribute('data-title') || 'Title',
                 likes: this.getAttribute('data-likes') || '0',
@@ -57,7 +58,7 @@ export default customElements.define(COMPONENT_TAG,
         }
 
         async onButtonEditHandler(event) {
-            const response = [...await ConnectionAPI.GetMazeById(this.state.id)][0]
+            const response = await ConnectionAPI.GetMazeById(this.state.id)
 
             const objects = { }
             Object.keys(response.overworldMap.configObjects).map(key => {
@@ -110,7 +111,7 @@ export default customElements.define(COMPONENT_TAG,
 
         #createdCard() {
             return(/*html*/`
-                <div class="${ classes['card-info'] }">
+                <div class="${ classes['card-info'] } ${ classes[`display-${ this.state.display }`] }">
                     ${
                         this.state.image 
                         ? `<div class="${ classes['card__image'] }" style="background-image:url(${ this.state.image })"></div>`

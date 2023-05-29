@@ -113,8 +113,8 @@ export default customElements.define(PAGE_TAG,
 
         async renderCanvasMaze() {
             const response = await ConnectionAPI.GetMazeById(this.state.id)
-            this.state.name = response[0].name
-            window.OverworldMaps['MazeMap'] = response[0].overworldMap
+            this.state.name = response.name
+            window.OverworldMaps['MazeMap'] = response.overworldMap
 
             const overworld = new Overworld({
                 element: document.querySelector(`.${ classes['game-container'] }`)
