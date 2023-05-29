@@ -12,8 +12,6 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 - [ ] Best practices - frontend performance and API security
 - [ ] Auditory effects
 - [ ] Multiple players in one room
-- [ ] Room search, filtering and paging
-- [ ] Load room list using skeletons
 - [ ] Shortscuts
 - [ ] Visual effects when completing a room
 - [ ] Verifier of possible mazes to be completed
