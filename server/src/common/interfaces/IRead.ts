@@ -1,4 +1,4 @@
-import { optionsSelect } from "../../db/sqlite";
+import { optionsSelect } from "../../persistence/sqlite"
 
 export interface IRead<T> {
     find(options: optionsSelect): Promise<Array<T>>

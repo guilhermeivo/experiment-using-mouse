@@ -1,4 +1,4 @@
-import { optionsDelete, optionsUpdate } from "../../db/sqlite"
+import { optionsDelete, optionsUpdate } from "../../persistence/sqlite"
 
 export interface IWrite<T> {
     add(entity: T): Promise<T>
