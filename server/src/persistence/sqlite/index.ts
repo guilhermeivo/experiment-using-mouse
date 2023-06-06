@@ -12,6 +12,7 @@ const databaseUrl = process.env.DATABASE_URL || ''
 
 const initialize = () => {
     db = new sqlite3.Database(databaseUrl)
+    console.log('[SQLITE] Connected as ' + databaseUrl)
     migrate()
 }
 
@@ -119,7 +120,7 @@ const defineTable = async (tableName: string, attributes = { }, options: options
         db.run(createTableSQL, (error) => {
             if (error) return
 
-            console.log(`successfully created ${ tableName } table.`)
+            console.log(`[SQLITE] Successfully created ${ tableName } table.`)
         })
     })
 }

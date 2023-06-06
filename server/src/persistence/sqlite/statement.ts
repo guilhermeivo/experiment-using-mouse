@@ -88,14 +88,14 @@ export const selectStatement = (table: string | Array<string>, options: optionsS
 
     const resultColumnsSQL = getResultColumn(resultColumns)
     const tableSQL = getTable(table)
-    const [ whereSQL, payloads ] = getWhere(where)
+    const [ whereSQL, wherePayloads ] = getWhere(where)
     const groupBySQL = getGroupBy(groupBy)
     const orderBySQL = getOrderBy(orderBy)
-    const limitSQL = getLimit(limit)
+    const [ limitSQL, limitPayloads ] = getLimit(limit)
 
     const sql = ['SELECT', resultColumnsSQL, 'FROM', tableSQL, whereSQL, groupBySQL, orderBySQL, limitSQL].join(' ')
 
-    return [ sql, payloads ]
+    return [ sql, [...wherePayloads, ...limitPayloads] ]
 }
 
 /* contents */
@@ -242,14 +242,18 @@ const getOrderBy = (orderingTerm: string | Array<any>): string => {
     return `ORDER BY ${ orderingTerm }`
 }
 
-const getLimit = (limit: literal | Array<literal> ): string => {
-    if (!limit) return ''
+const getLimit = (limit: literal | Array<literal> ): Array<string | Array<string>> => {
+    const payloads: Array<any> = []
+    if (!limit) return ['', payloads]
 
     if (!isLiteral(limit)) {
         const [ expression, offset ] = limit
+        payloads.push(expression)
+        payloads.push(offset)
 
-        return `LIMIT ${ expression } OFFSET ${ offset }`
+        return [`LIMIT ? OFFSET ?`, payloads]
     }
 
-    return `LIMIT ${ limit }`
+    payloads.push(limit)
+    return [`LIMIT ?`, payloads]
 }
