@@ -5,7 +5,7 @@ import db from './persistence'
 dotenv.config()
 
 const HOST = process.env.BASE_HOSTNAME || 'localhost'
-const PORT = Number(process.env.BASE_PORT) || 8000
+const PORT = Number(process.env.BASE_PORT) || 8080
 const CORS = process.env.CORS_URL || ''
 
 if (process.env.NODE_ENV === 'DEVELOPMENT') {

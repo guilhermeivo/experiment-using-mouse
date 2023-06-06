@@ -19,7 +19,7 @@ export default async (request: requestGetWithPagination) => {
     const result: Array<object> = []
     await Promise.all(
         mazeEntity.map(async maze => {
-            result.push(responseMaze(maze, request.userId))
+            result.push(await responseMaze(maze, request.userId))
         }))
 
     return new Result('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
