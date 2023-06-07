@@ -31,7 +31,7 @@ $ docker compose down --volumes
 - [ ] Verifier of possible mazes to be completed
 
 ## Architecture
-How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE`](./docs/architecture.md).
 
 <img src="https://github.githubassets.com/images/mona-whisper.gif" align="right" />
 
