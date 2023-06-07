@@ -6,4 +6,4 @@ export default interface IControllerProps {
     method: string
 }
 
-type GenericFunction = (request?: any, response?: http.ServerResponse) => Result<any> | Promise<Result<any>>
+type GenericFunction = (request?: any, response?: http.ServerResponse) => Result<object> | Promise<Result<object | number | string>>

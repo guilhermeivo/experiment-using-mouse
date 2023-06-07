@@ -17,7 +17,7 @@ interface requestCreate {
     ip: string
 }
 
-export default async (request: requestCreate) => {
+export default async (request: requestCreate): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.name || !request.description || !request.object) return new Result(`Not all data was provided.`)
 
@@ -80,5 +80,5 @@ export default async (request: requestCreate) => {
         return new Result(`Can't send code email.`)
     }
 
-    return new Result('Maze has been successfully created.', maze.id)
+    return new Result<number>('Maze has been successfully created.', maze.id)
 }

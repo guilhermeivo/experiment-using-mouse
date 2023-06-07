@@ -9,7 +9,7 @@ interface requestGetWithPagination {
     pageSize: number
 }
 
-export default async (request: requestGetWithPagination) => {
+export default async (request: requestGetWithPagination): Promise<Result<PaginatedList<object>>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.pageNumber || !request.pageSize) return new Result(`Not all data was provided.`)
 
@@ -22,5 +22,5 @@ export default async (request: requestGetWithPagination) => {
             result.push(await responseMaze(maze, request.userId))
         }))
 
-    return new Result('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
+    return new Result<PaginatedList<object>>('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
 }

@@ -17,7 +17,7 @@ export default (url: string): urlComponents => {
     if (queryString.includes('&')) queryParams = queryString.split('&')
 
     let parameters: object = {}
-    queryParams.map((m: string) => m.split('=')).map((m: any) => {
+    queryParams.map((m: string) => m.split('=')).map((m: Array<string>) => {
         parameters = {
             ...parameters,
             [m[0].trim()]: m[1].trim()

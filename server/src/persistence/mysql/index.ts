@@ -42,18 +42,18 @@ const teardown = async (): Promise<void> => {
 
 // TODO:
 const add = async <T extends object>(tableName: string, entity: T): Promise<T> => {
-    const valuesName = Object.keys(entity).map((key, index) => {
+    const valuesName = Object.keys(entity).map(key => {
         if (entity[key as keyof typeof entity]) return (key)
     }).filter(Boolean).join(', ')
 
-    const values = Object.keys(entity).map((key, index) => {
+    const values = Object.keys(entity).map(key => {
         if (entity[key as keyof typeof entity]) return entity[key as keyof typeof entity]
     }).filter(Boolean)
 
     const sqlInsert = `insert into ${ tableName } (${ valuesName }) values (${ values.map(() => '?').filter(Boolean) })`
 
     return await new Promise((resolve, reject) => {
-        connection.query(sqlInsert, [...values], async function (error, result: mysql.ResultSetHeader, fields) {
+        connection.query(sqlInsert, [...values], async function (error, result: mysql.ResultSetHeader) {
             if (error) {
                 console.error(error.message)
                 return reject(error.message)
@@ -72,7 +72,7 @@ const destroy = async <T extends object>(table: string | Array<string>, options:
     const [ sql, payloads ] = deleteStatement(table, options)
 
     return await new Promise((resolve, reject) => {
-        connection.query(sql as string, payloads, async function (error, result, fields) {
+        connection.query(sql as string, payloads, async function (error) {
             if (error) {
                 console.error(error.message)
                 return reject(error.message)
@@ -85,14 +85,14 @@ const destroy = async <T extends object>(table: string | Array<string>, options:
     })
 }
 
-const update = async <T extends object>(table: string | Array<string>, newEntity: T, options: optionsUpdate): Promise<T> => {
+const update = async <T extends object>(table: string | Array<string>, newEntity: object, options: optionsUpdate): Promise<T> => {
     const [ sql, payloads ] = updateStatement(table, {
         attributes: newEntity,
         ...options
     })
 
     return await new Promise((resolve, reject) => {
-        connection.query(sql as string, payloads, async function (error, results, fields) {
+        connection.query(sql as string, payloads, async function (error) {
             if (error) {
                 console.error(error.message)
                 return reject(error.message)
@@ -109,7 +109,7 @@ const findAll = async <T extends object>(table: string | Array<string>, options:
     const [ sql, payloads ] = selectStatement(table, options)
 
     return await new Promise((resolve, reject) => {
-        connection.query(sql as string, payloads, async function (error, results: mysql.RowDataPacket[], fields) {
+        connection.query(sql as string, payloads, async function (error, results: mysql.RowDataPacket[]) {
             if (error) {
                 console.error(error.message)
                 return reject(error.message)
@@ -123,7 +123,7 @@ const findAll = async <T extends object>(table: string | Array<string>, options:
 const defineTable = async (tableName: string, attributes = { }, options: optionsCreateTable = { }) => {
     const createTableSQL = createTableStatement(tableName, attributes, options)
 
-    connection.query(createTableSQL, async function (error, results, fields) {
+    connection.query(createTableSQL, async function (error) {
         if (error) return
 
         console.log(`[MYSQL] Successfully created ${ tableName } table.`)

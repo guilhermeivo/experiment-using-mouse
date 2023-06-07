@@ -13,7 +13,7 @@ interface requestGetBySearchWithPagination {
     filters: string
 }
 
-export default async (request: requestGetBySearchWithPagination) => {
+export default async (request: requestGetBySearchWithPagination): Promise<Result<PaginatedList<object>>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.pageNumber || !request.pageSize) return new Result(`Not all data was provided.`)
     if (request.sortBy && !['alphabetical', 'releaseDate', 'likes'].includes(request.sortBy)) return new Result(`Not all data was provided.`)
@@ -39,5 +39,5 @@ export default async (request: requestGetBySearchWithPagination) => {
             result.push(await responseMaze(maze, request.userId))
         }))
 
-    return new Result('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
+    return new Result<PaginatedList<object>>('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
 }

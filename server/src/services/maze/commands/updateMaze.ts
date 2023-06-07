@@ -13,7 +13,7 @@ interface requestUpdate {
     ip: string
 }
 
-export default async (request: requestUpdate) => {
+export default async (request: requestUpdate): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.id) return new Result(`Not all data was provided.`)
 
@@ -52,5 +52,5 @@ export default async (request: requestUpdate) => {
         return new Result('An error occurred while executing the function.')
     }
 
-    return new Result('The maze has been updated successfully.', request.id)
+    return new Result<number>('The maze has been updated successfully.', request.id)
 }

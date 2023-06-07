@@ -73,7 +73,7 @@ const destroy = async <T extends object>(table: string | Array<string>, options:
     })
 }
 
-const update = async <T extends object>(table: string | Array<string>, newEntity: T, options: optionsUpdate): Promise<T> => {
+const update = async <T extends object>(table: string | Array<string>, newEntity: object, options: optionsUpdate): Promise<T> => {
     const [ sql, payloads ] = updateStatement(table, {
         attributes: newEntity,
         ...options

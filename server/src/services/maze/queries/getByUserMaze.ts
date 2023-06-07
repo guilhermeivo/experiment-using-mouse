@@ -6,7 +6,7 @@ interface requestByUser {
     userId: number
 }
 
-export default async (request: requestByUser) => {
+export default async (request: requestByUser): Promise<Result<Array<object>>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
 
     const findMaze = await mazeRepository.find({
@@ -14,13 +14,13 @@ export default async (request: requestByUser) => {
             userId: request.userId
         }
     })
-    if (findMaze.length <= 0) return new Result(`Could not find any matching values.`, [])
-
     const result: Array<object> = []
+    if (findMaze.length <= 0) return new Result(`Could not find any matching values.`, result)
+
     await Promise.all(
         findMaze.map(async maze => {
             result.push(await responseMaze(maze, request.userId))
         }))
 
-    return new Result('Get Maze By User!', result)
+    return new Result<Array<object>>('Get Maze By User!', result)
 }

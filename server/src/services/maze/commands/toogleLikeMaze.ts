@@ -8,7 +8,7 @@ interface requestToggleLike {
     userId: number
 }
 
-export default async (request: requestToggleLike) => {
+export default async (request: requestToggleLike): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.id) return new Result(`Not all data was provided.`)
 
@@ -32,11 +32,11 @@ export default async (request: requestToggleLike) => {
         })
         if (!removeInteraction) return new Result('An error occurred while executing the function.')
 
-        return new Result('Removed like!', request.id)
+        return new Result<number>('Removed like!', request.id)
     } else {
         const addLike = await interactionRepository.addLike(request.userId, request.id)
         if (!addLike) return new Result('An error occurred while executing the function.')
 
-        return new Result('Add like!', request.id)
+        return new Result<number>('Add like!', request.id)
     }
 }

@@ -6,7 +6,7 @@ export default function cookieParser(cookieString: string) {
     if (cookieString.includes(';')) listCookieString = cookieString.split(';')
    
     let cookies = {}
-    listCookieString.map((m: string) => m.split('=')).map((m: any) => {
+    listCookieString.map((m: string) => m.split('=')).map((m: Array<string>) => {
         cookies = {
             ...cookies,
             [m[0].trim()]: m[1].trim()

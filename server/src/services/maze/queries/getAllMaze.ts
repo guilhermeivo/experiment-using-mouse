@@ -6,7 +6,7 @@ interface requestGetAll {
     userId: number
 }
 
-export default async (request: requestGetAll) => {
+export default async (request: requestGetAll): Promise<Result<Array<object>>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
 
     const findMaze = await mazeRepository.find()
@@ -17,5 +17,5 @@ export default async (request: requestGetAll) => {
             result.push(await responseMaze(maze, request.userId))
         }))
 
-    return new Result('Get All Mazes!', result)
+    return new Result<Array<object>>('Get All Mazes!', result)
 }

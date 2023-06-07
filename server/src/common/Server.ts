@@ -43,8 +43,7 @@ export default abstract class Server {
                     for (let i = 0; i < Object.keys(controller).length; i++) {
                         const key = Object.keys(controller)[i]
 
-                        if (typeof controller[key] === 'function') {
-                            
+                        if (typeof controller[key] === 'function') {                            
                             const result: Result<object> = await controller[key](requestController, response)
 
                             if (!result.Succeeded) return reject(result)

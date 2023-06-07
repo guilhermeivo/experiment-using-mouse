@@ -6,7 +6,7 @@ interface requestAuthGuard {
     access_token: string
 }
 
-export default async (request: requestAuthGuard) => {
+export default async (request: requestAuthGuard): Promise<Result<object>> => {
     const valid = validateJwtToken(request.access_token)
     if (!valid) return new Result('Invalid auth credentials.')
 
@@ -14,5 +14,5 @@ export default async (request: requestAuthGuard) => {
     if (!findUser) return new Result(`Invalid auth credentials.`)
     if (!Object.hasOwnProperty.call(valid, 'sub')) return new Result(`Invalid auth credentials.`)
 
-    return new Result('Success auth.', { 'userId': valid['sub'] }) // next flow
+    return new Result<object>('Success auth.', { 'userId': valid['sub'] }) // next flow
 }

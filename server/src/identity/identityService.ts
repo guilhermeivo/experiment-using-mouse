@@ -6,6 +6,7 @@ import crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
 import { templateMail } from "../common/templates/templateMail"
 import { isEmailValid, sendMail } from "../common/helpers/mailHelper"
+import * as http from 'node:http'
 dotenv.config()
 
 const emailUser = process.env.EMAIL_USER
@@ -18,7 +19,7 @@ interface requestAuthenticate {
     ip: string
 }
 
-export const authenticateUser = async (request: requestAuthenticate, response: any) => {
+export const authenticateUser = async (request: requestAuthenticate, response?: http.ServerResponse): Promise<Result<object>> => {
     if (!request.email || !request.otc || !request.realm) return new Result(`Not all data was provided.`)
 
     const findUser = await userRepository.findByEmail(request.email)
@@ -50,7 +51,7 @@ export const authenticateUser = async (request: requestAuthenticate, response: a
 
     if (!updateToken) return new Result('An error occurred while executing the function.')
 
-    const removeToken = await tokenRepository.destroy({
+    await tokenRepository.destroy({
         where: {
             userId: findUser.id,
             token: request.otc
@@ -74,7 +75,7 @@ interface requestLogin {
     ip: string
 }
 
-export const loginUser = async (request: requestLogin) => {
+export const loginUser = async (request: requestLogin): Promise<Result<number>> => {
     if (!request.connection || request.connection !== 'email') 
         return new Result(`The type of communication was not provided (email).`)
     if (request.connection === 'email' && !request.email)
@@ -113,7 +114,7 @@ export const loginUser = async (request: requestLogin) => {
 
     try {
         sendMail(mailOptions)
-        return new Result('Verification code send to e-mail.', findUser.id)
+        return new Result<number>('Verification code send to e-mail.', findUser.id)
     } catch {
         return new Result(`Can't send code email.`)
     }
@@ -124,7 +125,7 @@ interface requestVerifyEmail {
     emailToken: string
 }
 
-export const verifyEmailUser = async (request: requestVerifyEmail) => {
+export const verifyEmailUser = async (request: requestVerifyEmail): Promise<Result<number>> => {
     if (!request.userId || !request.emailToken) return new Result(`Not all data was provided.`)
 
     const findUser = await userRepository.findById(Number(request.userId))
@@ -152,14 +153,14 @@ export const verifyEmailUser = async (request: requestVerifyEmail) => {
     
     if (!updateUser) return new Result('An error occurred while executing the function.')
 
-    const removeToken = await tokenRepository.destroy({
+    await tokenRepository.destroy({
         where: {
             userId: Number(request.userId),
             token: request.emailToken
         }
     })
 
-    return new Result('Email confirmed successfully.', findUser.id)
+    return new Result<number>('Email confirmed successfully.', findUser.id)
 }
 
 interface requestRegister {
@@ -169,7 +170,7 @@ interface requestRegister {
     redirectUri: string
 }
 
-export const registerUser = async (request: requestRegister) => {
+export const registerUser = async (request: requestRegister): Promise<Result<number>> => {
     if (!request.email || !request.username || !request.redirectUri) return new Result(`Not all data was provided.`)
     if (!isEmailValid(request.email)) return new Result(`You didn't enter a valid email address.`)
 
@@ -214,12 +215,12 @@ export const registerUser = async (request: requestRegister) => {
 
     try {
         sendMail(mailOptions)
-        return new Result('A link to verify authenticity has been sent to your email.', addUser.id)
+        return new Result<number>('A link to verify authenticity has been sent to your email.', addUser.id)
     } catch {
         return new Result(`Can't send confirmation email.`)
     }
 }
 
-export const logoutUser = () => { 
-    return new Result('Logout')
+export const logoutUser = async (): Promise<Result<number>> => { 
+    return new Result<number>('Logout')
 }

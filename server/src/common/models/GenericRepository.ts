@@ -19,7 +19,7 @@ export default abstract class GenericRepository<T extends object> implements IWr
         return this.db.destroy<T>(this.table, options)
     }
 
-    async update(entity: any, options: optionsUpdate = { }) {
+    async update(entity: object, options: optionsUpdate = { }) {
         return this.db.update<T>(this.table, entity, options)
     }
 
