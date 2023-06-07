@@ -18,15 +18,17 @@ $ docker compose up -d
 # logs
 $ docker compose logs -f server
 $ docker exec -it <mysql-container-id> mysql -p experiment-using-mouse
+```
 
 #### Tear it all down
 ```bash
 $ docker compose down --volumes
 ```
 
-## ToDo
+## Planned features
 - [ ] Auditory effects
 - [ ] Multiple players in one room
+- [ ] Verifier of possible mazes to be completed
 
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE.md`](./ARCHITECTURE.md).
