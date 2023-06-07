@@ -39,5 +39,5 @@ export default async (request: requestGetBySearchWithPagination) => {
             result.push(await responseMaze(maze, request.userId))
         }))
 
-    return new Result('maze', new PaginatedList<any>(result, count, request.pageNumber, request.pageSize))
+    return new Result('maze', new PaginatedList<object>(result, count, request.pageNumber, request.pageSize))
 }

@@ -12,7 +12,7 @@ export default async (request: requestAuthGuard) => {
 
     const findUser = await userRepository.findById(Number(valid.sub))
     if (!findUser) return new Result(`Invalid auth credentials.`)
-    if (!valid.hasOwnProperty('sub')) return new Result(`Invalid auth credentials.`)
+    if (!Object.hasOwnProperty.call(valid, 'sub')) return new Result(`Invalid auth credentials.`)
 
     return new Result('Success auth.', { 'userId': valid['sub'] }) // next flow
 }

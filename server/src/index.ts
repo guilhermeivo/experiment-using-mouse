@@ -32,7 +32,6 @@ server.listen(PORT, () => {
 
 const gracefulShutdown = () => {
     db.teardown()
-        .catch(() => {})
         .then(() => process.exit())
 }
 

@@ -4,6 +4,7 @@ import * as http from 'node:http'
 import Request from '../common/models/Request'
 import Result from './models/Result'
 import enumHttpStatusCode from './enumerations/enumHttpStatusCode'
+import IControllerProps from './interfaces/IControllerProps'
 
 interface OptionsConfigurations {
     origins: string,
@@ -30,20 +31,21 @@ export default abstract class Server {
         response.setHeader('Access-Control-Max-Age', 2592000)
         response.setHeader('Access-Control-Allow-Credentials', 'true')
 
-        new Promise<any>((resolve, reject) => {
+        new Promise<Result<object>>((resolve, reject) => {
             let isFind = false
     
             this.routes.map(async (controller) => {
                 if (request.path === controller.path && request.method === controller.method) { 
                     isFind = true
 
-                    let ip = requestHttp.headers['x-forwarded-for'] || requestHttp.socket.remoteAddress || null
+                    const ip = requestHttp.headers['x-forwarded-for'] || requestHttp.socket.remoteAddress || null
                     let requestController = {...request.query, ...request.body, ...request.cookies, ip }
                     for (let i = 0; i < Object.keys(controller).length; i++) {
                         const key = Object.keys(controller)[i]
+
                         if (typeof controller[key] === 'function') {
                             
-                            const result: Result<any> = await controller[key](requestController, response)
+                            const result: Result<object> = await controller[key](requestController, response)
 
                             if (!result.Succeeded) return reject(result)
 
@@ -60,7 +62,7 @@ export default abstract class Server {
             
             if (!isFind) return reject()
         })
-        .then((result: Result<any>) => {
+        .then((result: Result<object>) => {
             response.writeHead(enumHttpStatusCode.ok)
             response.end(JSON.stringify(result))
         })
@@ -83,7 +85,7 @@ export default abstract class Server {
         dirContents.map(content => {
             if ((content.includes('.ts') || content.includes('.js')) && !content.includes('.map')) {
                 const controller = require(path.join(dirName, `controllers/${ content }`)).default()
-                controller.map((methods: any) => {
+                controller.map((methods: IControllerProps) => {
                     let path = content.split('Controller')[0].toLowerCase()
                     if (methods.method.includes('(') && methods.method.includes(')')) {
                         const subPath = methods.method.substring(

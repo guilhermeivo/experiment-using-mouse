@@ -11,7 +11,7 @@ export default (url: string): urlComponents => {
         parameters: { }
     }
 
-    let queryString = decodedURI.split('?')[1] || ''
+    const queryString = decodedURI.split('?')[1] || ''
     let queryParams = [queryString]
 
     if (queryString.includes('&')) queryParams = queryString.split('&')

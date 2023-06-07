@@ -27,11 +27,11 @@ const teardown = async (): Promise<void> => {
 
 // TODO:
 const add = async <T extends object>(tableName: string, entity: T): Promise<T> => {
-    const valuesName = Object.keys(entity).map((key, index) => {
+    const valuesName = Object.keys(entity).map(key => {
         if (entity[key as keyof typeof entity]) return (key)
     }).filter(Boolean).join(', ')
 
-    const values = Object.keys(entity).map((key, index) => {
+    const values = Object.keys(entity).map(key => {
         if (entity[key as keyof typeof entity]) return entity[key as keyof typeof entity]
     }).filter(Boolean)
 

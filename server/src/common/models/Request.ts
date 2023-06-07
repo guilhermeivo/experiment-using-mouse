@@ -8,7 +8,7 @@ export default class Request {
     body: object = { }
     headers: http.IncomingHttpHeaders = { }
     method: string | undefined = ''
-    path: string = ''
+    path = ''
     query: object = { }
     cookies: object = { }
     
@@ -29,11 +29,11 @@ export default class Request {
     private getBodyForRequestHttp(requestHttp: http.IncomingMessage): Promise<object> {
         const bodyChunk: Array<any> = []
         
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             requestHttp.on('data', chunk => {
                 bodyChunk.push(chunk)
             }).on('end', () => {
-                let parsedBody = Buffer.concat(bodyChunk).toString() || '{}'
+                const parsedBody = Buffer.concat(bodyChunk).toString() || '{}'
                 resolve(JSON.parse(parsedBody))
             })
         })

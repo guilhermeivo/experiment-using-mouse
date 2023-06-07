@@ -102,7 +102,7 @@ export const selectStatement = (table: string | Array<string>, options: optionsS
 // create_definition
 const getCreateDefinition = (columnDefinitions: any) => {
     return Object.keys(columnDefinitions).map(columnName => {
-        let columnOptions = Object.keys(columnDefinitions[columnName]).map(key => {
+        const columnOptions = Object.keys(columnDefinitions[columnName]).map(key => {
             if (key === 'type') {
                 // data_type 
                 const valueDataTypes = columnDefinitions[columnName][key] 

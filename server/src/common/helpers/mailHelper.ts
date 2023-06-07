@@ -9,27 +9,27 @@ const emailPort = Number(process.env.EMAIL_PORT)
 
 const nodeEnv = process.env.NODE_ENV
 
-const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
+const emailRegex = /^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
 
 export const isEmailValid = (email: string) => {
     if (!email) return false
 
     if (email.length > 254) return false
     
-    let valid = emailRegex.test(email)
+    const valid = emailRegex.test(email)
     if (!valid) return false
 
-    let parts = email.split('@')
+    const parts = email.split('@')
     if (parts[0].length > 64) return false
 
-    let domainParts = parts[1].split('.')
+    const domainParts = parts[1].split('.')
     if (domainParts.some((part) => { return part.length > 63 })) return false
 
     return true
 }
 
 export const sendMail = async (mailOptions: object) => {
-    let configOptions = {
+    const configOptions = {
         host: emailHost,
         port: emailPort,
         auth: {

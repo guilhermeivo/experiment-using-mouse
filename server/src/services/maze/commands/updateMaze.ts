@@ -25,7 +25,7 @@ export default async (request: requestUpdate) => {
     })
     if (!findMaze) return new Result(`Could not find any matching values.`)
 
-    const updateMaze = await mazeRepository.update({
+    await mazeRepository.update({
         name: request.name,
         description: request.name,
     }, {
