@@ -1,0 +1,2 @@
+## Smtp Service for testing
+To perform testing in development mode (NODE_ENV=DEVELOPMENT) you can use the [`Ethereal smtp service`](https://ethereal.email/), a fake smtp service aimed at testing, in which messages are never delivered. The messages will be displayed in the terminal in the form: `Preview URL: <URL>`.
