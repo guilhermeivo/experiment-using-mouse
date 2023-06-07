@@ -1,0 +1,51 @@
+services:
+  server:
+# docker run -dp 8080:8080 `
+#   -w /server --mount "type=bind,src=$pwd,target=/server" `
+#   --network experiment-using-mouse `
+#   -e MYSQL_HOST=mysql `
+#   -e MYSQL_USER=root `
+#   -e MYSQL_PASSWORD=secret `
+#   -e MYSQL_DB=experiment-using-mouse `
+#   node:18-alpine `
+#   sh -c "npm install && npx nodemon --legacy-watch"
+    image: node:18-alpine
+    command: sh -c "npm install && npm run start:dev"
+    ports:
+      - 8080:8080
+    working_dir: /server
+    volumes:
+      - ./server:/server
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: experiment-using-mouse
+    depends_on:
+      - mysql
+  app:
+    image: node:18-alpine
+    command: sh -c "npm install && npm run start:dev"
+    ports:
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    depends_on:
+      - server
+  mysql:
+# docker run -d `
+#   --network experiment-using-mouse --network-alias mysql `
+#   -v todo-mysql-data:/var/lib/mysql `
+#   -e MYSQL_ROOT_PASSWORD=secret `
+#   -e MYSQL_DATABASE=experiment-using-mouse `
+#   mysql:8.0
+    image: mysql:8.0
+    volumes:
+      - experiment-using-mouse-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: experiment-using-mouse
+
+volumes:
+  experiment-using-mouse-mysql-data: 

@@ -5,7 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -71,6 +71,7 @@ web_modules/
 
 # dotenv environment variables file
 .env
+.env.local
 .env.test
 .env.production
 
@@ -113,6 +114,17 @@ out
 .yarn/install-state.gz
 .pnp.*
 
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # local database
 *.sqlite
 *.sqlite
@@ -121,10 +133,7 @@ out
 
 # dist
 dist/
+dist-ssr
 
 # uploaded files
 uploads/
-
-
-# docker
-Dockerfile

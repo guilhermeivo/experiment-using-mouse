@@ -4,7 +4,7 @@ export const dataTypes = {
     NUMBER: 'INTEGER',
     BOOL: 'BOOLEAN',
     REAL: 'REAL',
-    DATE: 'DATE',
+    DATE: 'DATETIME',
     NUMERIC: 'NUMERIC'
 }
 

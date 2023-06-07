@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "start:dev": "npx nodemon",
+    "start:dev": "npx nodemon --legacy-watch",
     "build": "tsc",
     "test:dev": "node --watch --test test/api.test.mjs",
     "test": "node --test test/api.test.mjs"

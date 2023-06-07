@@ -253,8 +253,8 @@ const getLimit = (limit: literal | Array<literal> ): Array<string | Array<string
 
     if (!isLiteral(limit)) {
         const [ expression, offset ] = limit
-        payloads.push(expression)
-        payloads.push(offset)
+        payloads.push(Number(expression))
+        payloads.push(Number(offset))
 
         return [`LIMIT ? OFFSET ?`, payloads]
     }
