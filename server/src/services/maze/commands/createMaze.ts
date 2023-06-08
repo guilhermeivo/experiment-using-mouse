@@ -22,8 +22,6 @@ export default async (request: requestCreate): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.name || !request.description || !request.object) return new Result(`Not all data was provided.`)
 
-    console.log(JSON.parse(request.object))
-
     if (!validators.isNotSpecialCharacters(request.name)) return new Result(`You didn't enter a valid name.`)
     if (!validators.isPossibleMaze(JSON.parse(request.object))) return new Result(`You didn't enter a valid object.`)
 
@@ -46,12 +44,11 @@ export default async (request: requestCreate): Promise<Result<number>> => {
         }
     })
     try {
-        if (!fs.existsSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))) {
-            fs.mkdirSync(path.join(__dirname, `/../${ fileUpdate.filePath }/`))
+        if (!fs.existsSync(path.join(__dirname, `/../../../${ fileUpdate.filePath }/`))) {
+            fs.mkdirSync(path.join(__dirname, `/../../../${ fileUpdate.filePath }/`))
         }
-        fs.writeFileSync(path.join(__dirname, `/../${ fileUpdate.filePath }/${ fileUpdate.fileName }.json`), request.object)
-    } catch (err) {
-        console.log(err)
+        fs.writeFileSync(path.join(__dirname, `/../../../${ fileUpdate.filePath }/${ fileUpdate.fileName }.json`), request.object)
+    } catch {
         return new Result('An error occurred while executing the function.')
     }
 
