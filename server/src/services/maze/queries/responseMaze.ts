@@ -30,7 +30,7 @@ export default async (maze: maze, userId: number) => {
     const findUser = await userRepository.findById(Number(maze.userId))
 
     try {
-        const data = fs.readFileSync(path.join(__dirname, `/../${ file.filePath }/${ file.fileName }.json`), 'utf8')
+        const data = fs.readFileSync(path.join(__dirname, `/../../../${ file.filePath }/${ file.fileName }.json`), 'utf8')
 
         return {
             id: maze.id,
