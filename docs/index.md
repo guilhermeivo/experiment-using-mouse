@@ -5,3 +5,4 @@
     - **[Fetch api](./fetch-api.md)**
     - **[Reduce material design icons font](./reduce-material-design-icons-font.md)**
     - **[Smtp service for testing](./smtp-service-for-testing.md)**
+    - **[Validators](https://www.npmjs.com/package/@experiment-using-mouse/validators)**
