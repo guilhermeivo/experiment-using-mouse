@@ -1,11 +1,12 @@
 import { checkToken, createElementFromHTML, disableBackMenu, downloadData, enableBackMenu, submitButtonHandler } from '../../Common/common'
-import validators from '../../Common/validators'
+import validatorForms from '../../Common/validatorForms'
 import OverworldMazeEdit from '../../OverworldMazeEdit'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
 import { navigateTo } from '../../Common/common'
+import validators from '@experiment-using-mouse/validators'
 
 const SMALLEST_POSSIBLE_SIZE = 4
 const LARGEST_POSSIBLE_SIZE = 20
@@ -48,7 +49,7 @@ export default customElements.define(PAGE_TAG,
                     largestSize: LARGEST_POSSIBLE_SIZE,
                     rows: OverworldMaze.rows || DEFAULT_MAZE_ROWS, 
                     columns: OverworldMaze.columns || DEFAULT_MAZE_COLUMNS,
-                    mazeObjects: OverworldMaze.mazeObjects || null,
+                    configObjects: OverworldMaze.configObjects || null,
                     tilesMaze: OverworldMaze.tilesMaze || null
                 })
             }
@@ -139,7 +140,7 @@ export default customElements.define(PAGE_TAG,
         }
 
         async onSaveMazeHandler(event) {
-            const validatorInputName = validators(
+            const validatorInputName = validatorForms(
                 '#inputName', { formElement: '#formTextName', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
             
             const isValid = validatorInputName.isValidNotEmpty() && validatorInputName.isValidNotSpecialCharacters()
@@ -156,7 +157,7 @@ export default customElements.define(PAGE_TAG,
                             name: inputName.value, 
                             rows: this.state.overworldMazeEdit.rows, 
                             columns: this.state.overworldMazeEdit.columns, 
-                            mazeObjects: this.state.overworldMazeEdit.mazeObjects, 
+                            configObjects: this.state.overworldMazeEdit.configObjects, 
                             tilesMaze: this.state.overworldMazeEdit.tilesMaze
                         })
                         localStorage.setItem('OverworldMaze', json)
@@ -174,6 +175,13 @@ export default customElements.define(PAGE_TAG,
                             resolve()
                         } else {
                             const overworldMaze = this.state.overworldMazeEdit.getOverworldMap(this.state.maze.exportImageTiles())
+                            const isPossible = validators.isPossibleMaze(overworldMaze)
+
+                            if (!isPossible) {
+                                const message = document.querySelector('message-info')
+                                message.addMessageInfo({ description: 'This is not a valid maze, try to fix it before trying to save again.', type: 'warn' })
+                                return reject()
+                            }
 
                             if (!this.state.idMaze) {
                                 const response = await ConnectionAPI.CreateMaze(inputName.value, inputName.value, overworldMaze)

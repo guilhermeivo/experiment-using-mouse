@@ -187,7 +187,7 @@ export default customElements.define(COMPONENT_TAG,
             `)
         }
 
-        #createMazeObjects(object) {            
+        #createConfigObjects(object) {            
             const objectId = Object.keys(window.editors).find(editor => editor === object.id)
             const editor = window.editors[objectId]
 
@@ -214,8 +214,8 @@ export default customElements.define(COMPONENT_TAG,
             this.appendDOM(this.#createMaze())
             
             this.update()
-            Object.keys(this.state.overworldMazeEdit.mazeObjects)
-                .map(key => this.appendChild(createElementFromHTML(this.#createMazeObjects(this.state.overworldMazeEdit.mazeObjects[key]))))
+            Object.keys(this.state.overworldMazeEdit.configObjects)
+                .map(key => this.appendChild(createElementFromHTML(this.#createConfigObjects(this.state.overworldMazeEdit.configObjects[key]))))
 
             this.addAllListeners()
         }

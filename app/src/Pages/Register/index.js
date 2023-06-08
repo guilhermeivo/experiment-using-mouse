@@ -1,6 +1,6 @@
 import classes from './style.module.scss'
 import classesForms from '../../assets/styles/forms_controls.module.scss'
-import validators from '../../Common/validators'
+import validatorForms from '../../Common/validatorForms'
 import ConnectionAPI from '../../Services/ConnectionAPI'
 import { disableBackMenu, enableBackMenu, navigateTo, submitButtonHandler } from "../../Common/common"
 
@@ -26,9 +26,9 @@ export default customElements.define(PAGE_TAG,
         }
         
         onRegisterHandler(event) {
-            const validatorInputEmail = validators(
+            const validatorInputEmail = validatorForms(
                 '#inputEmail', { formElement: '#formTextEmail', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
-            const validatorInputName = validators(
+            const validatorInputName = validatorForms(
                 '#inputUsername', { formElement: '#formTextName', errorElement: `.${ classesForms['form__error-message'] }`, errorClass: classesForms['form__text-control--error']})
             
             const isValidEmail = validatorInputEmail.isValidNotEmpty() && validatorInputEmail.isValidEmail()

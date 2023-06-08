@@ -60,39 +60,13 @@ export default customElements.define(COMPONENT_TAG,
         async onButtonEditHandler(event) {
             const response = await ConnectionAPI.GetMazeById(this.state.id)
 
-            const objects = { }
-            Object.keys(response.overworldMap.configObjects).map(key => {
-                const currentObject = response.overworldMap.configObjects[key]
-
-                objects[key] = {
-                    id: currentObject.id,
-                    type: currentObject.type,
-                    isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
-                    x: (currentObject.y + 32)/32,
-                    y: (currentObject.x + 32)/32,
-                    src: currentObject.src
-                }
-            })
-            const tilesMaze = { }
-            let rows = 0, columns = 0
-            Object.keys(response.overworldMap.tiles).map(key => {
-
-                const [ x, y ] = key.split(',').map(string => Number(string))
-                const newX = (y+32)/32
-                const newY = (x+32)/32
-                tilesMaze[`${(y+32)/32},${(x+32)/32}`] = response.overworldMap.tiles[key]
-
-                if (newX > rows) rows = newX
-                if (newY > columns) columns = newY
-            })
-
             const json = JSON.stringify({ 
                 idMaze: response.id,
                 name: response.name, 
-                rows: rows, 
-                columns: columns, 
-                mazeObjects: objects, 
-                tilesMaze: tilesMaze
+                rows: response.overworldMap.rows, 
+                columns: response.overworldMap.columns, 
+                configObjects: response.overworldMap.configObjects, 
+                tilesMaze: response.overworldMap.tiles
             })
             localStorage.setItem('OverworldMaze', json)
             navigateTo(`/make?id=${ response.id }`)

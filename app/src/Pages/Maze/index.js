@@ -1,7 +1,7 @@
 import Overworld from '../../Overworld'
 import classes from './style.module.scss'
 import ConnectionAPI from '../../Services/ConnectionAPI'
-import { createElementFromHTML, disableBackMenu, enableBackMenu, navigateTo } from '../../Common/common'
+import { createElementFromHTML, disableBackMenu, enableBackMenu, navigateTo, withGrid } from '../../Common/common'
 import classesForms from "../../assets/styles/forms_controls.module.scss"
 import Counter from '../../Common/Counter'
 
@@ -114,7 +114,32 @@ export default customElements.define(PAGE_TAG,
         async renderCanvasMaze() {
             const response = await ConnectionAPI.GetMazeById(this.state.id)
             this.state.name = response.name
-            window.OverworldMaps['MazeMap'] = response.overworldMap
+
+            const objects = { }
+            Object.keys(response.overworldMap.configObjects).map(key => {
+                const currentObject = response.overworldMap.configObjects[key]
+                objects[key] = {
+                    id: currentObject.id,
+                    type: currentObject.type,
+                    isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
+                    x: withGrid(currentObject.y - 1),
+                    y: withGrid(currentObject.x - 1),
+                    src: window.editors[currentObject.id].src
+                }
+            })
+            const tile = { }
+            Object.keys(response.overworldMap.tiles).map(key => {
+                const [ x, y ] = key.split(',').map(string => Number(string))
+
+                tile[`${ withGrid(y-1) },${ withGrid(x-1) }`] = response.overworldMap.tiles[key]
+            })
+
+            window.OverworldMaps['MazeMap'] = {
+                id: 'maze',
+                lowerSrc: response.overworldMap.lowerSrc,
+                configObjects: objects,
+                tiles: tile
+            }
 
             const overworld = new Overworld({
                 element: document.querySelector(`.${ classes['game-container'] }`)

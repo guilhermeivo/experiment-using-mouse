@@ -32,7 +32,7 @@ export default class OverworldMazeEdit {
         this.rows = config.rows || this.smallestSize
         this.columns = config.columns || this.smallestSize
 
-        this.mazeObjects = config.mazeObjects || {
+        this.configObjects = config.configObjects || {
             cheese: {
                 type: 'Cheese',
                 id: window.editors.cheese.id,
@@ -90,8 +90,8 @@ export default class OverworldMazeEdit {
     }
 
     setGameObject({ name, x, y }) {
-        this.mazeObjects[name].x = x
-        this.mazeObjects[name].y = y
+        this.configObjects[name].x = x
+        this.configObjects[name].y = y
     }
 
     remove({ x, y }) {
@@ -99,29 +99,13 @@ export default class OverworldMazeEdit {
     }
 
     getOverworldMap(lowerSrc) {
-        const objects = { }
-        Object.keys(this.mazeObjects).map(key => {
-            const currentObject = this.mazeObjects[key]
-            objects[key] = {
-                id: currentObject.id,
-                type: currentObject.type,
-                isPlayerControlled: currentObject.isPlayerControlled ? currentObject.isPlayerControlled : false,
-                x: withGrid(currentObject.y - 1),
-                y: withGrid(currentObject.x - 1),
-                src: window.editors[currentObject.id].src
-            }
-        })
-        const tile = { }
-        Object.keys(this.tilesMaze).map(key => {
-            const [ x, y ] = key.split(',').map(string => Number(string))
-
-            tile[`${withGrid(y-1)},${withGrid(x-1)}`] = this.tilesMaze[key]
-        })
         return {
             id: 'maze',
+            rows: this.rows,
+            columns: this.columns,
             lowerSrc: lowerSrc,
-            configObjects: objects,
-            tiles: tile
+            configObjects: this.configObjects,
+            tiles: this.tilesMaze
         }
     }
 }

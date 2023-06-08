@@ -15,6 +15,7 @@
     "vite": "^4.2.0"
   },
   "dependencies": {
+    "@experiment-using-mouse/validators": "^0.0.18",
     "dotenv": "^16.0.3"
   }
 }

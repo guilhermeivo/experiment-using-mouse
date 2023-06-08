@@ -1,4 +1,5 @@
 const MINIMUM_TIME_ERROR_MESSAGE = 5000
+import validators from '@experiment-using-mouse/validators'
 
 export default (target, config) => {
     const errorClass = config.errorClass
@@ -13,29 +14,21 @@ export default (target, config) => {
     if (!errorElement) throw new Error(`Could not find element: ${ config.errorElement }`)
 
     const isValidEmail = () => {
-        const emailRegExp = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/
-
-        const isValid = elementTarget.value.length > 0 && 
-            emailRegExp.test(elementTarget.value)
+        const isValid = validators.isEmail(elementTarget.value)
 
         if (!isValid) setError('This field only accepts emails')
         return isValid
     }
 
     const isValidNotEmpty = () => {
-        const isValid = elementTarget.value.length > 0
+        const isValid = validators.isNotEmpty(elementTarget.value)
 
         if (!isValid) setError('This field cannot be empty')
         return isValid
     }
 
     const isValidNotSpecialCharacters = () => {
-        const nonAlphanumericCharactersRegExp = /(\W)|(_)/
-        const numbersRegExp = /([0-9])/
-
-        const isValid = elementTarget.value.length > 0 &&
-            !nonAlphanumericCharactersRegExp.test(elementTarget.value) &&
-            !numbersRegExp.test(elementTarget.value)
+        const isValid = validators.isNotSpecialCharacters(elementTarget.value)
 
         if (!isValid) setError('This field does not accept special characters')
         return isValid
