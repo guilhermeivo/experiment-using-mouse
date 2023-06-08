@@ -11,7 +11,6 @@ Project initially thought to build a graphic part of the exercise number `9.2` o
 ## Planned features
 - [ ] Auditory effects
 - [ ] Multiple players in one room
-- [ ] Verifier of possible mazes to be completed
 
 ## Architecture
 How this software works internally and how it interacts with external dependencies - written in detail at [`ARCHITECTURE`](./docs/architecture.md).
