@@ -1,10 +1,10 @@
 {
   "name": "@experiment-using-mouse/validators",
-  "version": "0.0.1",
+  "version": "0.0.18",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Hello\" && exit 1"
+    "test": "node --test index.test.mjs"
   },
   "author": "guilhermeivo",
   "license": "MIT"
