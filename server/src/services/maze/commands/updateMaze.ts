@@ -3,6 +3,7 @@ import fileRepository from "../../../repository/fileRepository"
 import mazeRepository from "../../../repository/mazeRepository"
 import * as fs from 'fs'
 import path from "path"
+import validators from "@experiment-using-mouse/validators"
 
 interface requestUpdate {
     id: number
@@ -16,6 +17,9 @@ interface requestUpdate {
 export default async (request: requestUpdate): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.id) return new Result(`Not all data was provided.`)
+
+    if (!validators.isNotSpecialCharacters(request.name)) return new Result(`You didn't enter a valid name.`)
+    if (!validators.isPossibleMaze(JSON.parse(request.object))) return new Result(`You didn't enter a valid object.`)
 
     const findMaze = await mazeRepository.findOne({
         where: {

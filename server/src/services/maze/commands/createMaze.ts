@@ -6,6 +6,7 @@ import mazeRepository from "../../../repository/mazeRepository"
 import userRepository from "../../../repository/userRepository"
 import { templateMail } from "../../../common/templates/templateMail"
 import { sendMail } from "../../../common/helpers/mailHelper"
+import validators from "@experiment-using-mouse/validators"
 
 const emailUser = process.env.EMAIL_USER
 
@@ -20,6 +21,11 @@ interface requestCreate {
 export default async (request: requestCreate): Promise<Result<number>> => {
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.name || !request.description || !request.object) return new Result(`Not all data was provided.`)
+
+    console.log(JSON.parse(request.object))
+
+    if (!validators.isNotSpecialCharacters(request.name)) return new Result(`You didn't enter a valid name.`)
+    if (!validators.isPossibleMaze(JSON.parse(request.object))) return new Result(`You didn't enter a valid object.`)
 
     const currentTime = new Date()
 

@@ -5,8 +5,9 @@ import userRepository from "../repository/userRepository"
 import crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
 import { templateMail } from "../common/templates/templateMail"
-import { isEmailValid, sendMail } from "../common/helpers/mailHelper"
+import { sendMail } from "../common/helpers/mailHelper"
 import * as http from 'node:http'
+import validators from "@experiment-using-mouse/validators"
 dotenv.config()
 
 const emailUser = process.env.EMAIL_USER
@@ -21,6 +22,8 @@ interface requestAuthenticate {
 
 export const authenticateUser = async (request: requestAuthenticate, response?: http.ServerResponse): Promise<Result<object>> => {
     if (!request.email || !request.otc || !request.realm) return new Result(`Not all data was provided.`)
+
+    if (!validators.isEmail(request.email)) return new Result(`You didn't enter a valid email address.`)
 
     const findUser = await userRepository.findByEmail(request.email)
     if (!findUser) return new Result(`Invalid auth credentials.`)
@@ -81,6 +84,8 @@ export const loginUser = async (request: requestLogin): Promise<Result<number>> 
     if (request.connection === 'email' && !request.email)
         return new Result(`The form of communication was not provided.`)
     
+    if (!validators.isEmail(request.email)) return new Result(`You didn't enter a valid email address.`)
+
     const findUser = await userRepository.findByEmail(request.email)
     if (!findUser) return new Result(`Invalid auth credentials.`)
     if (!findUser.emailConfirmed) return new Result(`Waiting for email confirmation.`)
@@ -172,7 +177,9 @@ interface requestRegister {
 
 export const registerUser = async (request: requestRegister): Promise<Result<number>> => {
     if (!request.email || !request.username || !request.redirectUri) return new Result(`Not all data was provided.`)
-    if (!isEmailValid(request.email)) return new Result(`You didn't enter a valid email address.`)
+
+    if (!validators.isEmail(request.email)) return new Result(`You didn't enter a valid email address.`)
+    if (!validators.isNotSpecialCharacters(request.username)) return new Result(`You didn't enter a valid username.`)
 
     const emailExist = await userRepository.findByEmail(request.email)
     if (emailExist) return new Result(`There is already a registered user with this email adress.`)

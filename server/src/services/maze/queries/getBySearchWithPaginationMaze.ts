@@ -3,6 +3,7 @@ import mazeRepository from "../../../repository/mazeRepository"
 import db from '../../../persistence'
 import responseMaze from "./responseMaze"
 import PaginatedList from "../../../common/models/PaginatedList"
+import validators from "@experiment-using-mouse/validators"
 
 interface requestGetBySearchWithPagination {
     userId: number
@@ -17,7 +18,7 @@ export default async (request: requestGetBySearchWithPagination): Promise<Result
     if (!request.userId) return new Result(`Invalid auth credentials.`)
     if (!request.pageNumber || !request.pageSize) return new Result(`Not all data was provided.`)
     if (request.sortBy && !['alphabetical', 'releaseDate', 'likes'].includes(request.sortBy)) return new Result(`Not all data was provided.`)
-
+    
     const mazeEntity = await mazeRepository.pagination(request.pageSize, request.pageNumber, {
         where: {
             name: {
