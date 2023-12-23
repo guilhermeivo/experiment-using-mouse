@@ -55,6 +55,10 @@ export default customElements.define(COMPONENT_TAG,
 
             if (newTypeKey == this.state.type) return
 
+            // sound effect
+            if (this.state.items[newTypeKey].sound)
+                this.state.items[newTypeKey].sound.play()
+
             const newType = this.state.items[newTypeKey]
             const [ x, y ] = this.state.position.split(',')
 

@@ -7,6 +7,9 @@ import MouseIcon from "./assets/images/MouseIcon.png"
 import CheeseIcon from "./assets/images/CheeseIcon.png"
 import EraserIcon from "./assets/images/EraserIcon.png"
 
+import PathSound from "./assets/sounds/PathSound.mp3"
+import WallSound from "./assets/sounds/WallSound.mp3"
+
 import FileMapImage from './assets/images/FileMap.png'
 
 import CheeseCharacters from './assets/images/characters/cheese.png'
@@ -121,6 +124,7 @@ window.editors = {
         label: 'Wall',
         description: 'Obstacles hindering the characters path.',
         type: enumTypeEditors.Tile,
+        sound: new Audio(WallSound),
         sprite: new Sprite({
             src: FileMapImage,
             variants: {
@@ -189,6 +193,7 @@ window.editors = {
         label: 'Path',
         description: 'Build set of intricate pathways.',
         type: enumTypeEditors.Tile,
+        sound: new Audio(PathSound),
         sprite: new Sprite({
             src: FileMapImage,
             variants: {

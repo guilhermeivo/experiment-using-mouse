@@ -19,3 +19,4 @@ How this software works internally and how it interacts with external dependenci
 
 ## License
 This project is under license. See the [`LICENSE`](./LICENSE) file for details.
+This project is using licensed files. See the [`BLACKMAGIC FAIRLIGHT SOUND LIBRARY`](https://www.blackmagicdesign.com/products/davinciresolve/fairlight) page for details.
